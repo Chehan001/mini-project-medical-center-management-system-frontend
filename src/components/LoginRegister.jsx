@@ -41,9 +41,9 @@ const LoginRegister = () => {
 
     if (action === "Register") {
       try {
-        await axios.post('http://localhost:5000/api/students/register', {
-          universityEmail: form.universityEmail,
-          idNumber: form.idNumber,
+        await axios.post('http://localhost:8000/api/user/register', {
+          university_mail: form.universityEmail,
+         university_reg_number: form.idNumber,
           password: form.password
         });
         alert("Registered successfully!");
@@ -54,8 +54,8 @@ const LoginRegister = () => {
       }
     } else if (action === "Sign In") {
       try {
-        const response = await axios.post('http://localhost:5000/api/students/login', {
-          idNumber: form.idNumber,
+        const response = await axios.post('http://localhost:8000/api/user/login', {
+         university_reg_number: form.idNumber,
           password: form.password
         });
         alert("Login successful!");
@@ -124,7 +124,7 @@ const LoginRegister = () => {
               <TextField
                 placeholder="Enter University Email"
                 name="universityEmail"
-                value={form.universityEmail}
+                value={form.university_mail}
                 onChange={handleChange}
                 fullWidth
                 required
