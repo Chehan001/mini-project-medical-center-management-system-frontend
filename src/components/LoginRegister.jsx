@@ -1,3 +1,4 @@
+// frontend/src/components/LoginRegister.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import {
@@ -21,18 +22,42 @@ const LoginRegister = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleForgotPasswordSubmit = (e) => {
+  const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
+
     if (step === 1) {
-      setStep(2);
+      try {
+        await axios.post('http://localhost:8000/api/auth/request-password-reset', {
+          university_mail: form.universityEmail,
+        });
+        alert('Reset link sent to email!');
+        setStep(2);
+      } catch (err) {
+        alert('Error sending reset link.');
+        console.error(err);
+      }
     } else {
       if (form.newPassword !== form.confirmPassword) {
         alert("Passwords do not match!");
         return;
       }
-      alert("Password reset successful!");
-      setAction("Sign In");
-      setStep(1);
+
+      try {
+        const fakeUserId = "replace_this_id"; // Replace with actual
+        const fakeToken = "replace_this_token"; // Replace with actual
+
+        await axios.post(`http://localhost:8000/api/auth/reset-password/${fakeUserId}/${fakeToken}`, {
+          password: form.newPassword,
+          confirmPassword: form.confirmPassword,
+        });
+
+        alert("Password reset successful!");
+        setAction("Sign In");
+        setStep(1);
+      } catch (err) {
+        alert("Password reset failed.");
+        console.error(err);
+      }
     }
   };
 
@@ -43,7 +68,7 @@ const LoginRegister = () => {
       try {
         await axios.post('http://localhost:8000/api/user/register', {
           university_mail: form.universityEmail,
-         university_reg_number: form.idNumber,
+          university_reg_number: form.idNumber,
           password: form.password
         });
         alert("Registered successfully!");
@@ -54,8 +79,8 @@ const LoginRegister = () => {
       }
     } else if (action === "Sign In") {
       try {
-        const response = await axios.post('http://localhost:8000/api/user/login', {
-         university_reg_number: form.idNumber,
+        const response = await axios.post('http://localhost:8000/api/auth/login', {
+          university_reg_number: form.idNumber,
           password: form.password
         });
         alert("Login successful!");
@@ -124,7 +149,7 @@ const LoginRegister = () => {
               <TextField
                 placeholder="Enter University Email"
                 name="universityEmail"
-                value={form.university_mail}
+                value={form.universityEmail}
                 onChange={handleChange}
                 fullWidth
                 required
