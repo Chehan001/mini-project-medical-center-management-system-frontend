@@ -1,11 +1,8 @@
-// frontend/src/components/LoginRegister.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import {
-  Avatar, Container, Paper, TextField, Typography,
-  Box, Button, Grid, Link
-} from '@mui/material';
+import {Avatar, Container, Paper, TextField, Typography,Box, Button, Grid, Link} from '@mui/material';
 import MailLockOutlinedIcon from '@mui/icons-material/MailLockOutlined';
+import { useNavigate } from 'react-router-dom'; 
 
 const LoginRegister = () => {
   const [action, setAction] = useState("Sign In");
@@ -17,6 +14,8 @@ const LoginRegister = () => {
     newPassword: '',
     confirmPassword: '',
   });
+
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -43,8 +42,8 @@ const LoginRegister = () => {
       }
 
       try {
-        const fakeUserId = "replace_this_id"; // Replace with actual
-        const fakeToken = "replace_this_token"; // Replace with actual
+        const fakeUserId = "replace_this_id";
+        const fakeToken = "replace_this_token";
 
         await axios.post(`http://localhost:8000/api/auth/reset-password/${fakeUserId}/${fakeToken}`, {
           password: form.newPassword,
@@ -83,8 +82,7 @@ const LoginRegister = () => {
           university_reg_number: form.idNumber,
           password: form.password
         });
-        alert("Login successful!");
-        console.log(response.data);
+        navigate('/userProfil'); 
       } catch (err) {
         alert("Login failed. Check ID or password.");
         console.error(err);
