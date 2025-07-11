@@ -4,6 +4,7 @@ import NavBar from './components/NavBar';
 import HomePage from './components/HomePage';
 import LoginRegister from './components/LoginRegister';
 import PersonalData from './components/userProfil'; 
+import ResetPassword from './components/ResetPassword';
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginRegister />} />
+        <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
         <Route path="/personal-data" element={<userProfile />} /> 
       </Routes>
     </Router>

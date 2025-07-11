@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import {Avatar, Container, Paper, TextField, Typography,Box, Button, Grid, Link} from '@mui/material';
+import {
+  Avatar, Container, Paper, TextField, Typography,
+  Box, Button, Grid, Link
+} from '@mui/material';
 import MailLockOutlinedIcon from '@mui/icons-material/MailLockOutlined';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 const LoginRegister = () => {
   const [action, setAction] = useState("Sign In");
-  const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     universityEmail: '',
     idNumber: '',
-    password: '',
-    newPassword: '',
-    confirmPassword: '',
+    password: ''
   });
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -23,40 +23,15 @@ const LoginRegister = () => {
 
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
-
-    if (step === 1) {
-      try {
-        await axios.post('http://localhost:8000/api/auth/request-password-reset', {
-          university_mail: form.universityEmail,
-        });
-        alert('Reset link sent to email!');
-        setStep(2);
-      } catch (err) {
-        alert('Error sending reset link.');
-        console.error(err);
-      }
-    } else {
-      if (form.newPassword !== form.confirmPassword) {
-        alert("Passwords do not match!");
-        return;
-      }
-
-      try {
-        const fakeUserId = "replace_this_id";
-        const fakeToken = "replace_this_token";
-
-        await axios.post(`http://localhost:8000/api/auth/reset-password/${fakeUserId}/${fakeToken}`, {
-          password: form.newPassword,
-          confirmPassword: form.confirmPassword,
-        });
-
-        alert("Password reset successful!");
-        setAction("Sign In");
-        setStep(1);
-      } catch (err) {
-        alert("Password reset failed.");
-        console.error(err);
-      }
+    try {
+      await axios.post('http://localhost:8000/api/auth/request-password-reset', {
+        university_mail: form.universityEmail,
+      });
+      alert('Password reset link sent to your university email.');
+      setAction("Sign In");
+    } catch (err) {
+      alert('Error sending reset link.');
+      console.error(err);
     }
   };
 
@@ -82,7 +57,8 @@ const LoginRegister = () => {
           university_reg_number: form.idNumber,
           password: form.password
         });
-        navigate('/userProfil'); 
+        alert("Login successful");
+        navigate('/userProfil');
       } catch (err) {
         alert("Login failed. Check ID or password.");
         console.error(err);
@@ -106,22 +82,22 @@ const LoginRegister = () => {
           sx={{ mt: 1 }}
           onSubmit={action === "Forgot Password" ? handleForgotPasswordSubmit : handleSubmit}
         >
-          {action === "Register" && (
-            <TextField
-              placeholder="Enter University Email"
-              name="universityEmail"
-              value={form.universityEmail}
-              onChange={handleChange}
-              fullWidth
-              required
-              sx={{ mb: 4 }}
-            />
-          )}
-
-          {(action === "Sign In" || action === "Register") && (
+          {action !== "Forgot Password" && (
             <>
+              {action === "Register" && (
+                <TextField
+                  placeholder="Enter University Email"
+                  name="universityEmail"
+                  value={form.universityEmail}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  sx={{ mb: 2 }}
+                />
+              )}
+
               <TextField
-                placeholder="Enter University Id Number"
+                placeholder="Enter University ID Number"
                 name="idNumber"
                 value={form.idNumber}
                 onChange={handleChange}
@@ -129,6 +105,7 @@ const LoginRegister = () => {
                 required
                 sx={{ mb: 2 }}
               />
+
               <TextField
                 placeholder="Enter Password"
                 type="password"
@@ -143,52 +120,27 @@ const LoginRegister = () => {
           )}
 
           {action === "Forgot Password" && (
-            step === 1 ? (
-              <TextField
-                placeholder="Enter University Email"
-                name="universityEmail"
-                value={form.universityEmail}
-                onChange={handleChange}
-                fullWidth
-                required
-                sx={{ mb: 2 }}
-              />
-            ) : (
-              <>
-                <TextField
-                  placeholder="Enter New Password"
-                  type="password"
-                  name="newPassword"
-                  value={form.newPassword}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                  sx={{ mb: 2 }}
-                />
-                <TextField
-                  placeholder="Re-enter New Password"
-                  type="password"
-                  name="confirmPassword"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                  sx={{ mb: 2 }}
-                />
-              </>
-            )
+            <TextField
+              placeholder="Enter University Email"
+              name="universityEmail"
+              value={form.universityEmail}
+              onChange={handleChange}
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
           )}
 
           <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
-            {action === "Forgot Password" && step === 2 ? "Reset Password" : action}
+            {action}
           </Button>
         </Box>
 
         <Grid container justifyContent="space-between" sx={{ mt: 1 }}>
           {action !== "Forgot Password" && (
-            <Grid>
-              <Link component="button" onClick={() => { setAction("Forgot Password"); setStep(1); }}>
-                Forgot Password
+            <Grid item>
+              <Link component="button" onClick={() => setAction("Forgot Password")}>
+                Forgot Password?
               </Link>
             </Grid>
           )}
@@ -207,7 +159,7 @@ const LoginRegister = () => {
             </Grid>
           ) : (
             <Grid item>
-              <Link component="button" onClick={() => { setAction("Sign In"); setStep(1); }}>
+              <Link component="button" onClick={() => setAction("Sign In")}>
                 Back to Sign In
               </Link>
             </Grid>

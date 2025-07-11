@@ -40,13 +40,20 @@ export const requestReset = async (email) => {
 // Reset password using token
 export const resetPassword = async ({ userId, token, password, confirmPassword }) => {
   try {
-    const res = await api.post(`/auth/reset-password/${userId}/${token}`, {
+    // Sanitize userId (just in case userId contains angle brackets accidentally)
+    const cleanUserId = userId.replace(/[<>]/g, '');
+
+    const res = await api.post(`/auth/reset-password/${cleanUserId}/${token}`, {
       password,
       confirmPassword,
     });
+
     return res.data.message;
   } catch (err) {
-    const errorMessage = err.response?.data?.message || err.message || 'An error occurred while resetting the password';
+    //  Better error handling
+    const errorMessage =
+      err.response?.data?.message || err.message || 'An error occurred while resetting the password';
     throw new Error(errorMessage);
   }
 };
+
