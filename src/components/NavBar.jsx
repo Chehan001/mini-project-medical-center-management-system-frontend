@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import {
-  AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer,
-  List, ListItem, ListItemText
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
@@ -26,10 +34,11 @@ const NavBar = () => {
 
   return (
     <AppBar
-      position="sticky"   //  sticks on top, no white gap
+      position="sticky"
       elevation={3}
       sx={{
-        backgroundColor: '#BDF9DB',
+        backgroundColor: '#ffffff', // White navbar background
+        color: 'black',             // Black text
         ...( !isMobile && {
           marginTop: '10px',
           borderRadius: '12px',
@@ -39,16 +48,22 @@ const NavBar = () => {
       }}
     >
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          MediCare
-        </Typography>
+        {/* Logo + Text */}
+        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+          <img
+            src="/medicare_logo.png" // <-- fixed path
+            alt=""
+            style={{ height: '50px', objectFit: 'contain', marginRight: '10px' }}
+          />
+      
+        </Box>
 
         {isMobile ? (
           <>
             <IconButton
               edge="end"
-              color="inherit"
               onClick={toggleDrawer(true)}
+              sx={{ color: 'black' }}
             >
               <MenuIcon />
             </IconButton>
@@ -72,7 +87,16 @@ const NavBar = () => {
                       component={Link}
                       to={item.path}
                     >
-                      <ListItemText primary={item.text} />
+                      <ListItemText
+                        primary={item.text}
+                        primaryTypographyProps={{
+                          sx: {
+                            fontWeight: 'bold',
+                            fontSize: '1.2rem',
+                            color: 'black',
+                          }
+                        }}
+                      />
                     </ListItem>
                   ))}
                 </List>
@@ -84,9 +108,14 @@ const NavBar = () => {
             {navItems.map((item) => (
               <Button
                 key={item.text}
-                color="inherit"
                 component={Link}
                 to={item.path}
+                sx={{
+                  fontWeight: 'bold',
+                  fontSize: '1.1rem',
+                  color: 'black',
+                  mx: 1,
+                }}
               >
                 {item.text}
               </Button>
