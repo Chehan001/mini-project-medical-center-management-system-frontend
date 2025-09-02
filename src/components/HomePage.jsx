@@ -16,8 +16,7 @@ const HomePage = () => {
 
       {/* Page Content */}
       <div style={{ padding: '20px' }}>
-        <h2>Welcome to MediCare</h2>
-        <p>This is your medical center platform.</p>
+       
       </div>
     </div>
   );
