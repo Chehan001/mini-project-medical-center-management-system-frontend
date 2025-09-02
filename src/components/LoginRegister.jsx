@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import MailLockOutlinedIcon from '@mui/icons-material/MailLockOutlined';
 import { useNavigate } from 'react-router-dom';
-import NavBar from './NavBar';   // ✅ include NavBar inside gradient
 
 const LoginRegister = () => {
   const [action, setAction] = useState("Sign In");
@@ -54,12 +53,12 @@ const LoginRegister = () => {
       }
     } else if (action === "Sign In") {
       try {
-        const response = await axios.post('http://localhost:8000/api/auth/login', {
+        await axios.post('http://localhost:8000/api/auth/login', {
           university_reg_number: form.idNumber,
           password: form.password
         });
         alert("Login successful");
-        navigate('/userProfil');
+        navigate('/personal-data');
       } catch (err) {
         alert("Login failed. Check ID or password.");
         console.error(err);
@@ -72,23 +71,46 @@ const LoginRegister = () => {
       style={{
         minHeight: '100vh',
         position: 'relative',
-        background: 'linear-gradient(to bottom, #80e4be, #a9e0cb)', //  same gradient as HomePage
+        background: 'linear-gradient(to bottom, #80e4be, #a9e0cb)',
         margin: 0,
         padding: 0,
         display: 'flex',
         flexDirection: 'column'
       }}
     >
-      {/*  Gradient also covers NavBar */}
-      <NavBar />
+      {/* <NavBar /> */}
 
-      {/* Page Content */}
-      <Container maxWidth="xs" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-        <Paper elevation={10} sx={{ padding: 3, width: '100%' }}>
-          <Avatar sx={{ mx: "auto", bgcolor: "primary.main", mb: 1 }}>
-            <MailLockOutlinedIcon />
+      <Container
+        maxWidth="xs"
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Paper
+          elevation={10}
+          sx={{
+            padding: 4,
+            width: '100%',
+            borderRadius: '20px',
+          }}
+        >
+          <Avatar
+            sx={{
+              mx: "auto",
+              bgcolor: "#4EECD1",
+              mb: 2,
+              width: 60,
+              height: 60
+            }}
+            aria-label="login avatar"
+          >
+            <MailLockOutlinedIcon fontSize="large" />
           </Avatar>
-          <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
+
+          <Typography component="h1" variant="h5" sx={{ textAlign: "center", mb: 2 }}>
             {action}
           </Typography>
 
@@ -147,15 +169,32 @@ const LoginRegister = () => {
               />
             )}
 
-            <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{
+                mt: 1,
+                backgroundColor: "#4EECD1",
+                color: "#000",
+                fontWeight: "bold",
+                fontSize: "1rem",
+                borderRadius: "10px",
+                "&:hover": { backgroundColor: "#42d5c0" }
+              }}
+            >
               {action}
             </Button>
           </Box>
 
-          <Grid container justifyContent="space-between" sx={{ mt: 1 }}>
+          <Grid container justifyContent="space-between" sx={{ mt: 2 }}>
             {action !== "Forgot Password" && (
               <Grid item>
-                <Link component="button" onClick={() => setAction("Forgot Password")}>
+                <Link
+                  component="button"
+                  underline="none"
+                  onClick={() => setAction("Forgot Password")}
+                >
                   Forgot Password?
                 </Link>
               </Grid>
@@ -163,19 +202,31 @@ const LoginRegister = () => {
 
             {action === "Sign In" ? (
               <Grid item>
-                <Link component="button" onClick={() => setAction("Register")}>
+                <Link
+                  component="button"
+                  underline="none"
+                  onClick={() => setAction("Register")}
+                >
                   Register
                 </Link>
               </Grid>
             ) : action === "Register" ? (
               <Grid item>
-                <Link component="button" onClick={() => setAction("Sign In")}>
+                <Link
+                  component="button"
+                  underline="none"
+                  onClick={() => setAction("Sign In")}
+                >
                   Already have an account? Sign In
                 </Link>
               </Grid>
             ) : (
               <Grid item>
-                <Link component="button" onClick={() => setAction("Sign In")}>
+                <Link
+                  component="button"
+                  underline="none"
+                  onClick={() => setAction("Sign In")}
+                >
                   Back to Sign In
                 </Link>
               </Grid>
