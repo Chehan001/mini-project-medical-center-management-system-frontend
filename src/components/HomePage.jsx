@@ -8,15 +8,18 @@ const HomePage = () => {
         minHeight: '100vh',
         position: 'relative',
         background: 'linear-gradient(to bottom, #80e4be, #a9e0cb)',
-      
+        margin: 0,
+        padding: 0,
+        display: 'flex',
+        flexDirection: 'column', 
       }}
     >
-      {/* NavBar now included inside gradient */}
+      {/*  Gradient also covers NavBar */}
       <NavBar />
 
       {/* Page Content */}
-      <div style={{ padding: '20px' }}>
-       
+      <div style={{ padding: '20px', flexGrow: 1 }}>
+        
       </div>
     </div>
   );

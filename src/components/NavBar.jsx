@@ -26,10 +26,10 @@ const NavBar = () => {
 
   return (
     <AppBar
-      position="sticky"   // ✅ sticks on top, no white gap
+      position="sticky"   //  sticks on top, no white gap
       elevation={3}
       sx={{
-        backgroundColor: '#13CD86',
+        backgroundColor: '#BDF9DB',
         ...( !isMobile && {
           marginTop: '10px',
           borderRadius: '12px',

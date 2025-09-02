@@ -11,13 +11,18 @@ const About = () => {
         background: "linear-gradient(to bottom, #80e4be, #a9e0cb)",
         margin: 0,
         padding: 0,
+        display: "flex",           
+        flexDirection: "column",   
       }}
     >
-      {/* ✅ Navbar inside gradient */}
+      {/*  Navbar inside gradient */}
       <NavBar />
 
-      {/* ✅ Page Content */}
-      <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+      {/*  Page Content */}
+      <Container
+        maxWidth="md"
+        sx={{ mt: 4, mb: 4, flexGrow: 1 }} //  flexGrow keeps layout consistent
+      >
         <Paper
           elevation={6}
           sx={{

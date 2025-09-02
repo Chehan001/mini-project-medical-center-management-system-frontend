@@ -72,14 +72,14 @@ const LoginRegister = () => {
       style={{
         minHeight: '100vh',
         position: 'relative',
-        background: 'linear-gradient(to bottom, #80e4be, #a9e0cb)', // ✅ same gradient as HomePage
+        background: 'linear-gradient(to bottom, #80e4be, #a9e0cb)', //  same gradient as HomePage
         margin: 0,
         padding: 0,
         display: 'flex',
         flexDirection: 'column'
       }}
     >
-      {/* ✅ Gradient also covers NavBar */}
+      {/*  Gradient also covers NavBar */}
       <NavBar />
 
       {/* Page Content */}
