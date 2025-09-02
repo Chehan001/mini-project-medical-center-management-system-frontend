@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import MailLockOutlinedIcon from '@mui/icons-material/MailLockOutlined';
 import { useNavigate } from 'react-router-dom';
+import NavBar from './NavBar';   // ✅ include NavBar inside gradient
 
 const LoginRegister = () => {
   const [action, setAction] = useState("Sign In");
@@ -67,106 +68,122 @@ const LoginRegister = () => {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Paper elevation={10} sx={{ marginTop: 8, padding: 2 }}>
-        <Avatar sx={{ mx: "auto", bgcolor: "primary.main", mb: 1 }}>
-          <MailLockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
-          {action}
-        </Typography>
+    <div
+      style={{
+        minHeight: '100vh',
+        position: 'relative',
+        background: 'linear-gradient(to bottom, #80e4be, #a9e0cb)', // ✅ same gradient as HomePage
+        margin: 0,
+        padding: 0,
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
+      {/* ✅ Gradient also covers NavBar */}
+      <NavBar />
 
-        <Box
-          component="form"
-          noValidate
-          sx={{ mt: 1 }}
-          onSubmit={action === "Forgot Password" ? handleForgotPasswordSubmit : handleSubmit}
-        >
-          {action !== "Forgot Password" && (
-            <>
-              {action === "Register" && (
+      {/* Page Content */}
+      <Container maxWidth="xs" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+        <Paper elevation={10} sx={{ padding: 3, width: '100%' }}>
+          <Avatar sx={{ mx: "auto", bgcolor: "primary.main", mb: 1 }}>
+            <MailLockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
+            {action}
+          </Typography>
+
+          <Box
+            component="form"
+            noValidate
+            sx={{ mt: 1 }}
+            onSubmit={action === "Forgot Password" ? handleForgotPasswordSubmit : handleSubmit}
+          >
+            {action !== "Forgot Password" && (
+              <>
+                {action === "Register" && (
+                  <TextField
+                    placeholder="Enter University Email"
+                    name="universityEmail"
+                    value={form.universityEmail}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                    sx={{ mb: 2 }}
+                  />
+                )}
+
                 <TextField
-                  placeholder="Enter University Email"
-                  name="universityEmail"
-                  value={form.universityEmail}
+                  placeholder="Enter University ID Number"
+                  name="idNumber"
+                  value={form.idNumber}
                   onChange={handleChange}
                   fullWidth
                   required
                   sx={{ mb: 2 }}
                 />
-              )}
 
+                <TextField
+                  placeholder="Enter Password"
+                  type="password"
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  sx={{ mb: 2 }}
+                />
+              </>
+            )}
+
+            {action === "Forgot Password" && (
               <TextField
-                placeholder="Enter University ID Number"
-                name="idNumber"
-                value={form.idNumber}
+                placeholder="Enter University Email"
+                name="universityEmail"
+                value={form.universityEmail}
                 onChange={handleChange}
                 fullWidth
                 required
                 sx={{ mb: 2 }}
               />
+            )}
 
-              <TextField
-                placeholder="Enter Password"
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                fullWidth
-                required
-                sx={{ mb: 2 }}
-              />
-            </>
-          )}
+            <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
+              {action}
+            </Button>
+          </Box>
 
-          {action === "Forgot Password" && (
-            <TextField
-              placeholder="Enter University Email"
-              name="universityEmail"
-              value={form.universityEmail}
-              onChange={handleChange}
-              fullWidth
-              required
-              sx={{ mb: 2 }}
-            />
-          )}
+          <Grid container justifyContent="space-between" sx={{ mt: 1 }}>
+            {action !== "Forgot Password" && (
+              <Grid item>
+                <Link component="button" onClick={() => setAction("Forgot Password")}>
+                  Forgot Password?
+                </Link>
+              </Grid>
+            )}
 
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
-            {action}
-          </Button>
-        </Box>
-
-        <Grid container justifyContent="space-between" sx={{ mt: 1 }}>
-          {action !== "Forgot Password" && (
-            <Grid item>
-              <Link component="button" onClick={() => setAction("Forgot Password")}>
-                Forgot Password?
-              </Link>
-            </Grid>
-          )}
-
-          {action === "Sign In" ? (
-            <Grid item>
-              <Link component="button" onClick={() => setAction("Register")}>
-                Register
-              </Link>
-            </Grid>
-          ) : action === "Register" ? (
-            <Grid item>
-              <Link component="button" onClick={() => setAction("Sign In")}>
-                Already have an account? Sign In
-              </Link>
-            </Grid>
-          ) : (
-            <Grid item>
-              <Link component="button" onClick={() => setAction("Sign In")}>
-                Back to Sign In
-              </Link>
-            </Grid>
-          )}
-        </Grid>
-      </Paper>
-    </Container>
+            {action === "Sign In" ? (
+              <Grid item>
+                <Link component="button" onClick={() => setAction("Register")}>
+                  Register
+                </Link>
+              </Grid>
+            ) : action === "Register" ? (
+              <Grid item>
+                <Link component="button" onClick={() => setAction("Sign In")}>
+                  Already have an account? Sign In
+                </Link>
+              </Grid>
+            ) : (
+              <Grid item>
+                <Link component="button" onClick={() => setAction("Sign In")}>
+                  Back to Sign In
+                </Link>
+              </Grid>
+            )}
+          </Grid>
+        </Paper>
+      </Container>
+    </div>
   );
 };
 

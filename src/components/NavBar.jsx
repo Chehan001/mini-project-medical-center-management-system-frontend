@@ -25,63 +25,77 @@ const NavBar = () => {
   ];
 
   return (
-    <>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Sabaragamu University Medical Center
-          </Typography>
+    <AppBar
+      position="sticky"   // ✅ sticks on top, no white gap
+      elevation={3}
+      sx={{
+        backgroundColor: '#13CD86',
+        ...( !isMobile && {
+          marginTop: '10px',
+          borderRadius: '12px',
+          maxWidth: '1100px',
+          mx: 'auto',
+        })
+      }}
+    >
+      <Toolbar>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          MediCare
+        </Typography>
 
-          {isMobile ? (
-            <>
-              <IconButton
-                edge="end"
+        {isMobile ? (
+          <>
+            <IconButton
+              edge="end"
+              color="inherit"
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+
+            <Drawer
+              anchor="right"
+              open={drawerOpen}
+              onClose={toggleDrawer(false)}
+            >
+              <Box
+                sx={{ width: 200 }}
+                role="presentation"
+                onClick={toggleDrawer(false)}
+                onKeyDown={toggleDrawer(false)}
+              >
+                <List>
+                  {navItems.map((item) => (
+                    <ListItem
+                      button
+                      key={item.text}
+                      component={Link}
+                      to={item.path}
+                    >
+                      <ListItemText primary={item.text} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            </Drawer>
+          </>
+        ) : (
+          <Box>
+            {navItems.map((item) => (
+              <Button
+                key={item.text}
                 color="inherit"
-                onClick={toggleDrawer(true)}
+                component={Link}
+                to={item.path}
               >
-                <MenuIcon />
-              </IconButton>
-
-              <Drawer
-                anchor="right"
-                open={drawerOpen}
-                onClose={toggleDrawer(false)}
-              >
-                <Box
-                  sx={{ width: 200 }}
-                  role="presentation"
-                  onClick={toggleDrawer(false)}
-                  onKeyDown={toggleDrawer(false)}
-                >
-                  <List>
-                    {navItems.map((item) => (
-                      <ListItem button key={item.text} component={Link} to={item.path}>
-                        <ListItemText primary={item.text} />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
-              </Drawer>
-            </>
-          ) : (
-            <Box>
-              {navItems.map((item) => (
-                <Button
-                  key={item.text}
-                  color="inherit"
-                  component={Link}
-                  to={item.path}
-                >
-                  {item.text}
-                </Button>
-              ))}
-            </Box>
-          )}
-        </Toolbar>
-      </AppBar>
-    </>
+                {item.text}
+              </Button>
+            ))}
+          </Box>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 };
 
 export default NavBar;
-
