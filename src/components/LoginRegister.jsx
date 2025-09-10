@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+// frontend/components/LoginRegister.js
+import React, { useState } from "react";
+import axios from "axios";
 import {
   Avatar, Container, Paper, TextField, Typography,
   Box, Button, Grid, Link
-} from '@mui/material';
-import MailLockOutlinedIcon from '@mui/icons-material/MailLockOutlined';
-import { useNavigate } from 'react-router-dom';
+} from "@mui/material";
+import MailLockOutlinedIcon from "@mui/icons-material/MailLockOutlined";
+import { useNavigate } from "react-router-dom";
 
 const LoginRegister = () => {
   const [action, setAction] = useState("Sign In");
   const [form, setForm] = useState({
-    universityEmail: '',
-    idNumber: '',
-    password: ''
+    universityEmail: "",
+    idNumber: "",
+    password: "",
   });
 
   const navigate = useNavigate();
@@ -23,14 +24,18 @@ const LoginRegister = () => {
 
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
+    if (!form.universityEmail) {
+      alert("Please enter your university email.");
+      return;
+    }
     try {
-      await axios.post('http://localhost:8000/api/auth/request-password-reset', {
+      await axios.post("http://localhost:8000/api/auth/request-password-reset", {
         university_mail: form.universityEmail,
       });
-      alert('Password reset link sent to your university email.');
+      alert("Password reset link sent to your university email.");
       setAction("Sign In");
     } catch (err) {
-      alert('Error sending reset link.');
+      alert("Error sending reset link.");
       console.error(err);
     }
   };
@@ -39,11 +44,15 @@ const LoginRegister = () => {
     e.preventDefault();
 
     if (action === "Register") {
+      if (!form.universityEmail || !form.idNumber || !form.password) {
+        alert("Please fill in all required fields.");
+        return;
+      }
       try {
-        await axios.post('http://localhost:8000/api/user/register', {
+        await axios.post("http://localhost:8000/api/user/register", {
           university_mail: form.universityEmail,
           university_reg_number: form.idNumber,
-          password: form.password
+          password: form.password,
         });
         alert("Registered successfully!");
         setAction("Sign In");
@@ -52,15 +61,19 @@ const LoginRegister = () => {
         console.error(err);
       }
     } else if (action === "Sign In") {
+      if (!form.idNumber || !form.password) {
+        alert("Please enter your ID number and password.");
+        return;
+      }
       try {
-        await axios.post('http://localhost:8000/api/auth/login', {
+        await axios.post("http://localhost:8000/api/auth/login", {
           university_reg_number: form.idNumber,
-          password: form.password
+          password: form.password,
         });
         alert("Login successful");
-        navigate('/personal-data');
+        navigate("/personal-data");
       } catch (err) {
-        alert("Login failed. Check ID or password.");
+        alert("Login failed. Check credentials.");
         console.error(err);
       }
     }
@@ -69,42 +82,22 @@ const LoginRegister = () => {
   return (
     <div
       style={{
-        minHeight: '100vh',
-        position: 'relative',
-        background: 'linear-gradient(to bottom, #80e4be, #a9e0cb)',
+        minHeight: "100vh",
+        position: "relative",
+        background: "linear-gradient(to bottom, #80e4be, #a9e0cb)",
         margin: 0,
         padding: 0,
-        display: 'flex',
-        flexDirection: 'column'
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      {/* <NavBar /> */}
-
       <Container
         maxWidth="xs"
-        sx={{
-          flexGrow: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}
       >
-        <Paper
-          elevation={10}
-          sx={{
-            padding: 4,
-            width: '100%',
-            borderRadius: '20px',
-          }}
-        >
+        <Paper elevation={10} sx={{ padding: 4, width: "100%", borderRadius: "20px" }}>
           <Avatar
-            sx={{
-              mx: "auto",
-              bgcolor: "#4EECD1",
-              mb: 2,
-              width: 60,
-              height: 60
-            }}
+            sx={{ mx: "auto", bgcolor: "#4EECD1", mb: 2, width: 60, height: 60 }}
             aria-label="login avatar"
           >
             <MailLockOutlinedIcon fontSize="large" />
@@ -120,20 +113,23 @@ const LoginRegister = () => {
             sx={{ mt: 1 }}
             onSubmit={action === "Forgot Password" ? handleForgotPasswordSubmit : handleSubmit}
           >
+            {/* Registration needs Email + ID + Password */}
+            {action === "Register" && (
+              <TextField
+                placeholder="Enter University Email"
+                name="universityEmail"
+                value={form.universityEmail}
+                onChange={handleChange}
+                fullWidth
+                required
+                autoComplete="email"
+                sx={{ mb: 2 }}
+              />
+            )}
+
+            {/* Sign In and Register need ID + Password */}
             {action !== "Forgot Password" && (
               <>
-                {action === "Register" && (
-                  <TextField
-                    placeholder="Enter University Email"
-                    name="universityEmail"
-                    value={form.universityEmail}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                    sx={{ mb: 2 }}
-                  />
-                )}
-
                 <TextField
                   placeholder="Enter University ID Number"
                   name="idNumber"
@@ -141,6 +137,7 @@ const LoginRegister = () => {
                   onChange={handleChange}
                   fullWidth
                   required
+                  autoComplete="username"
                   sx={{ mb: 2 }}
                 />
 
@@ -152,11 +149,13 @@ const LoginRegister = () => {
                   onChange={handleChange}
                   fullWidth
                   required
+                  autoComplete={action === "Register" ? "new-password" : "current-password"}
                   sx={{ mb: 2 }}
                 />
               </>
             )}
 
+            {/* Forgot Password needs only Email */}
             {action === "Forgot Password" && (
               <TextField
                 placeholder="Enter University Email"
@@ -165,6 +164,7 @@ const LoginRegister = () => {
                 onChange={handleChange}
                 fullWidth
                 required
+                autoComplete="email"
                 sx={{ mb: 2 }}
               />
             )}
@@ -180,7 +180,7 @@ const LoginRegister = () => {
                 fontWeight: "bold",
                 fontSize: "1rem",
                 borderRadius: "10px",
-                "&:hover": { backgroundColor: "#42d5c0" }
+                "&:hover": { backgroundColor: "#42d5c0" },
               }}
             >
               {action}
@@ -190,11 +190,7 @@ const LoginRegister = () => {
           <Grid container justifyContent="space-between" sx={{ mt: 2 }}>
             {action !== "Forgot Password" && (
               <Grid item>
-                <Link
-                  component="button"
-                  underline="none"
-                  onClick={() => setAction("Forgot Password")}
-                >
+                <Link component="button" underline="none" onClick={() => setAction("Forgot Password")}>
                   Forgot Password?
                 </Link>
               </Grid>
@@ -202,31 +198,19 @@ const LoginRegister = () => {
 
             {action === "Sign In" ? (
               <Grid item>
-                <Link
-                  component="button"
-                  underline="none"
-                  onClick={() => setAction("Register")}
-                >
+                <Link component="button" underline="none" onClick={() => setAction("Register")}>
                   Register
                 </Link>
               </Grid>
             ) : action === "Register" ? (
               <Grid item>
-                <Link
-                  component="button"
-                  underline="none"
-                  onClick={() => setAction("Sign In")}
-                >
+                <Link component="button" underline="none" onClick={() => setAction("Sign In")}>
                   Already have an account? Sign In
                 </Link>
               </Grid>
             ) : (
               <Grid item>
-                <Link
-                  component="button"
-                  underline="none"
-                  onClick={() => setAction("Sign In")}
-                >
+                <Link component="button" underline="none" onClick={() => setAction("Sign In")}>
                   Back to Sign In
                 </Link>
               </Grid>

@@ -10,7 +10,7 @@ import img6 from '../assets/slideshow1.png';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const Slideshow = () => {
+const SlideshowAssets = () => {
   const settings = {
     dots: true,
     infinite: true,
@@ -69,4 +69,4 @@ const Slideshow = () => {
   );
 };
 
-export default Slideshow;
+export default SlideshowAssets;
