@@ -6,7 +6,8 @@ import UserProfil from './components/UserProfil';
 import ResetPassword from './components/ResetPassword';
 import About from './components/About';
 import Channel from './components/Channel';
-import AdminDashboard from './components/admin/AdminDashboard'; // Admin panel
+import AdminDashboard from './admin/AdminDashboard';
+import NavBar from './components/NavBar'; // <-- Add NavBar import
 
 // Protected route for logged-in users
 const ProtectedRoute = ({ children }) => {
@@ -18,7 +19,7 @@ const ProtectedRoute = ({ children }) => {
 // Admin-only route
 const AdminRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role'); // save role on login
+  const role = localStorage.getItem('role');
   if (!token || role !== 'admin') return <Navigate to="/login" replace />;
   return children;
 };
