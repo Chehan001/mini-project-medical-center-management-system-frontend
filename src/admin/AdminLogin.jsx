@@ -23,7 +23,7 @@ const AdminLogin = () => {
       localStorage.setItem('role', res.data.role);
 
       alert('Admin login successful!');
-      navigate('/admin/dashboard'); // redirect to admin dashboard
+      navigate('/admin/dashboard'); 
     } catch (err) {
       console.error(err);
       alert('Login failed! Check credentials.');

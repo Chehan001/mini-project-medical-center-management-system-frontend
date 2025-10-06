@@ -7,24 +7,24 @@ export const register = async (data) => {
     const res = await api.post('/user/register', data);
     return res.data;
   } catch (err) {
-    // Improved error handling: Check if response exists and provide a meaningful message
+    // Improved_error_handling
     const errorMessage = err.response?.data?.message || err.message || 'An error occurred during registration';
     throw new Error(errorMessage);
   }
 };
 
-// User login
+// User_login
 export const login = async (data) => {
   try {
     const res = await api.post('/auth/login', data);
-    return res.data; // e.g., token or user data
+    return res.data; 
   } catch (err) {
     const errorMessage = err.response?.data?.message || err.message || 'An error occurred during login';
     throw new Error(errorMessage);
   }
 };
 
-// Request a reset token
+// Request_a_reset_token
 export const requestReset = async (email) => {
   try {
     const res = await api.post('/auth/request-password-reset', {
@@ -37,10 +37,9 @@ export const requestReset = async (email) => {
   }
 };
 
-// Reset password using token
+// Reset_password_using_token
 export const resetPassword = async ({ userId, token, password, confirmPassword }) => {
   try {
-    // Sanitize userId (just in case userId contains angle brackets accidentally)
     const cleanUserId = userId.replace(/[<>]/g, '');
 
     const res = await api.post(`/auth/reset-password/${cleanUserId}/${token}`, {
@@ -50,7 +49,6 @@ export const resetPassword = async ({ userId, token, password, confirmPassword }
 
     return res.data.message;
   } catch (err) {
-    //  Better error handling
     const errorMessage =
       err.response?.data?.message || err.message || 'An error occurred while resetting the password';
     throw new Error(errorMessage);

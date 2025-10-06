@@ -55,6 +55,7 @@ const HomeContent = () => {
 
   useEffect(() => {
     fetchContents();
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -100,7 +101,36 @@ const HomeContent = () => {
         Existing Content
       </Typography>
       {contents.map((item) => (
-        <Paper key={item._id} sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Paper
+          key={item._id}
+          sx={{
+            p: 2,
+            mb: 2,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <Box>
             <Typography variant="subtitle1">{item.title}</Typography>
-            <Typography variant="bod
+            <Typography variant="body2" color="text.secondary">
+              {item.description}
+            </Typography>
+            {item.imageUrl && (
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                style={{ maxWidth: 120, marginTop: 8, borderRadius: 8 }}
+              />
+            )}
+          </Box>
+          <IconButton color="error" onClick={() => handleDelete(item._id)}>
+            <DeleteIcon />
+          </IconButton>
+        </Paper>
+      ))}
+    </Box>
+  );
+};
+
+export default HomeContent;

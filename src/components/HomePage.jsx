@@ -1,7 +1,7 @@
 // src/components/HomePage.jsx
 import React from "react";
 import NavBar from "./NavBar";
-import Slideshow from "./Slideshow"; // ✅ import added
+import Slideshow from "./Slideshow"; 
 
 const HomePage = () => {
   return (
@@ -16,7 +16,6 @@ const HomePage = () => {
         flexDirection: "column",
       }}
     >
-      {/* Gradient also covers NavBar */}
       <NavBar />
 
       {/* Page Content */}
