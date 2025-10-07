@@ -51,7 +51,7 @@ const App = () => {
         />
 
         {/* Admin routes */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
 
         {/* Protect all admin pages */}
         <Route
