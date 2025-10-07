@@ -1,4 +1,3 @@
-// frontend/components/LoginRegister.js
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -49,7 +48,7 @@ const LoginRegister = () => {
         return;
       }
       try {
-        await axios.post("http://localhost:8000/api/user/register", {
+        await axios.post("http://localhost:8000/api/auth/register", {
           university_mail: form.universityEmail,
           university_reg_number: form.idNumber,
           password: form.password,
@@ -62,14 +61,18 @@ const LoginRegister = () => {
       }
     } else if (action === "Sign In") {
       if (!form.idNumber || !form.password) {
-        alert("Please enter your ID number and password.");
+        alert("Please enter your University Register Number and Password.");
         return;
       }
       try {
-        await axios.post("http://localhost:8000/api/auth/login", {
+        const res = await axios.post("http://localhost:8000/api/auth/login", {
           university_reg_number: form.idNumber,
           password: form.password,
         });
+        if (res.data.token) {
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("role", res.data.role || "student");
+        }
         alert("Login successful");
         navigate("/personal-data");
       } catch (err) {
@@ -113,7 +116,6 @@ const LoginRegister = () => {
             sx={{ mt: 1 }}
             onSubmit={action === "Forgot Password" ? handleForgotPasswordSubmit : handleSubmit}
           >
-            {/* Registration needs Email + ID + Password */}
             {action === "Register" && (
               <TextField
                 placeholder="Enter University Email"
@@ -127,35 +129,33 @@ const LoginRegister = () => {
               />
             )}
 
-            {/* Sign In and Register need ID + Password */}
-            {action !== "Forgot Password" && (
-              <>
-                <TextField
-                  placeholder="Enter University ID Number"
-                  name="idNumber"
-                  value={form.idNumber}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                  autoComplete="username"
-                  sx={{ mb: 2 }}
-                />
-
-                <TextField
-                  placeholder="Enter Password"
-                  type="password"
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                  autoComplete={action === "Register" ? "new-password" : "current-password"}
-                  sx={{ mb: 2 }}
-                />
-              </>
+            {(action === "Register" || action === "Sign In") && (
+              <TextField
+                placeholder="Enter University Register Number"
+                name="idNumber"
+                value={form.idNumber}
+                onChange={handleChange}
+                fullWidth
+                required
+                autoComplete="username"
+                sx={{ mb: 2 }}
+              />
             )}
 
-            {/* Forgot Password needs only Email */}
+            {(action === "Register" || action === "Sign In") && (
+              <TextField
+                placeholder="Enter Password"
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                fullWidth
+                required
+                autoComplete={action === "Register" ? "new-password" : "current-password"}
+                sx={{ mb: 2 }}
+              />
+            )}
+
             {action === "Forgot Password" && (
               <TextField
                 placeholder="Enter University Email"
