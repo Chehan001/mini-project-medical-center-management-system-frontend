@@ -6,6 +6,7 @@ import UserProfil from './components/UserProfil';
 import ResetPassword from './components/ResetPassword';
 import About from './components/About';
 import Channel from './components/Channel';
+import RegistrationForm from './components/RegistrationForm';  
 
 // Admin
 import AdminLogin from './admin/AdminLogin';
@@ -33,19 +34,34 @@ const App = () => (
       <Route path="/channel" element={<Channel />} />
       <Route path="/login" element={<LoginRegister />} />
       <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
+      <Route path="/registration-form" element={<RegistrationForm />} />  
+
       <Route
         path="/personal-data"
-        element={<ProtectedRoute><UserProfil /></ProtectedRoute>}
+        element={
+          <ProtectedRoute>
+            <UserProfil />
+          </ProtectedRoute>
+        }
       />
 
+      {/* Admin routes */}
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route
         path="/admin/dashboard"
-        element={<AdminRoute><AdminDashboard /></AdminRoute>}
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        }
       />
       <Route
         path="/admin/home-content"
-        element={<AdminRoute><HomeContent /></AdminRoute>}
+        element={
+          <AdminRoute>
+            <HomeContent />
+          </AdminRoute>
+        }
       />
 
       <Route path="*" element={<div style={{ padding: 40 }}>404 Not Found</div>} />
