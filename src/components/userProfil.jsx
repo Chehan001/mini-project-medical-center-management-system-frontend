@@ -37,17 +37,40 @@ const UserProfil = () => {
 
   return (
     <Container maxWidth="md" sx={{ py: 5 }}>
-      <Typography variant="h4" align="center" fontWeight="bold" gutterBottom>
-        Sabaragamuwa University of Sri Lanka
-      </Typography>
-      <Typography variant="h6" align="center" gutterBottom>
-        Medical Examiner’s Report
-      </Typography>
+      {/* Header Section with Logo */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mb: 2,
+          flexDirection: "column",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+          <img
+            src="/medicare_logo.png"
+            alt="University Logo"
+            style={{
+              height: "70px",
+              objectFit: "contain",
+              marginRight: "15px",
+            }}
+          />
+        </Box>
+        <Typography
+          variant="h6"
+          align="center"
+          sx={{ mt: 1, fontStyle: "italic", color: "text" }}
+        >
+          Medical Examiner’s Report
+        </Typography>
+      </Box>
 
       <Box
         component="form"
         onSubmit={handleSubmit}
-        sx={{ mt: 3, p: 3, borderRadius: 3, boxShadow: 3, bgcolor: "white" }}
+        sx={{ mt: 3, p: 4, borderRadius: 5, boxShadow: 3, bgcolor: "white" }}
       >
         {/* Candidate Info */}
         <Grid container spacing={3}>
@@ -97,52 +120,94 @@ const UserProfil = () => {
           </Grid>
 
         {/* Teeth & Gums */}
-        <Typography variant="h6" sx={{ mt: 4 }}>Teeth, Gums, Throat & Nasal Passages</Typography>
-        <Typography>Are gums and teeth healthy?
+        <Typography variant="h6" sx={{ mt: 4 }}>Condition of Teeth, Gums, Throat, and Nasal Passages</Typography>
+        <Typography sx={{ mt: 1 }}>Are gums and teeth healthy ?
         <RadioGroup row name="teethHealthy" onChange={handleChange}>
           <FormControlLabel value="yes" control={<Radio />} label="Yes" />
           <FormControlLabel value="no" control={<Radio />} label="No" />
-        </RadioGroup></Typography>
-        <TextField label="State of tongue, fauces, nasal passages" name="throat" onChange={handleChange} fullWidth sx={{ mt: 1 }} />
+        </RadioGroup>
+        </Typography>
 
         {/* Heart Examination */}
-        <Typography variant="h6" sx={{ mt: 4 }}>Heart Examination</Typography>
-        <Typography>Past history of heart disease or rheumatic fever?</Typography>
+        <Typography variant="h6" sx={{ mt: 4 }}>Examination of Heart </Typography>
+        <Typography sx={{ mt: 1 }}>Past history of heart disease or Rheumatic fever ?</Typography>
         <RadioGroup row name="heartDisease" onChange={handleChange}>
           <FormControlLabel value="yes" control={<Radio />} label="Yes" />
           <FormControlLabel value="no" control={<Radio />} label="No" />
         </RadioGroup>
+
+        <Typography  sx={{ mt: 1 }}>Do you have any cardiac enlargement in the heart ?</Typography>
+        <RadioGroup row name="CardiacEnlargement" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
+
+        <Typography  sx={{ mt: 1 }}>Do you hear a strange sound when your heart beats ?</Typography>
+        <RadioGroup row name="HeartSounds" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
+
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={6}><TextField label="Cardiac enlargement?" name="cardiac" onChange={handleChange} fullWidth /></Grid>
-          <Grid item xs={6}><TextField label="Heart Sounds" name="heartSounds" onChange={handleChange} fullWidth /></Grid>
-          <Grid item xs={6}><TextField label="Murmurs" name="murmurs" onChange={handleChange} fullWidth /></Grid>
-          <Grid item xs={6}><TextField label="Blood Pressure" name="bp" onChange={handleChange} fullWidth /></Grid>
+          <Grid item xs={6}><TextField label="Blood Pressure  (mmHg)" name="bp" onChange={handleChange} fullWidth /></Grid>
         </Grid>
 
         {/* Lungs Examination */}
-        <Typography variant="h6" sx={{ mt: 4 }}>Lungs Examination</Typography>
-        <Typography>History of Tuberculosis, Bronchitis or Asthma?</Typography>
+        <Typography variant="h6" sx={{ mt: 5 }}>Examination of Lungs </Typography>
+        <Typography sx={{ mt: 1 }}>History of Tuberculosis, Bronchitis or Asthma ?</Typography>
         <RadioGroup row name="lungsHistory" onChange={handleChange}>
           <FormControlLabel value="yes" control={<Radio />} label="Yes" />
           <FormControlLabel value="no" control={<Radio />} label="No" />
         </RadioGroup>
-        <TextField label="Any abnormalities?" name="lungsAbnormalities" onChange={handleChange} fullWidth sx={{ mt: 1 }} />
+
+        <Typography sx={{ mt: 1 }}>Has any abnormality been found clinically in the lungs ?</Typography>
+        <RadioGroup row name="lungsAbnormalities" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
 
         {/* Abdomen */}
-        <Typography variant="h6" sx={{ mt: 4 }}>Abdomen Examination</Typography>
-        <FormGroup>
-          <FormControlLabel control={<Checkbox />} label="Enlargement of liver or spleen" />
-          <FormControlLabel control={<Checkbox />} label="History of peptic ulcer" />
-          <FormControlLabel control={<Checkbox />} label="Kidneys palpable" />
-        </FormGroup>
-        <TextField label="Other abnormalities" name="abdomenOther" onChange={handleChange} fullWidth sx={{ mt: 1 }} />
+        <Typography variant="h6" sx={{ mt: 4 }}>Examination of Abdomen </Typography>
+        <Typography sx={{ mt: 1 }}>Is there any evidence of enlargement of the liver or spleen ?</Typography>
+        <RadioGroup row name="EnlargementOfLiverSpleen" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
 
-        {/* Nervous System & Vision */}
-        <Typography variant="h6" sx={{ mt: 4 }}>Nervous System & Vision</Typography>
-        <FormGroup>
-          <FormControlLabel control={<Checkbox />} label="History of convulsions or insanity" />
-          <FormControlLabel control={<Checkbox />} label="History of poliomyelitis" />
-        </FormGroup>
+         <Typography sx={{ mt: 1 }}>Do you have any past history of peptic ulcers ?</Typography>
+        <RadioGroup row name="HistoryOfPepticUlcer" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
+
+         <Typography sx={{ mt: 1 }}>Are the kidneys palpable ?</Typography>
+        <RadioGroup row name="kidneysPalpable" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
+
+         <Typography sx={{ mt: 1 }}>Are there any other abnormalities ?</Typography>
+        <RadioGroup row name="otherAbnormalities" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
+
+        {/* Nervous System */}
+        <Typography variant="h6" sx={{ mt: 4 }}>Examination of the Nervous System</Typography>
+        <Typography sx={{ mt: 1 }}>Any history of convulsions or insanity?</Typography>
+        <RadioGroup row name="HistoryOfConvulsions" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
+
+         <Typography sx={{ mt: 1 }}>Any past history of poliomyelitis?</Typography>
+        <RadioGroup row name="HistoryOfPoliomyelitis" onChange={handleChange}>
+          <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+          <FormControlLabel value="no" control={<Radio />} label="No" />
+        </RadioGroup>
+        
+         {/* Vision */}
+         <Typography variant="h6" sx={{ mt: 4 }}>Examination of the Vision</Typography>
         <Grid container spacing={2} sx={{ mt: 2 }}>
           <Grid item xs={6}><TextField label="Vision without Glass - Right" name="visionR" onChange={handleChange} fullWidth /></Grid>
           <Grid item xs={6}><TextField label="Vision without Glass - Left" name="visionL" onChange={handleChange} fullWidth /></Grid>
@@ -154,11 +219,16 @@ const UserProfil = () => {
         <Grid item xs={12} sx={{ mt: 2 }}>
             <TextField select label="Color Vision" name="colorVision" onChange={handleChange} fullWidth>
               <MenuItem value="normal">Normal</MenuItem>
-              <MenuItem value="defective">Defective</MenuItem>
+              <MenuItem value="RGColorBlindness">Red-green color blindness</MenuItem>
+              <MenuItem value="BYColorBlindness">Blue-yellow color blindness</MenuItem>
+              <MenuItem value="TColorBlindness">Total color blindness (achromatopsia)</MenuItem>
             </TextField>
           </Grid>
-        
+        {/* Hearing  */}
+        <Typography variant="h6" sx={{ mt: 4 }}>Examination of the Hearing</Typography>
         <TextField label="Hearing Defects / Ear Discharge" name="hearing" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
+        {/* speech  */}
+        <Typography variant="h6" sx={{ mt: 4 }}>Examination of the Speech</Typography>
         <TextField label="Speech" name="speech" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
 
         {/* Operations & Other Details */}
