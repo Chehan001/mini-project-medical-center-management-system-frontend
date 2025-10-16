@@ -73,7 +73,7 @@ const LoginRegister = () => {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("role", res.data.role || "student");
         }
-        alert("Login successful");
+        
         navigate("/personal-data");
       } catch (err) {
         alert("Login failed. Check credentials.");
