@@ -72,6 +72,7 @@ const LoginRegister = () => {
         if (res.data.token) {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("role", res.data.role || "student");
+          localStorage.setItem("regNumber", form.idNumber); //  Save registration number
         }
         
         navigate("/personal-data");

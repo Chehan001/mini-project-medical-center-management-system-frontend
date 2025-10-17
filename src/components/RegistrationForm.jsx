@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import axios from "axios";
 import {
   Container,
@@ -25,6 +25,13 @@ const RegistrationForm = () => {
   const [form, setForm] = useState({});
   const [photo, setPhoto] = useState(null); // preview URL
   const [photoFile, setPhotoFile] = useState(null); // actual file object
+
+  useEffect(() => {
+  const storedRegNo = localStorage.getItem("regNumber"); // ✅ get from local storage
+  if (storedRegNo) {
+    setForm((prev) => ({ ...prev, regNumber: storedRegNo })); // pre-fill
+   }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -130,7 +137,8 @@ const RegistrationForm = () => {
               <TextField label="Permanent Address" name="address" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
               <TextField label="Faculty" name="faculty" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
               <TextField label="Course of Study" name="course" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
-              <TextField label="Registration Number" name="regNumber" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
+             <TextField label="Registration Number" name="regNumber" value={form.regNumber || ""} fullWidth  sx={{ mt: 2 }}  InputProps={{ readOnly: true }}/>
+
               {/*  Date of Birth field */}
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -148,6 +156,7 @@ const RegistrationForm = () => {
               </LocalizationProvider>
             </Grid>
           </Grid>
+          
           {/* image */}
             <Grid item xs={12} sx={{ mt: 4 }} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
               <Avatar src={photo} sx={{ width: 120, height: 150, mb: 2, borderRadius: 2, border: "2px solid #1f8f7e" }} variant="rounded" />
