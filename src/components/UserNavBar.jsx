@@ -26,7 +26,7 @@ const UserNavBar = () => {
 
   const navItems = [
     { text: 'Home', path: '/' },
-     { text: 'Registration Form', path: '/registration-form' },
+     { text: 'Registration', path: '/registration-form' },
     { text: 'Channel', path: '/channel' },
     { text: 'Medical', path: '/medical' },
   ];

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Container,
   Typography,
@@ -22,31 +23,64 @@ import dayjs from "dayjs";
 
 const RegistrationForm = () => {
   const [form, setForm] = useState({});
-  const [photo, setPhoto] = useState(null);
+  const [photo, setPhoto] = useState(null); // preview URL
+  const [photoFile, setPhotoFile] = useState(null); // actual file object
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handlePhotoUpload = (e) => {
+
+ const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
-    if (file) setPhoto(URL.createObjectURL(file));
+    if (file) {
+      setPhoto(URL.createObjectURL(file));
+      setPhotoFile(file);
+    }
   };
 
   const handleDateChange = (date) => {
   setForm({ ...form, dob: date });
 };
 
-  const handleSubmit = (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault();
-   console.log({
-  ...form,
-  dob: form.dob ? dayjs(form.dob).format("YYYY-MM-DD") : null,
-});
-    console.log(form);
-    alert("Medical Examiner’s Report Submitted Successfully!");
+    try {
+      const fd = new FormData();
+
+      // append all text fields and radio selections
+      for (const key in form) {
+        if (form[key] instanceof Object && form[key].$d) {
+          // handle dayjs date object
+          fd.append(key, dayjs(form[key]).format("YYYY-MM-DD"));
+        } else {
+          fd.append(key, form[key] || "");
+        }
+      }
+
+      // append photo file
+      if (photoFile) fd.append("photo", photoFile);
+
+      const res = await axios.post(
+        "http://localhost:8000/api/user",
+        fd,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      console.log("Server response:", res.data);
+      alert("Medical Examiner’s Report Submitted Successfully!");
+
+      // reset form
+      setForm({});
+      setPhoto(null);
+      setPhotoFile(null);
+    } catch (err) {
+      console.error(err);
+      alert("Submission failed: " + (err.response?.data?.message || err.message));
+    }
   };
+
 
   return (
     <Container maxWidth="md" sx={{ py: 5 }}>
@@ -97,7 +131,7 @@ const RegistrationForm = () => {
               <TextField label="Faculty" name="faculty" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
               <TextField label="Course of Study" name="course" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
               <TextField label="Registration Number" name="regNumber" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
-              {/* 📅 Date of Birth field */}
+              {/*  Date of Birth field */}
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Date of Birth"
@@ -325,7 +359,7 @@ const RegistrationForm = () => {
             rows={2}
             sx={{ mt: 2 }}
           />
-
+          {/* submit */}
           <Box textAlign="center" sx={{ mt: 4 }}>
             <Button
               type="submit"

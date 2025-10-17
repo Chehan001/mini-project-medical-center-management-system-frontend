@@ -191,7 +191,7 @@ const LoginRegister = () => {
             {action !== "Forgot Password" && (
               <Grid item>
                 <Link component="button" underline="none" onClick={() => setAction("Forgot Password")}>
-                  Forgot Password?
+                  Forgot Password
                 </Link>
               </Grid>
             )}
@@ -205,7 +205,7 @@ const LoginRegister = () => {
             ) : action === "Register" ? (
               <Grid item>
                 <Link component="button" underline="none" onClick={() => setAction("Sign In")}>
-                  Already have an account? Sign In
+                  Sign In
                 </Link>
               </Grid>
             ) : (
