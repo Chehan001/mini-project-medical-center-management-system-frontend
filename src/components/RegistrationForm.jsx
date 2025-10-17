@@ -14,6 +14,11 @@ import {
   Divider,
   Paper,
 } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+
 
 const RegistrationForm = () => {
   const [form, setForm] = useState({});
@@ -29,8 +34,16 @@ const RegistrationForm = () => {
     if (file) setPhoto(URL.createObjectURL(file));
   };
 
+  const handleDateChange = (date) => {
+  setForm({ ...form, dob: date });
+};
+
   const handleSubmit = (e) => {
     e.preventDefault();
+   console.log({
+  ...form,
+  dob: form.dob ? dayjs(form.dob).format("YYYY-MM-DD") : null,
+});
     console.log(form);
     alert("Medical Examiner’s Report Submitted Successfully!");
   };
@@ -84,6 +97,21 @@ const RegistrationForm = () => {
               <TextField label="Faculty" name="faculty" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
               <TextField label="Course of Study" name="course" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
               <TextField label="Registration Number" name="regNumber" onChange={handleChange} fullWidth sx={{ mt: 2 }} />
+              {/* 📅 Date of Birth field */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Date of Birth"
+                  value={form.dob}
+                  onChange={handleDateChange}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      margin: "normal",
+                      sx: { mt: 2 },
+                    },
+                  }}
+                />
+              </LocalizationProvider>
             </Grid>
           </Grid>
           {/* image */}
