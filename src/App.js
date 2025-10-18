@@ -12,6 +12,7 @@ import RegistrationForm from './components/RegistrationForm';
 import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 import HomeContent from './admin/HomeContent';
+import StudentTable from './admin/StudentTable'; // <-- Import StudentTable
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -60,6 +61,14 @@ const App = () => (
         element={
           <AdminRoute>
             <HomeContent />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/students"
+        element={
+          <AdminRoute>
+            <StudentTable />
           </AdminRoute>
         }
       />
