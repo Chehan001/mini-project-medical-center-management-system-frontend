@@ -1,46 +1,97 @@
-import React, { useState } from "react";
-import { Box, Typography, Grid, Paper, Button } from "@mui/material";
-import axios from "axios";
-import StudentTable from "./StudentTable"; 
+import React from "react";
+import { Typography, Box, Paper } from "@mui/material";
+import AdminNavBar from "./AdminNavBar";
 
 const AdminDashboard = () => {
-  const [students, setStudents] = useState([]);
-  const [showTable, setShowTable] = useState(false);
-
-  const fetchStudents = async () => {
-    try {
-      const res = await axios.get("http://localhost:8000/api/user");
-      setStudents(res.data);
-      setShowTable(true);
-    } catch (err) {
-      console.error("Error fetching student data:", err);
-      alert("Failed to fetch student data.");
-    }
-  };
-
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Admin Dashboard
-      </Typography>
+    <>
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "linear-gradient(135deg, #b2f7e3, #7fdac4, #a9e0cb)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Navbar fixed at top */}
+        <Box sx={{ position: "absolute", top: 0, width: "100%" }}>
+          <AdminNavBar />
+        </Box>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6">Manage Student Data</Typography>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              View all registered student profiles
-            </Typography>
-            <Button variant="contained" sx={{ mt: 2 }} onClick={fetchStudents}>
-              View Student Data
-            </Button>
-          </Paper>
-        </Grid>
-      </Grid>
+        {/* Central welcome card */}
+        <Paper
+          elevation={10}
+          sx={{
+            p: 6,
+            borderRadius: 6,
+            textAlign: "center",
+            background: "rgba(255, 255, 255, 0.9)",
+            boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
+            backdropFilter: "blur(8px)",
+            transition: "transform 0.4s ease, box-shadow 0.4s ease",
+            "&:hover": {
+              transform: "scale(1.05)",
+              boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
+            },
+          }}
+        >
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: "bold",
+              fontStyle: "italic",
+              color: "#0d554b",
+              mb: 2,
+              textShadow: "2px 2px 4px rgba(0,0,0,0.15)",
+              letterSpacing: "1px",
+            }}
+          >
+            Welcome to the Admin Dashboard
+          </Typography>
 
-      {/* Student table displays only when loaded */}
-      {showTable && <StudentTable students={students} />}
-    </Box>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#1f8f7e",
+              fontWeight: 500,
+              letterSpacing: "0.5px",
+            }}
+          >
+            Manage Students, Doctors, and Medicine Records with Ease.
+          </Typography>
+        </Paper>
+
+        {/* Decorative floating circles */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 40,
+            right: 60,
+            width: 120,
+            height: 120,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.3)",
+            filter: "blur(10px)",
+          }}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            top: 60,
+            left: 80,
+            width: 150,
+            height: 150,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.25)",
+            filter: "blur(10px)",
+          }}
+        />
+      </div>
+    </>
   );
 };
 
