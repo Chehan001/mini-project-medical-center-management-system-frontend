@@ -29,7 +29,7 @@ const UserNavBar = () => {
   const navItems = [
     { text: 'Home', path: '/' },
     { text: 'Registration', path: '/registration-form' },
-    { text: 'Channel', path: '/channel' },
+    { text: 'Appointment', path: '/appointment-booking' },
     { text: 'Medical', path: '/medical' },
   ];
 

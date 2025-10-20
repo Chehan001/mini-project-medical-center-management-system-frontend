@@ -9,6 +9,7 @@ import ResetPassword from './components/ResetPassword';
 import About from './components/About';
 import Channel from './components/Channel';
 import RegistrationForm from './components/RegistrationForm';
+import AppointmentBooking from './components/AppointmentBooking'; 
 
 // Admin
 import AdminLogin from './admin/AdminLogin';
@@ -41,6 +42,9 @@ const App = () => (
       <Route path="/login" element={<LoginRegister />} />
       <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
       <Route path="/registration-form" element={<RegistrationForm />} />
+
+      {/* Add Appointment Booking Route */}
+      <Route path="/appointment-booking" element={<AppointmentBooking />} />
 
       {/* Protected student route */}
       <Route
