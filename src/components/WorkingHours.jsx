@@ -33,16 +33,29 @@ const WorkingHours = () => {
       });
   }, []);
 
+  const PaperStyles = {
+    p: 2.5,
+    background: "linear-gradient(135deg, #a6e3d1, #67b8a3)",
+    color: "#2c2c2c",
+    width: "100%",
+    maxWidth: "320px", // responsive max width
+    borderRadius: "16px",
+    boxShadow: "0 6px 14px rgba(0, 0, 0, 0.15)",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    "&:hover": {
+      transform: "scale(1.02)",
+      boxShadow: "0 8px 18px rgba(0, 0, 0, 0.2)",
+    },
+  };
+
   if (loading) {
     return (
       <Paper
         elevation={4}
         sx={{
-          p: 2.5,
+          ...PaperStyles,
           background: "linear-gradient(135deg, #6dcdb8, #3b8d7e)",
           color: "#fff",
-          width: "280px",
-          borderRadius: "14px",
         }}
       >
         <Typography
@@ -63,11 +76,9 @@ const WorkingHours = () => {
       <Paper
         elevation={4}
         sx={{
-          p: 3,
+          ...PaperStyles,
           background: "linear-gradient(135deg, #d9534f, #b93b38)",
           color: "#fff",
-          width: "280px",
-          borderRadius: "14px",
         }}
       >
         <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
@@ -82,22 +93,7 @@ const WorkingHours = () => {
 
   return (
     <Fade in timeout={800}>
-      <Paper
-        elevation={4}
-        sx={{
-          p: 2.5,
-          background: "linear-gradient(135deg, #a6e3d1, #67b8a3)",
-          color: "#2c2c2c",
-          width: "300px",
-          borderRadius: "16px",
-          boxShadow: "0 6px 14px rgba(0, 0, 0, 0.15)",
-          transition: "transform 0.3s ease, box-shadow 0.3s ease",
-          "&:hover": {
-            transform: "scale(1.02)",
-            boxShadow: "0 8px 18px rgba(0, 0, 0, 0.2)",
-          },
-        }}
-      >
+      <Paper elevation={4} sx={PaperStyles}>
         <Typography
           variant="h6"
           sx={{

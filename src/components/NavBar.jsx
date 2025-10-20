@@ -18,7 +18,9 @@ import { useTheme } from '@mui/material/styles';
 const NavBar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  // isTabletOrMobile will be true for screens < 900px
+  const isTabletOrMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
@@ -36,9 +38,9 @@ const NavBar = () => {
       position="sticky"
       elevation={3}
       sx={{
-        backgroundColor: '#ffffff', // White navbar background
-        color: 'black',             // Black text
-        ...( !isMobile && {
+        backgroundColor: '#ffffff',
+        color: 'black',
+        ...( !isTabletOrMobile && {
           marginTop: '10px',
           borderRadius: '12px',
           maxWidth: '1100px',
@@ -47,33 +49,25 @@ const NavBar = () => {
       }}
     >
       <Toolbar>
-        {/* Logo + Text */}
+        {/* Logo */}
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
           <img
-            src="/medicare_logo.png" // <-- fixed path
-            alt=""
+            src="/medicare_logo.png"
+            alt="MediCare Logo"
             style={{ height: '50px', objectFit: 'contain', marginRight: '10px' }}
           />
-      
         </Box>
 
-        {isMobile ? (
+        {isTabletOrMobile ? (
           <>
-            <IconButton
-              edge="end"
-              onClick={toggleDrawer(true)}
-              sx={{ color: 'black' }}
-            >
+            {/* Hamburger Menu for mobile & tablet */}
+            <IconButton edge="end" onClick={toggleDrawer(true)} sx={{ color: 'black' }}>
               <MenuIcon />
             </IconButton>
 
-            <Drawer
-              anchor="right"
-              open={drawerOpen}
-              onClose={toggleDrawer(false)}
-            >
+            <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
               <Box
-                sx={{ width: 200 }}
+                sx={{ width: 220 }}
                 role="presentation"
                 onClick={toggleDrawer(false)}
                 onKeyDown={toggleDrawer(false)}

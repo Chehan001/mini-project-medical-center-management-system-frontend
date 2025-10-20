@@ -18,7 +18,9 @@ import { useTheme } from '@mui/material/styles';
 const UserNavBar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
+  // Changed breakpoint to 'md' to include tablets
+  const isTabletOrMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
@@ -26,7 +28,7 @@ const UserNavBar = () => {
 
   const navItems = [
     { text: 'Home', path: '/' },
-     { text: 'Registration', path: '/registration-form' },
+    { text: 'Registration', path: '/registration-form' },
     { text: 'Channel', path: '/channel' },
     { text: 'Medical', path: '/medical' },
   ];
@@ -36,9 +38,9 @@ const UserNavBar = () => {
       position="sticky"
       elevation={3}
       sx={{
-        backgroundColor: '#ffffff', // White navbar background
-        color: 'black',             // Black text
-        ...( !isMobile && {
+        backgroundColor: '#ffffff',
+        color: 'black',
+        ...( !isTabletOrMobile && {
           marginTop: '10px',
           borderRadius: '12px',
           maxWidth: '1100px',
@@ -47,17 +49,16 @@ const UserNavBar = () => {
       }}
     >
       <Toolbar>
-        {/* Logo + Text */}
+        {/* Logo */}
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
           <img
-            src="/medicare_logo.png" // <-- fixed path
-            alt=""
+            src="/medicare_logo.png"
+            alt="MediCare Logo"
             style={{ height: '50px', objectFit: 'contain', marginRight: '10px' }}
           />
-      
         </Box>
 
-        {isMobile ? (
+        {isTabletOrMobile ? (
           <>
             <IconButton
               edge="end"
@@ -73,7 +74,7 @@ const UserNavBar = () => {
               onClose={toggleDrawer(false)}
             >
               <Box
-                sx={{ width: 200 }}
+                sx={{ width: 220 }}
                 role="presentation"
                 onClick={toggleDrawer(false)}
                 onKeyDown={toggleDrawer(false)}
