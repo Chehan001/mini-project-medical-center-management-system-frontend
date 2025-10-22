@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
-// Helper functions
+// --- Helpers ---
 function toLocalIsoDateInputValue(date) {
   const tzOffset = date.getTimezoneOffset() * 60000;
   return new Date(date - tzOffset).toISOString().slice(0, 10);
@@ -110,7 +110,7 @@ export default function AppointmentBooking() {
     fetchBookedSlots(selectedDate);
   }, [selectedDate]);
 
-  //  Fetch student profile automatically when slot selected
+  // Auto-fill student info
   useEffect(() => {
     const regNumber = localStorage.getItem("regNumber");
     if (!regNumber || !selectedSlot) return;
@@ -124,11 +124,10 @@ export default function AppointmentBooking() {
           mobile: res.data.mobile || "",
         });
       })
-      .catch((err) => {
-        console.error("Error fetching student profile:", err);
+      .catch(() => {
         setMessage({
           type: "error",
-          text: "Failed to auto-fill your student details. Please check your profile.",
+          text: "Failed to auto-fill your student details.",
         });
       });
   }, [selectedSlot]);
@@ -157,12 +156,11 @@ export default function AppointmentBooking() {
         setBooked((prev) => [...prev, res.data.appointment]);
         setMessage({
           type: "success",
-          text: `Appointment booked successfully for ${selectedDate} at ${selectedSlot.label}. Confirmation sent to ${studentData.mobile}.`,
+          text: `Appointment booked successfully for ${selectedDate} at ${selectedSlot.label}.`,
         });
         setSelectedSlot(null);
       }
     } catch (err) {
-      console.error(err);
       setMessage({
         type: "error",
         text: err.response?.data?.error || "Failed to book appointment.",
@@ -184,29 +182,24 @@ export default function AppointmentBooking() {
       <Container maxWidth="md">
         <Paper
           sx={{
-            p: 4,
+            p: { xs: 2, sm: 4 },
             borderRadius: 4,
             backgroundColor: "white",
             boxShadow: "0px 8px 25px rgba(0,0,0,0.15)",
           }}
         >
-          {/* --- Header --- */}
+          {/* Header */}
           <Box textAlign="center" mb={3}>
             <img
               src="/medicare_logo.png"
               alt="University Logo"
-              style={{
-                height: "80px",
-                marginBottom: "10px",
-                objectFit: "contain",
-              }}
+              style={{ height: "70px", objectFit: "contain", marginBottom: "10px" }}
             />
             <Typography
               variant="h5"
               sx={{
                 color: "#1f8f7e",
                 fontWeight: "bold",
-                fontSize: "1.8rem",
                 textShadow: "1px 1px 2px rgba(0,0,0,0.1)",
               }}
             >
@@ -215,27 +208,31 @@ export default function AppointmentBooking() {
             <Divider sx={{ mt: 1 }} />
           </Box>
 
-          <Grid container spacing={4}>
-            {/* --- LEFT SIDE: Slots --- */}
+          {/* Main Content */}
+          <Grid
+            container
+            spacing={3}
+            alignItems="center"
+            justifyContent="center"
+          >
+            {/* Left: Date & Slots */}
             <Grid item xs={12} md={6}>
-              <Typography fontWeight="bold">Choose a Date</Typography>
+              <Typography sx={{ color: "#1f8f7e", fontWeight: "bold", }}>Choose a Date</Typography>
               <TextField
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                inputProps={{ min: toLocalIsoDateInputValue(today) }}
                 fullWidth
                 sx={{ mt: 1, mb: 2 }}
+                inputProps={{ min: toLocalIsoDateInputValue(today) }}
               />
-
-              <Typography fontWeight="bold">Available Slots</Typography>
-
+              <Typography sx={{ color: "#1f8f7e", fontWeight: "bold", }}>Available Slots</Typography>
               {!slots.length ? (
                 <Alert severity="info" sx={{ mt: 1 }}>
                   No slots available (Weekend or Holiday)
                 </Alert>
               ) : (
-                <List sx={{ maxHeight: 300, overflow: "auto", mt: 1 }}>
+                <List sx={{ maxHeight: 300, overflowY: "auto", mt: 1 }}>
                   {slots.map((s) => {
                     const disabled = s.disabled || booked.some((b) => b.time === s.label);
                     return (
@@ -245,15 +242,10 @@ export default function AppointmentBooking() {
                         onClick={() => !disabled && setSelectedSlot(s)}
                         selected={selectedSlot?.iso === s.iso}
                         sx={{
-                          bgcolor:
-                            selectedSlot?.iso === s.iso ? "#d1f5e1" : "transparent",
-                          "&:hover": !disabled && {
-                            bgcolor: "#e8fdf4",
-                            transform: "scale(1.02)",
-                          },
+                          bgcolor: selectedSlot?.iso === s.iso ? "#d1f5e1" : "transparent",
                           borderRadius: 1,
                           mb: 0.5,
-                          transition: "0.2s",
+                          "&:hover": !disabled && { bgcolor: "#e8fdf4" },
                         }}
                         secondaryAction={
                           disabled ? (
@@ -274,56 +266,82 @@ export default function AppointmentBooking() {
               )}
             </Grid>
 
-            {/* --- RIGHT SIDE: Student Info --- */}
-            <Grid item xs={12} md={6}>
-              <Typography fontWeight="bold">Student Information</Typography>
-
-              <TextField
-                label="Name"
-                value={studentData.name}
-                fullWidth
-                sx={{ mt: 1 }}
-                InputProps={{ readOnly: true }}
-              />
-              <TextField
-                label="Registration Number"
-                value={studentData.regNumber}
-                fullWidth
-                sx={{ mt: 2 }}
-                InputProps={{ readOnly: true }}
-              />
-              <TextField
-                label="Mobile Number"
-                value={studentData.mobile}
-                onChange={(e) =>
-                  setStudentData({ ...studentData, mobile: e.target.value })
-                }
-                fullWidth
-                sx={{ mt: 2 }}
-                placeholder="+94 7XXXXXXXX"
-              />
-
-              <Button
-                variant="contained"
-                sx={{
-                  mt: 3,
-                  bgcolor: "#1f8f7e",
-                  "&:hover": { bgcolor: "#157666", transform: "scale(1.03)" },
-                  fontWeight: "bold",
-                  py: 1.5,
+            {/* Right: Doctor Image */}
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <img
+                src="/Doctor.png"
+                alt="Doctor"
+                style={{
+                  height: "450px",
+                  maxWidth: "100%",
+                  objectFit: "contain",
                 }}
-                onClick={handleBook}
-              >
-                Confirm Appointment
-              </Button>
-
-              {message && (
-                <Box mt={2}>
-                  <Alert severity={message.type}>{message.text}</Alert>
-                </Box>
-              )}
+              />
             </Grid>
           </Grid>
+
+          {/* Student Info */}
+          <Box textAlign="center" mt={4}>
+            <Typography
+              fontWeight="bold"
+              textAlign="center"
+              mb={2}
+              sx={{ fontSize: "1.1rem" , color: "#1f8f7e", }}
+            >
+              Student Information
+            </Typography>
+            <TextField
+              label="Name"
+              value={studentData.name}
+              fullWidth
+              InputProps={{ readOnly: true }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Registration Number"
+              value={studentData.regNumber}
+              fullWidth
+              InputProps={{ readOnly: true }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Mobile Number"
+              value={studentData.mobile}
+              onChange={(e) =>
+                setStudentData({ ...studentData, mobile: e.target.value })
+              }
+              fullWidth
+              placeholder="+94 7XXXXXXXX"
+            />
+            <Button
+              variant="contained"
+              sx={{
+                mt: 3,
+                bgcolor: "#1f8f7e",
+                "&:hover": { bgcolor: "#157666", transform: "scale(1.03)" },
+                fontWeight: "bold",
+                borderRadius: 5,
+                py: 1.5,
+              }}
+              onClick={handleBook}
+            >
+              Confirm Appointment
+            </Button>
+            {message && (
+              <Box mt={2}>
+                <Alert severity={message.type}>{message.text}</Alert>
+              </Box>
+            )}
+          </Box>
         </Paper>
       </Container>
     </Box>
