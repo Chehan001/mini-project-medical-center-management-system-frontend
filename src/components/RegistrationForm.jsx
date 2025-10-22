@@ -102,29 +102,17 @@ const RegistrationForm = () => {
   };
 
   return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(to bottom right, #b3f3d9, #d4f9e6, #c8f5e2)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        py: 6,
+      }}
+    > 
     <Container maxWidth="md" sx={{ py: 5 }}>
-      {/* Header Section */}
-      <Box textAlign="center" mb={3}>
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-          <img
-            src="/medicare_logo.png"
-            alt="University Logo"
-            style={{ height: "70px", objectFit: "contain" }}
-          />
-        </Box>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: "bold",
-            fontStyle: "italic",
-            color: "#1f8f7e",
-            mb: 2,
-          }}
-        >
-          Medical Examiner’s Report
-        </Typography>
-      </Box>
-
       <Paper
         elevation={5}
         sx={{
@@ -138,11 +126,31 @@ const RegistrationForm = () => {
           },
         }}
       >
+        {/* Header Section (moved inside Paper) */}
+        <Box textAlign="center" mb={3}>
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
+            <img
+              src="/medicare_logo.png"
+              alt="University Logo"
+              style={{ height: "70px", objectFit: "contain" }}
+            />
+          </Box>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: "bold",
+              fontStyle: "italic",
+              color: "#1f8f7e",
+              mb: 2,
+            }}
+          >
+            Medical Examiner’s Report
+          </Typography>
+         <Divider sx={{ mt: 3 }} />
+        </Box>
+
         <Box component="form" onSubmit={handleSubmit}>
           {/* Candidate Info */}
-          <Typography variant="h6" sx={{ color: "#1f8f7e", mb: 2 }}>
-            Candidate Information
-          </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={8}>
               {[
@@ -493,6 +501,7 @@ const RegistrationForm = () => {
         </Box>
       </Paper>
     </Container>
+    </Box>
   );
 };
 export default RegistrationForm;

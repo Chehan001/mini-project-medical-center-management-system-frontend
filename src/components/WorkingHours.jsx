@@ -136,7 +136,7 @@ const WorkingHours = () => {
         <Divider sx={{ my: 2, backgroundColor: "#2c2c2c33" }} />
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <CalendarTodayIcon sx={{ fontSize: 18, color: "#1f5b50" }} />
+          <CalendarTodayIcon sx={{ fontSize: 18, color: "#1f5b50" }} />z
           <Typography
             variant="body2"
             sx={{ fontStyle: "italic", color: "#1f5b50" }}

@@ -51,25 +51,6 @@ export default function AppointmentBooking() {
   const [booked, setBooked] = useState([]);
   const [message, setMessage] = useState(null);
 
-  // Fetch logged-in student data
-  useEffect(() => {
-    const regNo = localStorage.getItem("regNo");
-    if (regNo) {
-      axios
-        .get(`/api/users/profile/${regNo}`)
-        .then((res) => {
-          if (res.data.ok) {
-            setStudentData({
-              name: res.data.user.name,
-              regNumber: res.data.user.regNumber,
-              mobile: res.data.user.mobile || "",
-            });
-          }
-        })
-        .catch((err) => console.error("Failed to fetch user profile:", err));
-    }
-  }, []);
-
   // Generate available slots
   const generateSlotsForDate = useCallback(
     (dateIso) => {
@@ -111,7 +92,10 @@ export default function AppointmentBooking() {
     [holidays]
   );
 
-  const slots = useMemo(() => generateSlotsForDate(selectedDate), [selectedDate, generateSlotsForDate]);
+  const slots = useMemo(
+    () => generateSlotsForDate(selectedDate),
+    [selectedDate, generateSlotsForDate]
+  );
 
   const fetchBookedSlots = async (date) => {
     try {
@@ -121,6 +105,33 @@ export default function AppointmentBooking() {
       console.error("Failed to fetch booked appointments:", err);
     }
   };
+
+  useEffect(() => {
+    fetchBookedSlots(selectedDate);
+  }, [selectedDate]);
+
+  //  Fetch student profile automatically when slot selected
+  useEffect(() => {
+    const regNumber = localStorage.getItem("regNumber");
+    if (!regNumber || !selectedSlot) return;
+
+    axios
+      .get(`http://localhost:8000/api/user/${regNumber}`)
+      .then((res) => {
+        setStudentData({
+          name: res.data.name,
+          regNumber: res.data.regNumber,
+          mobile: res.data.mobile || "",
+        });
+      })
+      .catch((err) => {
+        console.error("Error fetching student profile:", err);
+        setMessage({
+          type: "error",
+          text: "Failed to auto-fill your student details. Please check your profile.",
+        });
+      });
+  }, [selectedSlot]);
 
   const handleBook = async () => {
     setMessage(null);
@@ -138,6 +149,8 @@ export default function AppointmentBooking() {
         date: selectedDate,
         time: selectedSlot.label,
         mobile: studentData.mobile,
+        name: studentData.name,
+        regNumber: studentData.regNumber,
       });
 
       if (res.data.ok) {
@@ -156,10 +169,6 @@ export default function AppointmentBooking() {
       });
     }
   };
-
-  useEffect(() => {
-    fetchBookedSlots(selectedDate);
-  }, [selectedDate]);
 
   return (
     <Box
@@ -181,7 +190,7 @@ export default function AppointmentBooking() {
             boxShadow: "0px 8px 25px rgba(0,0,0,0.15)",
           }}
         >
-          {/* --- Centered Header Section --- */}
+          {/* --- Header --- */}
           <Box textAlign="center" mb={3}>
             <img
               src="/medicare_logo.png"
@@ -236,8 +245,12 @@ export default function AppointmentBooking() {
                         onClick={() => !disabled && setSelectedSlot(s)}
                         selected={selectedSlot?.iso === s.iso}
                         sx={{
-                          bgcolor: selectedSlot?.iso === s.iso ? "#d1f5e1" : "transparent",
-                          "&:hover": !disabled && { bgcolor: "#e8fdf4", transform: "scale(1.02)" },
+                          bgcolor:
+                            selectedSlot?.iso === s.iso ? "#d1f5e1" : "transparent",
+                          "&:hover": !disabled && {
+                            bgcolor: "#e8fdf4",
+                            transform: "scale(1.02)",
+                          },
                           borderRadius: 1,
                           mb: 0.5,
                           transition: "0.2s",
