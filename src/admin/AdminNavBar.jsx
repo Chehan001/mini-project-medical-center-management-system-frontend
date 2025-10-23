@@ -10,7 +10,6 @@ import {
   ListItem,
   ListItemText,
   Divider,
-
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useLocation } from 'react-router-dom';
@@ -21,13 +20,17 @@ const AdminNavBar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const location = useLocation(); // For active link highlighting
+  const location = useLocation();
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
 
-  const navItems = [{ text: 'Student', path: '/admin/students' }];
+  // ✅ Added Appointment to navItems
+  const navItems = [
+    { text: 'Student', path: '/admin/students' },
+     { text: 'Appointment', path: '/admin/appointments' },
+  ];
 
   return (
     <AppBar
@@ -36,6 +39,7 @@ const AdminNavBar = () => {
       sx={{
         backgroundColor: '#ffffff',
         color: 'black',
+        transition: '0.3s ease-in-out',
         ...(!isMobile && {
           marginTop: '10px',
           borderRadius: '12px',
@@ -50,9 +54,12 @@ const AdminNavBar = () => {
           <img
             src="/medicare_logo.png"
             alt="MediCare Logo"
-            style={{ height: '50px', objectFit: 'contain', marginRight: '10px' }}
+            style={{
+              height: '50px',
+              objectFit: 'contain',
+              marginRight: '10px',
+            }}
           />
-          
         </Box>
 
         {/* Responsive Menu */}
@@ -75,7 +82,11 @@ const AdminNavBar = () => {
               open={drawerOpen}
               onClose={toggleDrawer(false)}
               PaperProps={{
-                sx: { borderRadius: '0 0 0 12px', width: 220 },
+                sx: {
+                  borderRadius: '0 0 0 12px',
+                  width: 220,
+                  backgroundColor: '#fdfdfd',
+                },
               }}
             >
               <Box
@@ -95,7 +106,9 @@ const AdminNavBar = () => {
                         borderRadius: '8px',
                         mb: 1,
                         backgroundColor:
-                          location.pathname === item.path ? '#e0f7f1' : 'transparent',
+                          location.pathname === item.path
+                            ? '#e0f7f1'
+                            : 'transparent',
                         transition: '0.3s',
                         '&:hover': { backgroundColor: '#f0f0f0' },
                       }}
@@ -127,7 +140,8 @@ const AdminNavBar = () => {
                 sx={{
                   fontWeight: 'bold',
                   fontSize: '1.1rem',
-                  color: location.pathname === item.path ? '#1f8f7e' : 'black',
+                  color:
+                    location.pathname === item.path ? '#1f8f7e' : 'black',
                   mx: 1,
                   borderRadius: '8px',
                   transition: '0.3s',
@@ -135,6 +149,9 @@ const AdminNavBar = () => {
                     backgroundColor: '#f0f0f0',
                     transform: 'scale(1.05)',
                   },
+                  ...(location.pathname === item.path && {
+                    borderBottom: '2px solid #1f8f7e',
+                  }),
                 }}
               >
                 {item.text}

@@ -1,52 +1,53 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-// Components
-import HomePage from './components/HomePage';
-import LoginRegister from './components/LoginRegister';
-import UserProfil from './components/UserProfil';
-import ResetPassword from './components/ResetPassword';
-import About from './components/About';
-import Channel from './components/Channel';
-import RegistrationForm from './components/RegistrationForm';
-import AppointmentBooking from './components/AppointmentBooking'; 
+// User Components
+import HomePage from "./components/HomePage";
+import LoginRegister from "./components/LoginRegister";
+import UserProfil from "./components/UserProfil";
+import ResetPassword from "./components/ResetPassword";
+import About from "./components/About";
+import Channel from "./components/Channel";
+import RegistrationForm from "./components/RegistrationForm";
+import AppointmentBooking from "./components/AppointmentBooking";
 
-// Admin
-import AdminLogin from './admin/AdminLogin';
-import AdminDashboard from './admin/AdminDashboard';
-import HomeContent from './admin/HomeContent';
-import StudentTable from './admin/StudentTable';
+// Admin Components
+import AdminLogin from "./admin/AdminLogin";
+import AdminDashboard from "./admin/AdminDashboard";
+import HomeContent from "./admin/HomeContent";
+import StudentTable from "./admin/StudentTable";
+import AdminAppointmentsTable from "./admin/AdminAppointmentsTable"; // ✅ Correct import
 
-// Protected route for normal users
+// Protected_Route_for_Students
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" replace />;
 };
 
-// Protected route for admin users
+
+// Protected_Route_for_Admins
 const AdminRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+
   if (!token) return <Navigate to="/admin-login" replace />;
-  if (role !== 'admin') return <Navigate to="/" replace />;
+  if (role !== "admin") return <Navigate to="/" replace />;
   return children;
 };
 
+// Main Component
 const App = () => (
   <Router>
     <Routes>
-      {/* Public routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<About />} />
       <Route path="/channel" element={<Channel />} />
       <Route path="/login" element={<LoginRegister />} />
-      <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
       <Route path="/registration-form" element={<RegistrationForm />} />
-
-      {/* Add Appointment Booking Route */}
+      <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
       <Route path="/appointment-booking" element={<AppointmentBooking />} />
 
-      {/* Protected student route */}
+      {/* Student Protected Route */}
       <Route
         path="/personal-data"
         element={
@@ -56,8 +57,9 @@ const App = () => (
         }
       />
 
-      {/* Admin routes */}
+      {/*  Admin Routes */}
       <Route path="/admin-login" element={<AdminLogin />} />
+
       <Route
         path="/admin/dashboard"
         element={
@@ -66,6 +68,7 @@ const App = () => (
           </AdminRoute>
         }
       />
+
       <Route
         path="/admin/home-content"
         element={
@@ -74,6 +77,7 @@ const App = () => (
           </AdminRoute>
         }
       />
+
       <Route
         path="/admin/students"
         element={
@@ -83,8 +87,41 @@ const App = () => (
         }
       />
 
-      {/* 404 fallback */}
-      <Route path="*" element={<div style={{ padding: 40 }}>404 Not Found</div>} />
+      <Route
+        path="/admin/appointments"
+        element={
+          <AdminRoute>
+            <AdminAppointmentsTable /> 
+          </AdminRoute>
+        }
+      />
+
+      {/* 404 Page */}
+      <Route
+        path="*"
+        element={
+          <div
+            style={{
+              minHeight: "100vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+              background: "linear-gradient(to bottom right, #b8f0d9, #d7faf0)",
+              color: "#0a5443",
+              fontFamily: "Poppins, sans-serif",
+              padding: "20px",
+            }}
+          >
+            <h1 style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>
+              404 - Page Not Found
+            </h1>
+            <p style={{ fontSize: "1.2rem" }}>
+              The page you’re looking for doesn’t exist.
+            </p>
+          </div>
+        }
+      />
     </Routes>
   </Router>
 );

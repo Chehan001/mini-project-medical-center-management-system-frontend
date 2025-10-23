@@ -51,7 +51,7 @@ const WorkingHours = () => {
   if (loading) {
     return (
       <Paper
-        elevation={4}
+        elevation={4}      
         sx={{
           ...PaperStyles,
           background: "linear-gradient(135deg, #6dcdb8, #3b8d7e)",
@@ -136,7 +136,7 @@ const WorkingHours = () => {
         <Divider sx={{ my: 2, backgroundColor: "#2c2c2c33" }} />
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <CalendarTodayIcon sx={{ fontSize: 18, color: "#1f5b50" }} />z
+          <CalendarTodayIcon sx={{ fontSize: 18, color: "#1f5b50" }} />
           <Typography
             variant="body2"
             sx={{ fontStyle: "italic", color: "#1f5b50" }}
