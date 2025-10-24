@@ -60,7 +60,7 @@ const WorkingHours = () => {
       >
         <Typography
           variant="h6"
-          sx={{ display: "flex", alignItems: "center", color: "#f0f0f0" }}z
+          sx={{ display: "flex", alignItems: "center", color: "#f0f0f0" }}
         >
           <AccessTimeIcon sx={{ mr: 1 }} /> Working Hours
         </Typography>

@@ -15,6 +15,7 @@ import {
   Divider,
 } from "@mui/material";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 // --- Helpers ---
 function toLocalIsoDateInputValue(date) {
@@ -172,7 +173,15 @@ export default function AppointmentBooking() {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(to bottom right, #b3f3d9, #d4f9e6, #c8f5e2)",
+        background:
+          "linear-gradient(135deg, #b3f3d9, #d4f9e6, #c8f5e2, #a6f1d7)",
+        backgroundSize: "400% 400%",
+        animation: "gradientMove 12s ease infinite",
+        "@keyframes gradientMove": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -180,169 +189,213 @@ export default function AppointmentBooking() {
       }}
     >
       <Container maxWidth="md">
-        <Paper
-          sx={{
-            p: { xs: 2, sm: 4 },
-            borderRadius: 4,
-            backgroundColor: "white",
-            boxShadow: "0px 8px 25px rgba(0,0,0,0.15)",
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
         >
-          {/* Header */}
-          <Box textAlign="center" mb={3}>
-            <img
-              src="/medicare_logo.png"
-              alt="University Logo"
-              style={{ height: "70px", objectFit: "contain", marginBottom: "10px" }}
-            />
-            <Typography
-              variant="h5"
-              sx={{
-                color: "#1f8f7e",
-                fontWeight: "bold",
-                textShadow: "1px 1px 2px rgba(0,0,0,0.1)",
-              }}
-            >
-              Quick Channel Appointment
-            </Typography>
-            <Divider sx={{ mt: 1 }} />
-          </Box>
-
-          {/* Main Content */}
-          <Grid
-            container
-            spacing={3}
-            alignItems="center"
-            justifyContent="center"
+          <Paper
+            elevation={8}
+            sx={{
+              p: { xs: 2, sm: 4 },
+              borderRadius: 4,
+              bgcolor: "#ffffff",
+              boxShadow: "0px 8px 30px rgba(31,143,126,0.25)",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: "0px 12px 40px rgba(31,143,126,0.35)",
+              },
+            }}
           >
-            {/* Left: Date & Slots */}
-            <Grid item xs={12} md={6}>
-              <Typography sx={{ color: "#1f8f7e", fontWeight: "bold", }}>Choose a Date</Typography>
-              <TextField
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                fullWidth
-                sx={{ mt: 1, mb: 2 }}
-                inputProps={{ min: toLocalIsoDateInputValue(today) }}
-              />
-              <Typography sx={{ color: "#1f8f7e", fontWeight: "bold", }}>Available Slots</Typography>
-              {!slots.length ? (
-                <Alert severity="info" sx={{ mt: 1 }}>
-                  No slots available (Weekend or Holiday)
-                </Alert>
-              ) : (
-                <List sx={{ maxHeight: 300, overflowY: "auto", mt: 1 }}>
-                  {slots.map((s) => {
-                    const disabled = s.disabled || booked.some((b) => b.time === s.label);
-                    return (
-                      <ListItem
-                        key={s.iso}
-                        button
-                        onClick={() => !disabled && setSelectedSlot(s)}
-                        selected={selectedSlot?.iso === s.iso}
-                        sx={{
-                          bgcolor: selectedSlot?.iso === s.iso ? "#d1f5e1" : "transparent",
-                          borderRadius: 1,
-                          mb: 0.5,
-                          "&:hover": !disabled && { bgcolor: "#e8fdf4" },
-                        }}
-                        secondaryAction={
-                          disabled ? (
-                            <Chip
-                              label={s.disabled ? "Past" : "Booked"}
-                              size="small"
-                              color="error"
-                              variant="outlined"
-                            />
-                          ) : null
-                        }
-                      >
-                        <ListItemText primary={s.label} />
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              )}
-            </Grid>
-
-            {/* Right: Doctor Image */}
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <img
-                src="/Doctor.png"
-                alt="Doctor"
+            {/* Header */}
+            <Box textAlign="center" mb={3}>
+              <motion.img
+                src="/medicare_logo.png"
+                alt="University Logo"
                 style={{
-                  height: "450px",
-                  maxWidth: "100%",
+                  height: "70px",
                   objectFit: "contain",
+                  marginBottom: "10px",
+                }}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8 }}
+              />
+              <Typography
+                variant="h5"
+                sx={{
+                  color: "#1f8f7e",
+                  fontWeight: "bold",
+                  letterSpacing: 0.5,
+                  fontFamily: "Poppins, sans-serif",
+                }}
+              >
+                Quick Channel Appointment
+              </Typography>
+              <Divider
+                sx={{
+                  mt: 1,
+                  borderColor: "#1f8f7e",
+                  borderBottomWidth: 2,
+                  width: "60%",
+                  mx: "auto",
                 }}
               />
-            </Grid>
-          </Grid>
+            </Box>
 
-          {/* Student Info */}
-          <Box textAlign="center" mt={4}>
-            <Typography
-              fontWeight="bold"
-              textAlign="center"
-              mb={2}
-              sx={{ fontSize: "1.1rem" , color: "#1f8f7e", }}
-            >
-              Student Information
-            </Typography>
-            <TextField
-              label="Name"
-              value={studentData.name}
-              fullWidth
-              InputProps={{ readOnly: true }}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Registration Number"
-              value={studentData.regNumber}
-              fullWidth
-              InputProps={{ readOnly: true }}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Mobile Number"
-              value={studentData.mobile}
-              onChange={(e) =>
-                setStudentData({ ...studentData, mobile: e.target.value })
-              }
-              fullWidth
-              placeholder="+94 7XXXXXXXX"
-            />
-            <Button
-              variant="contained"
-              sx={{
-                mt: 3,
-                bgcolor: "#1f8f7e",
-                "&:hover": { bgcolor: "#157666", transform: "scale(1.03)" },
-                fontWeight: "bold",
-                borderRadius: 5,
-                py: 1.5,
-              }}
-              onClick={handleBook}
-            >
-              Confirm Appointment
-            </Button>
-            {message && (
-              <Box mt={2}>
-                <Alert severity={message.type}>{message.text}</Alert>
-              </Box>
-            )}
-          </Box>
-        </Paper>
+            {/* Main Content */}
+            <Grid container spacing={3} alignItems="center" justifyContent="center">
+              {/* Left: Date & Slots */}
+              <Grid item xs={12} md={6}>
+                <Typography sx={{ color: "#1f8f7e", fontWeight: "bold" }}>
+                  Choose a Date
+                </Typography>
+                <TextField
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  fullWidth
+                  sx={{ mt: 1, mb: 2 }}
+                  inputProps={{ min: toLocalIsoDateInputValue(today) }}
+                />
+                <Typography sx={{ color: "#1f8f7e", fontWeight: "bold" }}>
+                  Available Slots
+                </Typography>
+                {!slots.length ? (
+                  <Alert severity="info" sx={{ mt: 1 }}>
+                    No slots available (Weekend or Holiday)
+                  </Alert>
+                ) : (
+                  <List sx={{ maxHeight: 300, overflowY: "auto", mt: 1 }}>
+                    {slots.map((s) => {
+                      const disabled =
+                        s.disabled || booked.some((b) => b.time === s.label);
+                      return (
+                        <motion.div
+                          key={s.iso}
+                          whileHover={{ scale: !disabled ? 1.02 : 1 }}
+                        >
+                          <ListItem
+                            button
+                            onClick={() => !disabled && setSelectedSlot(s)}
+                            selected={selectedSlot?.iso === s.iso}
+                            sx={{
+                              bgcolor:
+                                selectedSlot?.iso === s.iso
+                                  ? "#d1f5e1"
+                                  : "transparent",
+                              borderRadius: 1,
+                              mb: 0.5,
+                              "&:hover": !disabled && { bgcolor: "#e8fdf4" },
+                            }}
+                            secondaryAction={
+                              disabled ? (
+                                <Chip
+                                  label={s.disabled ? "Past" : "Booked"}
+                                  size="small"
+                                  color="error"
+                                  variant="outlined"
+                                />
+                              ) : null
+                            }
+                          >
+                            <ListItemText primary={s.label} />
+                          </ListItem>
+                        </motion.div>
+                      );
+                    })}
+                  </List>
+                )}
+              </Grid>
+
+              {/* Right: Doctor Image */}
+              <Grid
+                item
+                xs={12}
+                md={6}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <motion.img
+                  src="/Doctor.png"
+                  alt="Doctor"
+                  style={{
+                    height: "450px",
+                    maxWidth: "100%",
+                    objectFit: "contain",
+                  }}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.8 }}
+                />
+              </Grid>
+            </Grid>
+
+            {/* Student Info */}
+            <Box textAlign="center" mt={4}>
+              <Typography
+                fontWeight="bold"
+                textAlign="center"
+                mb={2}
+                sx={{ fontSize: "1.1rem", color: "#1f8f7e" }}
+              >
+                Student Information
+              </Typography>
+              <TextField
+                label="Name"
+                value={studentData.name}
+                fullWidth
+                InputProps={{ readOnly: true }}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Registration Number"
+                value={studentData.regNumber}
+                fullWidth
+                InputProps={{ readOnly: true }}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Mobile Number"
+                value={studentData.mobile}
+                onChange={(e) =>
+                  setStudentData({ ...studentData, mobile: e.target.value })
+                }
+                fullWidth
+                placeholder="+94 7XXXXXXXX"
+              />
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    mt: 3,
+                    bgcolor: "#1f8f7e",
+                    "&:hover": { bgcolor: "#157666", boxShadow: "0 8px 20px rgba(31,143,126,0.3)" },
+                    fontWeight: "bold",
+                    borderRadius: 5,
+                    py: 1.5,
+                    px: 4,
+                  }}
+                  onClick={handleBook}
+                >
+                  Confirm Appointment
+                </Button>
+              </motion.div>
+
+              {message && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+                  <Box mt={2}>
+                    <Alert severity={message.type}>{message.text}</Alert>
+                  </Box>
+                </motion.div>
+              )}
+            </Box>
+          </Paper>
+        </motion.div>
       </Container>
     </Box>
   );
