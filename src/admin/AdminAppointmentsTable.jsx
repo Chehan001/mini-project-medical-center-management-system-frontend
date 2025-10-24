@@ -10,11 +10,16 @@ import {
   CircularProgress,
   Box,
   TableContainer,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
 
 const AdminAppointmentsTable = () => {
   const [appointments, setAppointments] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,8 +27,10 @@ const AdminAppointmentsTable = () => {
     const fetchAppointments = async () => {
       try {
         const res = await axios.get("http://localhost:8000/api/appointments");
-        if (res.data.ok) setAppointments(res.data.data);
-        else setError("No appointments found.");
+        if (res.data.ok) {
+          setAppointments(res.data.data);
+          setFiltered(res.data.data);
+        } else setError("No appointments found.");
       } catch (err) {
         console.error("Error fetching appointments:", err);
         setError("Failed to fetch appointments.");
@@ -31,19 +38,33 @@ const AdminAppointmentsTable = () => {
         setLoading(false);
       }
     };
-
     fetchAppointments();
   }, []);
+
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearch(value);
+    const filteredData = appointments.filter(
+      (a) =>
+        a.name.toLowerCase().includes(value) ||
+        a.regNumber.toLowerCase().includes(value)
+    );
+    setFiltered(filteredData);
+  };
 
   if (loading)
     return (
       <Box
         display="flex"
+        flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        minHeight="60vh"
+        minHeight="70vh"
       >
         <CircularProgress color="success" size={60} />
+        <Typography sx={{ mt: 2, color: "text.secondary" }}>
+          Loading appointments...
+        </Typography>
       </Box>
     );
 
@@ -54,59 +75,83 @@ const AdminAppointmentsTable = () => {
       </Typography>
     );
 
-  if (!appointments.length)
-    return (
-      <Typography
-        variant="body1"
-        sx={{ mt: 3, textAlign: "center", color: "text.secondary" }}
-      >
-        No appointment data available.
-      </Typography>
-    );
-
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(to bottom right, #b3f3d9, #d4f9e6, #c8f5e2)",
+        background: "linear-gradient(135deg, #b3f3d9 0%, #c8f5e2 50%, #d4f9e6 100%)",
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
-        p: 4,
+        py: 6,
+        px: 2,
       }}
     >
       <Paper
-        elevation={6}
+        elevation={8}
         sx={{
-          width: "90%",
-          maxWidth: 1100,
+          width: "95%",
+          maxWidth: 1200,
           borderRadius: 4,
-          p: 4,
+          p: { xs: 3, md: 5 },
           backgroundColor: "rgba(255, 255, 255, 0.95)",
-          backdropFilter: "blur(8px)",
+          backdropFilter: "blur(10px)",
+          boxShadow: "0px 8px 25px rgba(0,0,0,0.1)",
         }}
       >
-        {/* --- HEADING --- */}
+        {/* Header Logo */}
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+          <img
+            src="/medicare_logo.png"
+            alt="University Logo"
+            style={{ height: "70px", objectFit: "contain" }}
+          />
+        </Box>
+
+        {/* Header Text */}
         <Typography
           variant="h5"
           align="center"
-          gutterBottom
           sx={{
-            mb: 3,
             fontWeight: "bold",
-            color: "#008060",
-            letterSpacing: 0.5,
+            color: "#007B5E",
+            mb: 3,
+            letterSpacing: 0.8,
+            textTransform: "uppercase",
           }}
         >
-          All Student Appointments
+          Student Appointment Records
         </Typography>
 
-        {/* --- TABLE --- */}
+        {/* Search Bar */}
+        <TextField
+          placeholder="Search by student name or reg number..."
+          fullWidth
+          value={search}
+          onChange={handleSearch}
+          sx={{
+            mb: 3,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 3,
+              backgroundColor: "#f9f9f9",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon color="success" />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        {/* Table */}
         <TableContainer
           sx={{
             borderRadius: 3,
             overflow: "hidden",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
           }}
         >
           <Table>
@@ -131,6 +176,8 @@ const AdminAppointmentsTable = () => {
                       color: "#004d40",
                       fontWeight: "bold",
                       textAlign: "center",
+                      fontSize: "0.95rem",
+                      textTransform: "uppercase",
                     }}
                   >
                     {header}
@@ -140,14 +187,19 @@ const AdminAppointmentsTable = () => {
             </TableHead>
 
             <TableBody>
-              {appointments.map((a, index) => (
+              {filtered.map((a, index) => (
                 <TableRow
                   key={a._id}
                   sx={{
                     "&:hover": {
-                      backgroundColor: "rgba(128, 224, 190, 0.15)",
+                      backgroundColor: "rgba(0, 150, 136, 0.08)",
+                      transform: "scale(1.01)",
                       transition: "0.3s",
                     },
+                    backgroundColor:
+                      index % 2 === 0
+                        ? "rgba(255,255,255,0.9)"
+                        : "rgba(240,255,250,0.7)",
                   }}
                 >
                   <TableCell align="center">{index + 1}</TableCell>
@@ -164,6 +216,15 @@ const AdminAppointmentsTable = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Footer */}
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ mt: 3, color: "text.secondary" }}
+        >
+          © 2025 MediCare Admin Portal | Sabaragamuwa University
+        </Typography>
       </Paper>
     </Box>
   );

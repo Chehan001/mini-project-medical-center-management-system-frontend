@@ -16,7 +16,8 @@ import AdminLogin from "./admin/AdminLogin";
 import AdminDashboard from "./admin/AdminDashboard";
 import HomeContent from "./admin/HomeContent";
 import StudentTable from "./admin/StudentTable";
-import AdminAppointmentsTable from "./admin/AdminAppointmentsTable"; // ✅ Correct import
+import AdminAppointmentsTable from "./admin/AdminAppointmentsTable";
+import AdminEntryPanel from "./admin/AdminEntryPanel";
 
 // Protected_Route_for_Students
 const ProtectedRoute = ({ children }) => {
@@ -48,53 +49,20 @@ const App = () => (
       <Route path="/appointment-booking" element={<AppointmentBooking />} />
 
       {/* Student Protected Route */}
-      <Route
-        path="/personal-data"
-        element={
-          <ProtectedRoute>
-            <UserProfil />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/personal-data" element={<ProtectedRoute>   <UserProfil />  </ProtectedRoute>} />
 
       {/*  Admin Routes */}
       <Route path="/admin-login" element={<AdminLogin />} />
 
-      <Route
-        path="/admin/dashboard"
-        element={
-          <AdminRoute>
-            <AdminDashboard />
-          </AdminRoute>
-        }
-      />
+      <Route path="/admin/dashboard" element={<AdminRoute>  <AdminDashboard />  </AdminRoute>} />
 
-      <Route
-        path="/admin/home-content"
-        element={
-          <AdminRoute>
-            <HomeContent />
-          </AdminRoute>
-        }
-      />
+      <Route path="/admin/home-content" element={<AdminRoute>  <HomeContent />   </AdminRoute>} />
 
-      <Route
-        path="/admin/students"
-        element={
-          <AdminRoute>
-            <StudentTable />
-          </AdminRoute>
-        }
-      />
+      <Route path="/admin/students" element={<AdminRoute> <StudentTable /> </AdminRoute>} />
 
-      <Route
-        path="/admin/appointments"
-        element={
-          <AdminRoute>
-            <AdminAppointmentsTable /> 
-          </AdminRoute>
-        }
-      />
+      <Route path="/admin/appointments" element={<AdminRoute>  <AdminAppointmentsTable /> </AdminRoute>} />
+
+      <Route path="/admin/entries" element={<AdminRoute>  <AdminEntryPanel /> </AdminRoute>} />
 
       {/* 404 Page */}
       <Route

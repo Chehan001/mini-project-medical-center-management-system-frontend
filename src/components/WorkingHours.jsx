@@ -51,7 +51,7 @@ const WorkingHours = () => {
   if (loading) {
     return (
       <Paper
-        elevation={4}      
+        elevation={4}
         sx={{
           ...PaperStyles,
           background: "linear-gradient(135deg, #6dcdb8, #3b8d7e)",
@@ -60,7 +60,7 @@ const WorkingHours = () => {
       >
         <Typography
           variant="h6"
-          sx={{ display: "flex", alignItems: "center", color: "#f0f0f0" }}
+          sx={{ display: "flex", alignItems: "center", color: "#f0f0f0" }}z
         >
           <AccessTimeIcon sx={{ mr: 1 }} /> Working Hours
         </Typography>
@@ -118,8 +118,8 @@ const WorkingHours = () => {
                 today === day
                   ? "#00796b"
                   : time === "Closed"
-                  ? "#c62828"
-                  : "#2c2c2c",
+                    ? "#c62828"
+                    : "#2c2c2c",
             }}
           >
             <Typography sx={{ fontWeight: today === day ? "bold" : "normal" }}>
