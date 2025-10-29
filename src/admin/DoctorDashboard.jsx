@@ -14,7 +14,7 @@ import {
 import { motion } from "framer-motion";
 import axios from "axios";
 import { Heart, Activity, User, Stethoscope } from "lucide-react";
-import AdminNavBar from "./AdminNavBar";
+import DoctorNavBar from "./DoctorNavBar";
 
 const DoctorDashboard = () => {
   const [regNumber, setRegNumber] = useState("");
@@ -77,7 +77,7 @@ const DoctorDashboard = () => {
       </style>
 
       <Box sx={{ mb: 4 }}>
-        <AdminNavBar />
+        <DoctorNavBar />
       </Box>
 
       {/* Main Card */}
