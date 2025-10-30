@@ -25,8 +25,8 @@ const DoctorNavBar = () => {
   const toggleDrawer = (open) => () => setDrawerOpen(open);
 
   const navItems = [
-    { text: "Student Medicine", path: "/doctor/studentmedicine" },
-    { text: "Student Medical", path: "/doctor/studentmedical" },
+    { text: "Student Medicine", path: "/student-medicine" },
+    { text: "Student Medical", path: "/student-medical" },
   ];
 
   return (
