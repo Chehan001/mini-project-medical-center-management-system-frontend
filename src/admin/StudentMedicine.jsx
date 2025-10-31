@@ -12,6 +12,7 @@ import {
   IconButton,
   Grid,
   Autocomplete,
+  CircularProgress,
 } from "@mui/material";
 import { User, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -80,6 +81,7 @@ const StudentMedicine = () => {
   ]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Auto-fill_date_and_time
   useEffect(() => {
@@ -112,35 +114,95 @@ const StudentMedicine = () => {
     e.preventDefault();
     setError("");
     setMessage("");
+    setLoading(true);
 
+    // Frontend validation
     if (!registerNumber.trim()) {
       setError("Please enter student register number.");
+      setLoading(false);
       return;
     }
+
     if (medicines.some((m) => !m.medicineName || !m.dosage || !m.frequency)) {
       setError("Please fill in all medicine fields before submitting.");
+      setLoading(false);
       return;
+    }
+
+    // Validate dosage and frequency are positive numbers
+    for (let i = 0; i < medicines.length; i++) {
+      if (parseInt(medicines[i].dosage) <= 0) {
+        setError(`Medicine ${i + 1}: Dosage must be greater than 0`);
+        setLoading(false);
+        return;
+      }
+      if (parseInt(medicines[i].frequency) <= 0) {
+        setError(`Medicine ${i + 1}: Frequency must be greater than 0`);
+        setLoading(false);
+        return;
+      }
     }
 
     try {
+      // Updated API endpoint to match new route
       const response = await axios.post(
-        "http://localhost:5000/api/doctor/add-medicine",
-        { regNumber: registerNumber, date, time, medicines }
+        "http://localhost:8000/api/student-medicines/add-medicine",
+        {
+          regNumber: registerNumber.toUpperCase(),
+          date,
+          time,
+          medicines,
+        }
       );
 
-      setMessage(response.data.message || "Medicine record added successfully!");
+      setMessage(
+        response.data.message || "Medicine record added successfully!"
+      );
+
+      // Reset form
       setRegisterNumber("");
-      setMedicines([{ id: 1, medicineName: "", dosage: "", frequency: "", timing: "morning" }]);
+      setMedicines([
+        { id: 1, medicineName: "", dosage: "", frequency: "", timing: "morning" },
+      ]);
+
+      // Auto-clear success message after 5 seconds
+      setTimeout(() => {
+        setMessage("");
+      }, 5000);
     } catch (err) {
       console.error("Error adding medicine:", err);
-      setError(err.response?.data?.message || "Error adding medicine record. Please try again.");
+
+      // Handle different error types
+      if (err.response) {
+        // Server responded with error
+        setError(
+          err.response.data.message ||
+            "Error adding medicine record. Please try again."
+        );
+      } else if (err.request) {
+        // Request made but no response
+        setError(
+          "Unable to connect to the server. Please check your connection."
+        );
+      } else {
+        // Something else happened
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Box
       sx={{
-        background: "linear-gradient(135deg, #b3f3d9 0%, #e0fff3 50%, #d4f9e6 100%)",  minHeight: "100vh", py: 6, px: 2, }} >
+        background:
+          "linear-gradient(135deg, #b3f3d9 0%, #e0fff3 50%, #d4f9e6 100%)",
+        minHeight: "100vh",
+        py: 6,
+        px: 2,
+      }}
+    >
       <Paper
         elevation={10}
         sx={{
@@ -157,45 +219,97 @@ const StudentMedicine = () => {
           <motion.img
             src="/medicare_logo.png"
             alt="University Logo"
-            style={{ height: "85px", objectFit: "contain", marginBottom: "10px" }}
+            style={{
+              height: "85px",
+              objectFit: "contain",
+              marginBottom: "10px",
+            }}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.7 }}
           />
-          <Divider sx={{ mt: 1, borderColor: "#13a67a",  borderBottomWidth: 2, width: "65%",  mx: "auto",  }}  />
+          <Divider
+            sx={{
+              mt: 1,
+              borderColor: "#13a67a",
+              borderBottomWidth: 2,
+              width: "65%",
+              mx: "auto",
+            }}
+          />
         </Box>
 
         {/* Title */}
-        <Typography variant="h4" fontWeight="bold" color="#065a45"  textAlign="center" mb={1} >
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          color="#065a45"
+          textAlign="center"
+          mb={1}
+        >
           Student Medicine Record
         </Typography>
-        <Typography variant="body1" color="text.secondary"  textAlign="center"  mb={4}  >
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          textAlign="center"
+          mb={4}
+        >
           Quickly record and submit prescribed medicines for students.
         </Typography>
 
         {/* Alerts */}
-        {message && <Alert severity="success" sx={{ mb: 3 }}>{message}</Alert>}
-        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+        {message && (
+          <Alert severity="success" sx={{ mb: 3 }}>
+            {message}
+          </Alert>
+        )}
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
-                <TextField label="Register Number" value={registerNumber} onChange={(e) => setRegisterNumber(e.target.value)}  fullWidth
+                <TextField
+                  label="Register Number"
+                  value={registerNumber}
+                  onChange={(e) =>
+                    setRegisterNumber(e.target.value.toUpperCase())
+                  }
+                  fullWidth
                   required
+                  disabled={loading}
                   InputProps={{
                     startAdornment: (
-                      <User size={18} style={{ marginRight: 8, color: "#0a5443" }} />
+                      <User
+                        size={18}
+                        style={{ marginRight: 8, color: "#0a5443" }}
+                      />
                     ),
                   }}
                 />
               </Grid>
+
               <Grid item xs={12} sm={4}>
-                <TextField label="Date" value={date} fullWidth InputProps={{ readOnly: true }} />
+                <TextField
+                  label="Date"
+                  value={date}
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField label="Time" value={time} fullWidth InputProps={{ readOnly: true }} />
+                <TextField
+                  label="Time"
+                  value={time}
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
               </Grid>
             </Grid>
 
@@ -210,10 +324,14 @@ const StudentMedicine = () => {
                 startIcon={<Plus size={18} />}
                 onClick={addMedicine}
                 variant="contained"
+                disabled={loading}
                 sx={{
                   borderRadius: "20px",
                   background: "linear-gradient(90deg, #0a5443, #1ca37f)",
-                  "&:hover": { background: "#09856e", transform: "scale(1.05)" },
+                  "&:hover": {
+                    background: "#09856e",
+                    transform: "scale(1.05)",
+                  },
                   textTransform: "none",
                   transition: "all 0.3s",
                 }}
@@ -244,12 +362,22 @@ const StudentMedicine = () => {
                     },
                   }}
                 >
-                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={2}
+                  >
                     <Typography fontWeight="bold" color="#0a5443">
                       Medicine {index + 1}
                     </Typography>
                     {medicines.length > 1 && (
-                      <IconButton onClick={() => removeMedicine(m.id)} color="error" size="small">
+                      <IconButton
+                        onClick={() => removeMedicine(m.id)}
+                        color="error"
+                        size="small"
+                        disabled={loading}
+                      >
                         <Trash2 size={20} />
                       </IconButton>
                     )}
@@ -261,19 +389,22 @@ const StudentMedicine = () => {
                         freeSolo
                         options={medicineList.filter(
                           (med) =>
-                            med.toLowerCase().includes(m.medicineName.toLowerCase()) &&
+                            med
+                              .toLowerCase()
+                              .includes(m.medicineName.toLowerCase()) &&
                             m.medicineName.length >= 1
                         )}
                         value={m.medicineName}
                         onInputChange={(e, newValue) =>
                           handleMedicineChange(m.id, "medicineName", newValue)
                         }
+                        disabled={loading}
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             label="Medicine Name"
                             required
-                            sx={{ width: 270, }}
+                            sx={{ width: 270 }}
                           />
                         )}
                       />
@@ -284,10 +415,13 @@ const StudentMedicine = () => {
                         label="Dosage (mg)"
                         type="number"
                         value={m.dosage}
-                        onChange={(e) => handleMedicineChange(m.id, "dosage", e.target.value)}
+                        onChange={(e) =>
+                          handleMedicineChange(m.id, "dosage", e.target.value)
+                        }
                         fullWidth
                         required
-
+                        disabled={loading}
+                        inputProps={{ min: 1 }}
                       />
                     </Grid>
                     <Grid item xs={6} sm={3.5}>
@@ -298,8 +432,10 @@ const StudentMedicine = () => {
                         onChange={(e) =>
                           handleMedicineChange(m.id, "frequency", e.target.value)
                         }
-                        fullWidth
+                        sx={{ width: 200, }}
                         required
+                        disabled={loading}
+                        inputProps={{ min: 1, max: 10 }}
                       />
                     </Grid>
                   </Grid>
@@ -307,26 +443,35 @@ const StudentMedicine = () => {
                   <Divider sx={{ my: 2 }} />
 
                   <Grid item xs={12}>
-                    <Typography variant="subtitle2" sx={{ mb: 1 }} color="#065a45">
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ mb: 1 }}
+                      color="#065a45"
+                    >
                       Timing
                     </Typography>
                     <Stack direction="row" spacing={2}>
                       {["morning", "night", "both"].map((t) => (
                         <Box
                           key={t}
-                          onClick={() => handleMedicineChange(m.id, "timing", t)}
+                          onClick={() =>
+                            !loading && handleMedicineChange(m.id, "timing", t)
+                          }
                           sx={{
                             px: 2.5,
                             py: 0.8,
                             borderRadius: 2,
-                            cursor: "pointer",
+                            cursor: loading ? "not-allowed" : "pointer",
                             fontWeight: "bold",
-                            backgroundColor: m.timing === t ? "#0a5443" : "#e0f2f1",
+                            backgroundColor:
+                              m.timing === t ? "#0a5443" : "#e0f2f1",
                             color: m.timing === t ? "#fff" : "#0a5443",
                             transition: "all 0.3s ease",
+                            opacity: loading ? 0.6 : 1,
                             "&:hover": {
-                              transform: "scale(1.05)",
-                              backgroundColor: m.timing === t ? "#0a5443" : "#c8e6c9",
+                              transform: loading ? "none" : "scale(1.05)",
+                              backgroundColor:
+                                m.timing === t ? "#0a5443" : "#c8e6c9",
                             },
                           }}
                         >
@@ -344,19 +489,42 @@ const StudentMedicine = () => {
               type="submit"
               variant="contained"
               fullWidth
+              disabled={loading}
               sx={{
                 borderRadius: "25px",
                 py: 1.6,
                 fontSize: "1.1rem",
                 fontWeight: "bold",
                 background: "linear-gradient(90deg, #0a5443, #13a67a)",
-                "&:hover": { background: "#09856e", transform: "scale(1.03)" },
+                "&:hover": {
+                  background: "#09856e",
+                  transform: "scale(1.03)",
+                },
+                "&:disabled": {
+                  background: "#ccc",
+                },
                 transition: "all 0.3s",
               }}
             >
-              Submit All Medicines
+              {loading ? (
+                <>
+                  <CircularProgress size={24} sx={{ mr: 1, color: "#fff" }} />
+                  Submitting...
+                </>
+              ) : (
+                "Submit All Medicines"
+              )}
             </Button>
           </Stack>
+
+          {/* Footer */}
+          <Typography
+            variant="body2"
+            align="center"
+            sx={{ mt: 3, color: "text.secondary" }}
+          >
+            © MediCare | Student Medicine Record | Sabaragamuwa University
+          </Typography>
         </form>
       </Paper>
     </Box>
