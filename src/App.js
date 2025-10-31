@@ -58,14 +58,7 @@ const App = () => (
       <Route path="/appointment-booking" element={<AppointmentBooking />} />
 
       {/* Student_Protected_Route */}
-      <Route
-        path="/personal-data"
-        element={
-          <ProtectedRoute>
-            <UserProfil />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/personal-data" element={ <ProtectedRoute> <UserProfil />  </ProtectedRoute> } />
 
       {/* Doctor & Admin Shared Routes */}
       <Route path="/doctor-dashboard" element = {  <DoctorRoute>  <DoctorDashboard /> </DoctorRoute> } />
