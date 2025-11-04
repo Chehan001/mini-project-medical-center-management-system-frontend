@@ -21,12 +21,12 @@ const AdminDashboard = () => {
         overflow: "hidden",
       }}
     >
-      {/* Navbar fixed at top */}
+      {/* Navbar */}
       <Box sx={{ position: "absolute", top: 0, width: "100%" }}>
         <AdminNavBar />
       </Box>
 
-      {/* Central welcome card */}
+      {/* Central Welcome Card */}
       <Paper
         elevation={10}
         sx={{
@@ -58,16 +58,12 @@ const AdminDashboard = () => {
 
         <Typography
           variant="h6"
-          sx={{
-            color: "#1f8f7e",
-            fontWeight: 500,
-            mb: 4,
-          }}
+          sx={{ color: "#1f8f7e", fontWeight: 500, mb: 4 }}
         >
           Manage Students, Doctors, and Medicine Records with Ease.
         </Typography>
 
-        {/* Action Buttons */}
+        {/* Buttons */}
         <Box sx={{ display: "flex", gap: 3, justifyContent: "center", flexWrap: "wrap" }}>
           <Button
             variant="contained"
@@ -97,7 +93,7 @@ const AdminDashboard = () => {
             variant="contained"
             size="large"
             startIcon={<MedicationIcon />}
-            onClick={() => navigate("/medicine-stock")}
+            onClick={() => navigate("/admin/medicine")}
             sx={{
               background: "linear-gradient(135deg, #26a69a, #00897b)",
               color: "white",

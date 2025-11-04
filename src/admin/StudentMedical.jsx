@@ -13,8 +13,11 @@ import {
   FormControl,
   FormLabel,
   Divider,
+  Grid,
+  CircularProgress,
 } from "@mui/material";
 import { motion } from "framer-motion";
+import { User, Search } from "lucide-react";
 import axios from "axios";
 
 const StudentMedical = () => {
@@ -28,6 +31,7 @@ const StudentMedical = () => {
   const [notes, setNotes] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -35,15 +39,24 @@ const StudentMedical = () => {
     setSearchResult(null);
     setMessage("");
     setError("");
+    setLoading(true);
 
     try {
-      const res = await axios.get("http://localhost:5000/api/doctor/search-treatment", {
-        params: { regNumber: searchRegNumber, date: searchDate },
-      });
+      const res = await axios.get(
+        "http://localhost:5000/api/doctor/search-treatment",
+        {
+          params: { regNumber: searchRegNumber, date: searchDate },
+        }
+      );
       setSearchResult(res.data);
     } catch (err) {
       console.error(err);
-      setSearchError(err.response?.data?.message || "No treatment record found for this date.");
+      setSearchError(
+        err.response?.data?.message ||
+          "No treatment record found for this date."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,9 +64,11 @@ const StudentMedical = () => {
     e.preventDefault();
     setError("");
     setMessage("");
+    setLoading(true);
 
     if (!medicalGiven) {
       setError("Please select whether medical was given or not.");
+      setLoading(false);
       return;
     }
 
@@ -65,8 +80,8 @@ const StudentMedical = () => {
         diagnosis: medicalGiven === "yes" ? diagnosis : "",
         notes: medicalGiven === "yes" ? notes : "No medical treatment given",
       });
-      setMessage(res.data.message || "Medical record added successfully!");
 
+      setMessage(res.data.message || "Medical record added successfully!");
       setMedicalGiven("");
       setDiagnosis("");
       setNotes("");
@@ -74,31 +89,33 @@ const StudentMedical = () => {
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Error adding medical record.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Box
       sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        background:
+          "linear-gradient(135deg, #b3f3d9 0%, #e0fff3 50%, #d4f9e6 100%)",
         minHeight: "100vh",
-        background: "linear-gradient(to bottom right, #a1f0d1, #c6f8e3)",
-        py: 5,
+        py: 6,
+        px: 2,
       }}
     >
       <Paper
-        elevation={6}
+        elevation={10}
         sx={{
-          p: 4,
-          width: { xs: "90%", sm: 500 },
+          maxWidth: 600,
+          mx: "auto",
+          p: 5,
           borderRadius: 4,
-          background: "white",
-          boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
+          background: "linear-gradient(to bottom right, #ffffff, #eafcf4)",
+          boxShadow: "0 10px 40px rgba(0,0,0,0.15)",
         }}
       >
-        {/* 🩺 Logo Section */}
+        {/* Logo */}
         <Box textAlign="center" mb={4}>
           <motion.img
             src="/medicare_logo.png"
@@ -115,7 +132,7 @@ const StudentMedical = () => {
           <Divider
             sx={{
               mt: 1,
-              borderColor: "#0a5443",
+              borderColor: "#13a67a",
               borderBottomWidth: 2,
               width: "70%",
               mx: "auto",
@@ -124,56 +141,110 @@ const StudentMedical = () => {
         </Box>
 
         <Typography
-          variant="h5"
+          variant="h4"
           fontWeight="bold"
-          mb={3}
           textAlign="center"
-          sx={{ color: "#0a5443" }}
+          mb={1}
+          sx={{ color: "#065a45" }}
         >
-          Student Medical Record System
+          Student Medical Record
+        </Typography>
+        <Typography
+          variant="body1"
+          textAlign="center"
+          mb={4}
+          color="text.secondary"
+        >
+          Search and record student medical details efficiently.
         </Typography>
 
-        {/*  Search Section */}
-        <form onSubmit={handleSearch}>
-          <Stack spacing={2} mb={3}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              Search Treatment Record
-            </Typography>
-            <TextField
-              label="Register Number"
-              value={searchRegNumber}
-              onChange={(e) => setSearchRegNumber(e.target.value)}
-              required
-              size="small"
-            />
-            <TextField
-              label="Treatment Date"
-              type="date"
-              value={searchDate}
-              onChange={(e) => setSearchDate(e.target.value)}
-              required
-              size="small"
-              InputLabelProps={{ shrink: true }}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                background: "#0a5443",
-                "&:hover": { background: "#09856e" },
-                textTransform: "none",
-                borderRadius: 2,
-              }}
-            >
-              Search
-            </Button>
-            {searchError && <Alert severity="warning">{searchError}</Alert>}
-          </Stack>
-        </form>
+        {/* Alerts */}
+        {message && <Alert severity="success" sx={{ mb: 3 }}>{message}</Alert>}
+        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+        {searchError && <Alert severity="warning" sx={{ mb: 3 }}>{searchError}</Alert>}
 
-        {/*  Search Results & Medical Record */}
+        {/* Search Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <form onSubmit={handleSearch}>
+            <Stack spacing={2} mb={3}>
+              <Typography variant="subtitle1" fontWeight="bold" color="#065a45">
+                Search Treatment Record
+              </Typography>
+
+              <Grid container spacing={6}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Register Number"
+                    value={searchRegNumber}
+                    onChange={(e) => setSearchRegNumber(e.target.value.toUpperCase())}
+                    required
+                    fullWidth
+                    disabled={loading}
+                    InputProps={{
+                      startAdornment: (
+                        <User
+                          size={18}
+                          style={{ marginRight: 8, color: "#0a5443" }}
+                        />
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={14} sm={6}>
+                  <TextField
+                    label="Treatment Date"
+                    type="date"
+                    value={searchDate}
+                    onChange={(e) => setSearchDate(e.target.value)}
+                    required
+                    fullWidth
+                    disabled={loading}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+              </Grid>
+
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={loading}
+                startIcon={<Search size={18} />}
+                sx={{
+                  py: 1.2,
+                  borderRadius: "25px",
+                  background: "linear-gradient(90deg, #0a5443, #13a67a)",
+                  fontWeight: "bold",
+                  "&:hover": { background: "#09856e", transform: "scale(1.03)" },
+                  "&:disabled": { background: "#ccc" },
+                  transition: "all 0.3s ease",
+                }}
+              >
+                {loading ? (
+                  <>
+                    <CircularProgress size={22} sx={{ color: "#fff", mr: 1 }} />
+                    Searching...
+                  </>
+                ) : (
+                  "Search Record"
+                )}
+              </Button>
+            </Stack>
+          </form>
+        </motion.div>
+
+        {/* Medical Record Section */}
         {searchResult && (
-          <>
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <Divider sx={{ my: 3 }} />
             <Alert severity="info" sx={{ mb: 3 }}>
               {searchResult.found
@@ -181,21 +252,31 @@ const StudentMedical = () => {
                 : `No treatment record found for ${searchRegNumber} on ${searchDate}`}
             </Alert>
 
-            {/*  Medical Record Form */}
             <form onSubmit={handleSubmit}>
-              <Stack spacing={2}>
-                <Typography variant="subtitle1" fontWeight="bold">
+              <Stack spacing={3}>
+                <Typography variant="subtitle1" fontWeight="bold" color="#065a45">
                   Add Medical Record
                 </Typography>
 
                 <FormControl component="fieldset" required>
-                  <FormLabel component="legend">Was Medical Given?</FormLabel>
+                  <FormLabel component="legend" sx={{ color: "#0a5443" }}>
+                    Was Medical Given?
+                  </FormLabel>
                   <RadioGroup
                     value={medicalGiven}
                     onChange={(e) => setMedicalGiven(e.target.value)}
+                    row
                   >
-                    <FormControlLabel value="yes" control={<Radio />} label="Yes - Medical Given" />
-                    <FormControlLabel value="no" control={<Radio />} label="No - Medical Not Given" />
+                    <FormControlLabel
+                      value="yes"
+                      control={<Radio color="success" />}
+                      label="Yes - Medical Given"
+                    />
+                    <FormControlLabel
+                      value="no"
+                      control={<Radio color="error" />}
+                      label="No - Not Given"
+                    />
                   </RadioGroup>
                 </FormControl>
 
@@ -207,6 +288,7 @@ const StudentMedical = () => {
                       onChange={(e) => setDiagnosis(e.target.value)}
                       required
                       size="small"
+                      fullWidth
                     />
                     <TextField
                       label="Notes"
@@ -215,6 +297,7 @@ const StudentMedical = () => {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       size="small"
+                      fullWidth
                     />
                   </>
                 )}
@@ -222,22 +305,46 @@ const StudentMedical = () => {
                 <Button
                   type="submit"
                   variant="contained"
+                  disabled={loading}
+                  fullWidth
                   sx={{
-                    background: "#0a5443",
-                    "&:hover": { background: "#09856e" },
-                    textTransform: "none",
-                    borderRadius: 2,
+                    borderRadius: "25px",
+                    py: 1.3,
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    background: "linear-gradient(90deg, #0a5443, #13a67a)",
+                    "&:hover": {
+                      background: "#09856e",
+                      transform: "scale(1.03)",
+                    },
+                    "&:disabled": {
+                      background: "#ccc",
+                    },
+                    transition: "all 0.3s ease",
                   }}
                 >
-                  Submit Medical Record
+                  {loading ? (
+                    <>
+                      <CircularProgress size={24} sx={{ mr: 1, color: "#fff" }} />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit Medical Record"
+                  )}
                 </Button>
-
-                {message && <Alert severity="success">{message}</Alert>}
-                {error && <Alert severity="error">{error}</Alert>}
               </Stack>
             </form>
-          </>
+          </motion.div>
         )}
+
+        {/* Footer */}
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ mt: 4, color: "text.secondary" }}
+        >
+          © MediCare | Student Medical Record | Sabaragamuwa University
+        </Typography>
       </Paper>
     </Box>
   );

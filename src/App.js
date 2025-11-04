@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-// User_Components
+// User Components
 import HomePage from "./components/HomePage";
 import LoginRegister from "./components/LoginRegister";
 import UserProfil from "./components/UserProfil";
@@ -11,7 +11,7 @@ import Channel from "./components/Channel";
 import RegistrationForm from "./components/RegistrationForm";
 import AppointmentBooking from "./components/AppointmentBooking";
 
-// Admin_Components
+// Admin Components
 import AdminLogin from "./admin/AdminLogin";
 import AdminDashboard from "./admin/AdminDashboard";
 import HomeContent from "./admin/HomeContent";
@@ -19,11 +19,11 @@ import StudentTable from "./admin/StudentTable";
 import AdminAppointmentsTable from "./admin/AdminAppointmentsTable";
 import AdminEntryPanel from "./admin/AdminEntryPanel";
 import DoctorDashboard from "./admin/DoctorDashboard";
-import MedicineStock from "./admin/MedicineStock";
 import StudentMedicine from "./admin/StudentMedicine";
 import StudentMedical from "./admin/StudentMedical";
+import MedicineStockSystem from "./admin/medicine/MedicineStockSystem";
 
-// Protected_Routes
+// Route Guards
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" replace />;
@@ -48,7 +48,7 @@ const DoctorRoute = ({ children }) => {
 const App = () => (
   <Router>
     <Routes>
-      {/* Public_User_Routes */}
+      {/* Public User Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<About />} />
       <Route path="/channel" element={<Channel />} />
@@ -57,24 +57,26 @@ const App = () => (
       <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
       <Route path="/appointment-booking" element={<AppointmentBooking />} />
 
-      {/* Student_Protected_Route */}
-      <Route path="/personal-data" element={ <ProtectedRoute> <UserProfil />  </ProtectedRoute> } />
+      {/* Student Protected */}
+      <Route path="/personal-data" element={<ProtectedRoute><UserProfil /></ProtectedRoute>} />
 
-      {/* Doctor & Admin Shared Routes */}
-      <Route path="/doctor-dashboard" element = {  <DoctorRoute>  <DoctorDashboard /> </DoctorRoute> } />
-      <Route path="/medicine-stock" element = { <DoctorRoute>  <MedicineStock /> </DoctorRoute> } />
-      <Route path="/student-medicine" element = { <DoctorRoute>  <StudentMedicine /> </DoctorRoute> } />
-      <Route path="/student-medical" element = { <DoctorRoute> <StudentMedical /> </DoctorRoute> } />
+      {/* Doctor/Admin Routes */}
+      <Route path="/doctor-dashboard" element={<DoctorRoute><DoctorDashboard /></DoctorRoute>} />
+      <Route path="/student-medicine" element={<DoctorRoute><StudentMedicine /></DoctorRoute>} />
+      <Route path="/student-medical" element={<DoctorRoute><StudentMedical /></DoctorRoute>} />
 
       {/* Admin Routes */}
-      <Route path="/admin-login" element={ <AdminLogin />} />
-      <Route path="/admin/dashboard" element={ <AdminRoute> <AdminDashboard /> </AdminRoute> } />
-      <Route path="/admin/home-content" element={ <AdminRoute> <HomeContent /> </AdminRoute> } />
-      <Route path="/admin/students" element={ <AdminRoute> <StudentTable /> </AdminRoute> }/>
-      <Route path="/admin/appointments" element={ <AdminRoute> <AdminAppointmentsTable /> </AdminRoute>} />
-      <Route path="/admin/entries" element={ <AdminRoute> <AdminEntryPanel /> </AdminRoute>  } />
+      <Route path="/admin-login" element={<AdminLogin />} />
+      <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/home-content" element={<AdminRoute><HomeContent /></AdminRoute>} />
+      <Route path="/admin/students" element={<AdminRoute><StudentTable /></AdminRoute>} />
+      <Route path="/admin/appointments" element={<AdminRoute><AdminAppointmentsTable /></AdminRoute>} />
+      <Route path="/admin/entries" element={<AdminRoute><AdminEntryPanel /></AdminRoute>} />
 
-      {/* 404 Page */}
+      {/* Medicine Stock (Nested) */}
+      <Route path="/admin/medicine/*" element={<AdminRoute><MedicineStockSystem /></AdminRoute>} />
+
+      {/* 404 */}
       <Route
         path="*"
         element={
