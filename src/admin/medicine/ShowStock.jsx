@@ -1,44 +1,251 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  Paper,
+  Typography,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  CircularProgress,
+  Box,
+  TableContainer,
+  Divider,
+  Fade,
+} from "@mui/material";
+import { motion } from "framer-motion";
 
 const ShowStock = () => {
   const [stock, setStock] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const sampleStock = [
-      { name: "Paracetamol", quantity: 120, expiry: "2025-10-10" },
-      { name: "Amoxicillin", quantity: 75, expiry: "2025-06-22" },
-      { name: "Ibuprofen", quantity: 60, expiry: "2026-02-12" },
-    ];
-    setStock(sampleStock);
+    const fetchStock = async () => {
+      try {
+
+        const sampleStock = [
+          { name: "Paracetamol", quantity: 120, expiry: "2025-10-10" },
+          { name: "Amoxicillin", quantity: 75, expiry: "2025-06-22" },
+          { name: "Ibuprofen", quantity: 60, expiry: "2026-02-12" },
+          { name: "Azithromycin", quantity: 40, expiry: "2025-12-05" },
+        ];
+        setStock(sampleStock);
+      } catch (err) {
+        console.error("Error fetching stock data:", err);
+        setError("Failed to load stock data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStock();
   }, []);
 
+  // Loading State
+  if (loading)
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="80vh"
+      >
+        <CircularProgress color="success" size={60} />
+        <Typography sx={{ mt: 2, color: "text.secondary" }}>
+          Loading stock details...
+        </Typography>
+      </Box>
+    );
+
+  // Error State
+  if (error)
+    return (
+      <Typography color="error" align="center" sx={{ mt: 4, fontWeight: 500 }}>
+        {error}
+      </Typography>
+    );
+
+  // No Data State
+  if (!stock.length)
+    return (
+      <Typography
+        variant="body1"
+        sx={{ mt: 3, textAlign: "center", color: "text.secondary" }}
+      >
+        No stock data available.
+      </Typography>
+    );
+
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-6">
-      <div className="bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Stock Details</h2>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-emerald-600 text-white">
-              <th className="p-3 text-left">Medicine Name</th>
-              <th className="p-3 text-left">Quantity</th>
-              <th className="p-3 text-left">Expiry Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stock.map((item, i) => (
-              <tr
-                key={i}
-                className="border-b hover:bg-gray-50 transition duration-200"
-              >
-                <td className="p-3">{item.name}</td>
-                <td className="p-3">{item.quantity}</td>
-                <td className="p-3">{item.expiry}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(-45deg, #b3f3d9, #d4f9e6, #c8f5e2, #a9e0cb)",
+        backgroundSize: "400% 400%",
+        animation: "gradientShift 15s ease infinite",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        py: 6,
+        px: 2,
+      }}
+    >
+      <style>
+        {`
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        `}
+      </style>
+
+      <Fade in timeout={1000}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+        >
+          <Paper
+            elevation={8}
+            sx={{
+              width: "95%",
+              maxWidth: 1000,
+              borderRadius: 4,
+              p: { xs: 3, md: 5 },
+              backgroundColor: "rgba(255, 255, 255, 0.95)",
+              backdropFilter: "blur(10px)",
+              boxShadow: "0px 8px 25px rgba(0,0,0,0.1)",
+              transition: "all 0.3s ease",
+              "&:hover": { boxShadow: "0px 12px 30px rgba(0,0,0,0.15)" },
+            }}
+          >
+            {/* LOGO */}
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+              <img
+                src="/medicare_logo.png"
+                alt="MediCare Logo"
+                style={{ height: "70px", objectFit: "contain" }}
+              />
+            </Box>
+
+            {/* TITLE */}
+            <Typography
+              variant="h5"
+              align="center"
+              sx={{
+                fontWeight: "bold",
+                color: "#007B5E",
+                letterSpacing: 1,
+                mb: 1,
+                textTransform: "uppercase",
+              }}
+            >
+              Medicine Stock Details
+            </Typography>
+
+            <Divider
+              sx={{
+                width: 200,
+                mx: "auto",
+                mb: 3,
+                borderBottomWidth: 3,
+                borderColor: "#80e4be",
+                borderRadius: 5,
+              }}
+            />
+
+            {/* TABLE */}
+            <TableContainer
+              sx={{
+                borderRadius: 3,
+                overflow: "hidden",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+              }}
+            >
+              <Table>
+                <TableHead
+                  sx={{
+                    background: "linear-gradient(to right, #80e4be, #a9e0cb)",
+                  }}
+                >
+                  <TableRow>
+                    {["Medicine Name", "Quantity", "Expiry Date"].map(
+                      (header) => (
+                        <TableCell
+                          key={header}
+                          sx={{
+                            color: "#004d40",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                            fontSize: "0.95rem",
+                          }}
+                        >
+                          {header}
+                        </TableCell>
+                      )
+                    )}
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {stock.map((item, index) => (
+                    <TableRow
+                      key={index}
+                      component={motion.tr}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "rgba(128, 224, 190, 0.15)",
+                          transition: "0.3s",
+                          transform: "scale(1.01)",
+                        },
+                        backgroundColor:
+                          index % 2 === 0
+                            ? "rgba(255,255,255,0.9)"
+                            : "rgba(245,255,250,0.7)",
+                      }}
+                    >
+                      <TableCell align="center" sx={{ fontWeight: 500 }}>
+                        {item.name}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 600,
+                          color:
+                            item.quantity < 50
+                              ? "error.main"
+                              : "success.main",
+                        }}
+                      >
+                        {item.quantity}
+                      </TableCell>
+                      <TableCell align="center">{item.expiry}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {/* FOOTER */}
+            <Typography
+              variant="body2"
+              align="center"
+              sx={{ mt: 3, color: "text.secondary" }}
+            >
+              © 2025 MediCare Admin Portal | Sabaragamuwa University
+            </Typography>
+          </Paper>
+        </motion.div>
+      </Fade>
+    </Box>
   );
 };
 
