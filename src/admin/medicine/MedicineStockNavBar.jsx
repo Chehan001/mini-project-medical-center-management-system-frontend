@@ -172,7 +172,7 @@ const MedicineStockNavBar = () => {
               </Drawer>
             </>
           ) : (
-            /* Desktop Navigation */
+
             <Box>
               {navItems.map((item) => (
                 <Button

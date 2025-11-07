@@ -1,3 +1,4 @@
+// client/src/components/StudentMedicine.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -17,59 +18,22 @@ import {
 import { User, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-// Medicine_List
+// Medicine_List (same as before)
 const medicineList = [
-  "Paracetamol",
-  "Ibuprofen",
-  "Aspirin",
-  "Diclofenac sodium",
-  "Naproxen",
-  "Amoxicillin",
-  "Azithromycin",
-  "Ciprofloxacin",
-  "Metronidazole",
-  "Cefuroxime",
-  "Doxycycline",
-  "Cetirizine",
-  "Loratadine",
-  "Chlorpheniramine maleate",
-  "Diphenhydramine",
-  "Pantoprazole",
-  "Ranitidine",
-  "Antacid syrup",
-  "Loperamide",
-  "Oral Rehydration Salts",
-  "Domperidone",
-  "Metoclopramide",
-  "Povidone-iodine solution",
-  "Hydrogen peroxide",
-  "Alcohol (70% isopropyl)",
-  "Chlorhexidine",
-  "Hand sanitizer",
-  "Dextromethorphan syrup",
-  "Guaifenesin syrup",
-  "Salbutamol inhaler",
-  "Steam inhalation preparations",
-  "Burn cream (Silver sulfadiazine)",
-  "Antifungal cream (Clotrimazole, Miconazole)",
-  "Hydrocortisone cream",
-  "Antibiotic ointment (Neomycin, Bacitracin)",
-  "Calamine lotion",
-  "Multivitamin tablets",
-  "Vitamin C",
-  "Iron & Folic acid tablets",
-  "Calcium supplements",
-  "Adrenaline injection",
-  "Hydrocortisone injection",
-  "Atropine",
-  "Diazepam injection",
-  "Glucose IV solution (5%)",
-  "Normal saline IV solution (0.9%)",
-  "Oral contraceptive pills",
-  "Antifungal tablets (Fluconazole)",
-  "Antimalarial drugs (Chloroquine / Artemether-Lumefantrine)",
-  "Blood pressure medication (Amlodipine, Losartan)",
-  "Diabetes medication (Metformin, Glibenclamide)",
+  "Paracetamol", "Ibuprofen", "Aspirin", "Diclofenac sodium", "Naproxen",
+  "Amoxicillin", "Azithromycin", "Ciprofloxacin", "Metronidazole", "Cefuroxime",
+  "Doxycycline", "Cetirizine", "Loratadine", "Chlorpheniramine maleate",
+  "Diphenhydramine", "Pantoprazole", "Ranitidine", "Antacid syrup", "Loperamide",
+  "Oral Rehydration Salts", "Domperidone", "Metoclopramide", "Povidone-iodine solution",
+  "Hydrogen peroxide", "Alcohol (70% isopropyl)", "Chlorhexidine", "Hand sanitizer",
+  "Dextromethorphan syrup", "Guaifenesin syrup", "Salbutamol inhaler", "Steam inhalation preparations",
+  "Burn cream (Silver sulfadiazine)", "Antifungal cream (Clotrimazole, Miconazole)",
+  "Hydrocortisone cream", "Antibiotic ointment (Neomycin, Bacitracin)", "Calamine lotion",
+  "Multivitamin tablets", "Vitamin C", "Iron & Folic acid tablets", "Calcium supplements",
+  "Adrenaline injection", "Hydrocortisone injection", "Atropine", "Diazepam injection",
+  "Glucose IV solution (5%)", "Normal saline IV solution (0.9%)", "Oral contraceptive pills",
+  "Antifungal tablets (Fluconazole)", "Antimalarial drugs (Chloroquine / Artemether-Lumefantrine)",
+  "Blood pressure medication (Amlodipine, Losartan)", "Diabetes medication (Metformin, Glibenclamide)",
 ];
 
 const StudentMedicine = () => {
@@ -106,8 +70,7 @@ const StudentMedicine = () => {
   };
 
   const removeMedicine = (id) => {
-    if (medicines.length > 1)
-      setMedicines(medicines.filter((m) => m.id !== id));
+    if (medicines.length > 1) setMedicines(medicines.filter((m) => m.id !== id));
   };
 
   const handleSubmit = async (e) => {
@@ -144,9 +107,9 @@ const StudentMedicine = () => {
     }
 
     try {
-      // Updated API endpoint to match new route
+      // <-- IMPORTANT: correct endpoint to match server.js
       const response = await axios.post(
-        "http://localhost:8000/api/student-medicines/add-medicine",
+        "http://localhost:8000/api/studentMedicine/add-medicine",
         {
           regNumber: registerNumber.toUpperCase(),
           date,
@@ -155,9 +118,7 @@ const StudentMedicine = () => {
         }
       );
 
-      setMessage(
-        response.data.message || "Medicine record added successfully!"
-      );
+      setMessage(response.data.message || "Medicine record added successfully!");
 
       // Reset form
       setRegisterNumber("");
@@ -166,28 +127,15 @@ const StudentMedicine = () => {
       ]);
 
       // Auto-clear success message after 5 seconds
-      setTimeout(() => {
-        setMessage("");
-      }, 5000);
+      setTimeout(() => setMessage(""), 5000);
     } catch (err) {
       console.error("Error adding medicine:", err);
 
-      // Handle different error types
-      if (err.response) {
-        // Server responded with error
-        setError(
-          err.response.data.message ||
-            "Error adding medicine record. Please try again."
-        );
-      } else if (err.request) {
-        // Request made but no response
-        setError(
-          "Unable to connect to the server. Please check your connection."
-        );
-      } else {
-        // Something else happened
-        setError("An unexpected error occurred. Please try again.");
-      }
+      // Ensure the message "Error adding medicine record. Please try again." is displayed if server failed
+      const serverMessage =
+        err.response?.data?.message || "Error adding medicine record. Please try again.";
+
+      setError(serverMessage);
     } finally {
       setLoading(false);
     }
@@ -196,8 +144,7 @@ const StudentMedicine = () => {
   return (
     <Box
       sx={{
-        background:
-          "linear-gradient(135deg, #b3f3d9 0%, #e0fff3 50%, #d4f9e6 100%)",
+        background: "linear-gradient(135deg, #b3f3d9 0%, #e0fff3 50%, #d4f9e6 100%)",
         minHeight: "100vh",
         py: 6,
         px: 2,
@@ -240,21 +187,10 @@ const StudentMedicine = () => {
         </Box>
 
         {/* Title */}
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          color="#065a45"
-          textAlign="center"
-          mb={1}
-        >
+        <Typography variant="h4" fontWeight="bold" color="#065a45" textAlign="center" mb={1}>
           Student Medicine Record
         </Typography>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          textAlign="center"
-          mb={4}
-        >
+        <Typography variant="body1" color="text.secondary" textAlign="center" mb={4}>
           Quickly record and submit prescribed medicines for students.
         </Typography>
 
@@ -278,38 +214,21 @@ const StudentMedicine = () => {
                 <TextField
                   label="Register Number"
                   value={registerNumber}
-                  onChange={(e) =>
-                    setRegisterNumber(e.target.value.toUpperCase())
-                  }
+                  onChange={(e) => setRegisterNumber(e.target.value.toUpperCase())}
                   fullWidth
                   required
                   disabled={loading}
                   InputProps={{
-                    startAdornment: (
-                      <User
-                        size={18}
-                        style={{ marginRight: 8, color: "#0a5443" }}
-                      />
-                    ),
+                    startAdornment: <User size={18} style={{ marginRight: 8, color: "#0a5443" }} />,
                   }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={4}>
-                <TextField
-                  label="Date"
-                  value={date}
-                  fullWidth
-                  InputProps={{ readOnly: true }}
-                />
+                <TextField label="Date" value={date} fullWidth InputProps={{ readOnly: true }} />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField
-                  label="Time"
-                  value={time}
-                  fullWidth
-                  InputProps={{ readOnly: true }}
-                />
+                <TextField label="Time" value={time} fullWidth InputProps={{ readOnly: true }} />
               </Grid>
             </Grid>
 
@@ -342,12 +261,7 @@ const StudentMedicine = () => {
 
             {/* Medicine Fields */}
             {medicines.map((m, index) => (
-              <motion.div
-                key={m.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
+              <motion.div key={m.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
                 <Paper
                   sx={{
                     p: 3,
@@ -362,22 +276,12 @@ const StudentMedicine = () => {
                     },
                   }}
                 >
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={2}
-                  >
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <Typography fontWeight="bold" color="#0a5443">
                       Medicine {index + 1}
                     </Typography>
                     {medicines.length > 1 && (
-                      <IconButton
-                        onClick={() => removeMedicine(m.id)}
-                        color="error"
-                        size="small"
-                        disabled={loading}
-                      >
+                      <IconButton onClick={() => removeMedicine(m.id)} color="error" size="small" disabled={loading}>
                         <Trash2 size={20} />
                       </IconButton>
                     )}
@@ -387,26 +291,11 @@ const StudentMedicine = () => {
                     <Grid item xs={12} sm={5}>
                       <Autocomplete
                         freeSolo
-                        options={medicineList.filter(
-                          (med) =>
-                            med
-                              .toLowerCase()
-                              .includes(m.medicineName.toLowerCase()) &&
-                            m.medicineName.length >= 1
-                        )}
+                        options={medicineList.filter((med) => med.toLowerCase().includes(m.medicineName.toLowerCase()) && m.medicineName.length >= 1)}
                         value={m.medicineName}
-                        onInputChange={(e, newValue) =>
-                          handleMedicineChange(m.id, "medicineName", newValue)
-                        }
+                        onInputChange={(e, newValue) => handleMedicineChange(m.id, "medicineName", newValue)}
                         disabled={loading}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="Medicine Name"
-                            required
-                            sx={{ width: 270 }}
-                          />
-                        )}
+                        renderInput={(params) => <TextField {...params} label="Medicine Name" required sx={{ width: 270 }} />}
                       />
                     </Grid>
 
@@ -415,9 +304,7 @@ const StudentMedicine = () => {
                         label="Dosage (mg)"
                         type="number"
                         value={m.dosage}
-                        onChange={(e) =>
-                          handleMedicineChange(m.id, "dosage", e.target.value)
-                        }
+                        onChange={(e) => handleMedicineChange(m.id, "dosage", e.target.value)}
                         fullWidth
                         required
                         disabled={loading}
@@ -429,10 +316,8 @@ const StudentMedicine = () => {
                         label="Frequency (per day)"
                         type="number"
                         value={m.frequency}
-                        onChange={(e) =>
-                          handleMedicineChange(m.id, "frequency", e.target.value)
-                        }
-                        sx={{ width: 200, }}
+                        onChange={(e) => handleMedicineChange(m.id, "frequency", e.target.value)}
+                        sx={{ width: 200 }}
                         required
                         disabled={loading}
                         inputProps={{ min: 1, max: 10 }}
@@ -443,35 +328,27 @@ const StudentMedicine = () => {
                   <Divider sx={{ my: 2 }} />
 
                   <Grid item xs={12}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ mb: 1 }}
-                      color="#065a45"
-                    >
+                    <Typography variant="subtitle2" sx={{ mb: 1 }} color="#065a45">
                       Timing
                     </Typography>
                     <Stack direction="row" spacing={2}>
                       {["morning", "night", "both"].map((t) => (
                         <Box
                           key={t}
-                          onClick={() =>
-                            !loading && handleMedicineChange(m.id, "timing", t)
-                          }
+                          onClick={() => !loading && handleMedicineChange(m.id, "timing", t)}
                           sx={{
                             px: 2.5,
                             py: 0.8,
                             borderRadius: 2,
                             cursor: loading ? "not-allowed" : "pointer",
                             fontWeight: "bold",
-                            backgroundColor:
-                              m.timing === t ? "#0a5443" : "#e0f2f1",
+                            backgroundColor: m.timing === t ? "#0a5443" : "#e0f2f1",
                             color: m.timing === t ? "#fff" : "#0a5443",
                             transition: "all 0.3s ease",
                             opacity: loading ? 0.6 : 1,
                             "&:hover": {
                               transform: loading ? "none" : "scale(1.05)",
-                              backgroundColor:
-                                m.timing === t ? "#0a5443" : "#c8e6c9",
+                              backgroundColor: m.timing === t ? "#0a5443" : "#c8e6c9",
                             },
                           }}
                         >
@@ -496,13 +373,8 @@ const StudentMedicine = () => {
                 fontSize: "1.1rem",
                 fontWeight: "bold",
                 background: "linear-gradient(90deg, #0a5443, #13a67a)",
-                "&:hover": {
-                  background: "#09856e",
-                  transform: "scale(1.03)",
-                },
-                "&:disabled": {
-                  background: "#ccc",
-                },
+                "&:hover": { background: "#09856e", transform: "scale(1.03)" },
+                "&:disabled": { background: "#ccc" },
                 transition: "all 0.3s",
               }}
             >
@@ -518,11 +390,7 @@ const StudentMedicine = () => {
           </Stack>
 
           {/* Footer */}
-          <Typography
-            variant="body2"
-            align="center"
-            sx={{ mt: 3, color: "text.secondary" }}
-          >
+          <Typography variant="body2" align="center" sx={{ mt: 3, color: "text.secondary" }}>
             © MediCare | Student Medicine Record | Sabaragamuwa University
           </Typography>
         </form>

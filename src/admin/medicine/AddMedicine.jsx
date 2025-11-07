@@ -8,35 +8,113 @@ import {
   Divider,
   Alert,
   Fade,
+  Autocomplete,
+  CircularProgress,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { Plus, Calendar } from "lucide-react";
+import axios from "axios";
+
+const MEDICINE_NAMES = [
+  "Paracetamol", "Ibuprofen", "Aspirin", "Diclofenac sodium", "Naproxen",
+  "Amoxicillin", "Azithromycin", "Ciprofloxacin", "Metronidazole", "Cefuroxime",
+  "Doxycycline", "Cetirizine", "Loratadine", "Chlorpheniramine maleate",
+  "Diphenhydramine", "Pantoprazole", "Ranitidine", "Antacid syrup", "Loperamide",
+  "Oral Rehydration Salts", "Domperidone", "Metoclopramide", "Povidone-iodine solution",
+  "Hydrogen peroxide", "Alcohol (70% isopropyl)", "Chlorhexidine", "Hand sanitizer",
+  "Dextromethorphan syrup", "Guaifenesin syrup", "Salbutamol inhaler", "Steam inhalation preparations",
+  "Burn cream (Silver sulfadiazine)", "Antifungal cream (Clotrimazole, Miconazole)",
+  "Hydrocortisone cream", "Antibiotic ointment (Neomycin, Bacitracin)", "Calamine lotion",
+  "Multivitamin tablets", "Vitamin C", "Iron & Folic acid tablets", "Calcium supplements",
+  "Adrenaline injection", "Hydrocortisone injection", "Atropine", "Diazepam injection",
+  "Glucose IV solution (5%)", "Normal saline IV solution (0.9%)", "Oral contraceptive pills",
+  "Antifungal tablets (Fluconazole)", "Antimalarial drugs (Chloroquine / Artemether-Lumefantrine)",
+  "Blood pressure medication (Amlodipine, Losartan)", "Diabetes medication (Metformin, Glibenclamide)",
+];
 
 const AddMedicine = () => {
   const [newMedicine, setNewMedicine] = useState({
     name: "",
     quantity: "",
+    manufacturingDate: "",
     expiryDate: "",
+    licenseNumber: "",
   });
-  const [message, setMessage] = useState({ text: "", type: "" });
 
-  const handleAddMedicine = (e) => {
+  const [message, setMessage] = useState({ text: "", type: "" });
+  const [addedTime, setAddedTime] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleAddMedicine = async (e) => {
     e.preventDefault();
-    if (!newMedicine.name || !newMedicine.quantity || !newMedicine.expiryDate) {
+    const { name, quantity, manufacturingDate, expiryDate, licenseNumber } = newMedicine;
+
+    if (!name || !quantity || !manufacturingDate || !expiryDate || !licenseNumber) {
       setMessage({ text: "Please fill all fields", type: "error" });
+      setAddedTime(null);
       return;
     }
-    setMessage({ text: "Medicine added successfully!", type: "success" });
-    setNewMedicine({ name: "", quantity: "", expiryDate: "" });
-    setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+
+    if (Number(quantity) <= 0) {
+      setMessage({ text: "Quantity must be greater than 0", type: "error" });
+      return;
+    }
+
+    if (new Date(expiryDate) <= new Date(manufacturingDate)) {
+      setMessage({ text: "Expiry date must be after manufacturing date", type: "error" });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post("http://localhost:8000/api/medicine/add", {
+        name: name.trim(),
+        quantity: Number(quantity),
+        manufacturingDate,
+        expiryDate,
+        licenseNumber: licenseNumber.trim().toUpperCase(),
+      });
+
+      const now = new Date();
+      const formattedTime = now.toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+
+      setAddedTime(formattedTime);
+      setMessage({ text: response.data.message || "Medicine added successfully!", type: "success" });
+
+      setNewMedicine({
+        name: "",
+        quantity: "",
+        manufacturingDate: "",
+        expiryDate: "",
+        licenseNumber: "",
+      });
+
+      setTimeout(() => {
+        setMessage({ text: "", type: "" });
+        setAddedTime(null);
+      }, 4000);
+    } catch (error) {
+      console.error("Error adding medicine:", error);
+      setMessage({ text: error.response?.data?.message || "Failed to add medicine. Please try again.", type: "error" });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const filteredMedicines =
+    newMedicine.name.length >= 2
+      ? MEDICINE_NAMES.filter((item) =>
+          item.toLowerCase().includes(newMedicine.name.toLowerCase())
+        )
+      : [];
 
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(-45deg, #b3f3d9, #d4f9e6, #c8f5e2, #a9e0cb)",
         backgroundSize: "400% 400%",
         animation: "gradientShift 15s ease infinite",
         display: "flex",
@@ -77,7 +155,6 @@ const AddMedicine = () => {
               "&:hover": { boxShadow: "0px 12px 30px rgba(0,0,0,0.15)" },
             }}
           >
-            {/* LOGO */}
             <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
               <img
                 src="/medicare_logo.png"
@@ -86,7 +163,6 @@ const AddMedicine = () => {
               />
             </Box>
 
-            {/* TITLE */}
             <Typography
               variant="h5"
               align="center"
@@ -112,7 +188,6 @@ const AddMedicine = () => {
               }}
             />
 
-            {/* ALERT MESSAGE */}
             {message.text && (
               <Alert
                 severity={message.type === "success" ? "success" : "error"}
@@ -127,20 +202,30 @@ const AddMedicine = () => {
                 }}
               >
                 {message.text}
+                {addedTime && (
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 0.5, color: "#00695c", fontWeight: 500 }}
+                  >
+                    Added on: {addedTime}
+                  </Typography>
+                )}
               </Alert>
             )}
 
-            {/* FORM */}
             <form onSubmit={handleAddMedicine}>
-              <TextField
-                label="Medicine Name"
-                fullWidth
+              <Autocomplete
+                freeSolo
+                options={filteredMedicines}
                 value={newMedicine.name}
-                onChange={(e) =>
-                  setNewMedicine({ ...newMedicine, name: e.target.value })
+                onInputChange={(e, newValue) =>
+                  setNewMedicine({ ...newMedicine, name: newValue })
                 }
-                sx={{ mb: 3 }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Medicine Name" fullWidth sx={{ mb: 3 }} />
+                )}
               />
+
               <TextField
                 label="Quantity"
                 type="number"
@@ -151,6 +236,35 @@ const AddMedicine = () => {
                 }
                 sx={{ mb: 3 }}
               />
+
+              <TextField
+                label="License Number"
+                fullWidth
+                value={newMedicine.licenseNumber}
+                onChange={(e) =>
+                  setNewMedicine({
+                    ...newMedicine,
+                    licenseNumber: e.target.value.toUpperCase(),
+                  })
+                }
+                sx={{ mb: 3 }}
+              />
+
+              <TextField
+                label="Manufacturing Date"
+                type="date"
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+                value={newMedicine.manufacturingDate}
+                onChange={(e) =>
+                  setNewMedicine({
+                    ...newMedicine,
+                    manufacturingDate: e.target.value,
+                  })
+                }
+                sx={{ mb: 3 }}
+              />
+
               <TextField
                 label="Expiry Date"
                 type="date"
@@ -166,7 +280,6 @@ const AddMedicine = () => {
                 sx={{ mb: 3 }}
               />
 
-              {/* INFO BOX */}
               <Box
                 sx={{
                   display: "flex",
@@ -183,37 +296,37 @@ const AddMedicine = () => {
                 </Typography>
               </Box>
 
-              {/* SUBMIT BUTTON */}
               <Button
                 type="submit"
                 variant="contained"
                 fullWidth
-                startIcon={<Plus size={18} />}
+                startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <Plus size={18} />}
+                disabled={loading}
                 sx={{
                   backgroundColor: "#1f8f7e",
                   py: 1.4,
                   fontWeight: "bold",
-                  borderRadius: 2,
+                  borderRadius: 10,
                   fontSize: "1rem",
                   "&:hover": {
                     backgroundColor: "#157b68",
                     transform: "translateY(-2px)",
                     boxShadow: "0 6px 20px rgba(31,143,126,0.3)",
                   },
+                  "&:disabled": { backgroundColor: "#9e9e9e" },
                   transition: "all 0.3s ease",
                 }}
               >
-                Add Medicine
+                {loading ? "Adding..." : "Add Medicine"}
               </Button>
             </form>
 
-            {/* FOOTER */}
             <Typography
               variant="body2"
               align="center"
               sx={{ mt: 4, color: "text.secondary" }}
             >
-              © 2025 MediCare Admin Portal | Sabaragamuwa University
+              © 2025 MediCare | Medicine Stock | Sabaragamuwa University
             </Typography>
           </Paper>
         </motion.div>

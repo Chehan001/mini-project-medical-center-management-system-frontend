@@ -8,37 +8,94 @@ import {
   Divider,
   Alert,
   Fade,
+  CircularProgress,
+  Autocomplete,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { CheckCircle, User, Pill, Hash } from "lucide-react";
+import { CheckCircle, Pill, Hash, CalendarClock } from "lucide-react";
+import axios from "axios";
+
+const MEDICINE_NAMES = [
+  "Paracetamol", "Ibuprofen", "Aspirin", "Diclofenac sodium", "Naproxen",
+  "Amoxicillin", "Azithromycin", "Ciprofloxacin", "Metronidazole", "Cefuroxime",
+  "Doxycycline", "Cetirizine", "Loratadine", "Chlorpheniramine maleate",
+  "Diphenhydramine", "Pantoprazole", "Ranitidine", "Antacid syrup", "Loperamide",
+  "Oral Rehydration Salts", "Domperidone", "Metoclopramide", "Povidone-iodine solution",
+  "Hydrogen peroxide", "Alcohol (70% isopropyl)", "Chlorhexidine", "Hand sanitizer",
+  "Dextromethorphan syrup", "Guaifenesin syrup", "Salbutamol inhaler", "Steam inhalation preparations",
+  "Burn cream (Silver sulfadiazine)", "Antifungal cream (Clotrimazole, Miconazole)",
+  "Hydrocortisone cream", "Antibiotic ointment (Neomycin, Bacitracin)", "Calamine lotion",
+  "Multivitamin tablets", "Vitamin C", "Iron & Folic acid tablets", "Calcium supplements",
+  "Adrenaline injection", "Hydrocortisone injection", "Atropine", "Diazepam injection",
+  "Glucose IV solution (5%)", "Normal saline IV solution (0.9%)", "Oral contraceptive pills",
+  "Antifungal tablets (Fluconazole)", "Antimalarial drugs (Chloroquine / Artemether-Lumefantrine)",
+  "Blood pressure medication (Amlodipine, Losartan)", "Diabetes medication (Metformin, Glibenclamide)",
+];
 
 const Distribution = () => {
-  const [form, setForm] = useState({ regNo: "", medicine: "", quantity: "" });
+  const [form, setForm] = useState({ medicine: "", quantity: "" });
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [lastDistribution, setLastDistribution] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.regNo || !form.medicine || !form.quantity) {
+    if (!form.medicine || !form.quantity) {
       setMessage({ text: "Please fill in all fields", type: "error" });
       return;
     }
 
-    setMessage({
-      text: `Medicine distributed to ${form.regNo} successfully!`,
-      type: "success",
-    });
+    if (Number(form.quantity) <= 0) {
+      setMessage({ text: "Quantity must be greater than 0", type: "error" });
+      return;
+    }
 
-    setForm({ regNo: "", medicine: "", quantity: "" });
-    setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+    setLoading(true);
+    try {
+      const response = await axios.post("http://localhost:8000/api/medicine/distribute", {
+        medicineName: form.medicine.trim(),
+        quantity: Number(form.quantity),
+      });
+
+      const currentDateTime = new Date().toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+      setLastDistribution(currentDateTime);
+
+      setMessage({
+        text: response.data.message || `Medicine "${form.medicine}" distributed successfully!`,
+        type: "success",
+      });
+
+      setForm({ medicine: "", quantity: "" });
+
+      setTimeout(() => {
+        setMessage({ text: "", type: "" });
+      }, 4000);
+    } catch (error) {
+      console.error("Error distributing medicine:", error);
+      setMessage({
+        text: error.response?.data?.message || "Failed to distribute medicine. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const filteredMedicines =
+    form.medicine.length >= 2
+      ? MEDICINE_NAMES.filter((item) =>
+          item.toLowerCase().includes(form.medicine.toLowerCase())
+        )
+      : [];
 
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(-45deg, #b3f3d9, #d4f9e6, #c8f5e2, #a9e0cb)",
         backgroundSize: "400% 400%",
         animation: "gradientShift 15s ease infinite",
         display: "flex",
@@ -134,34 +191,32 @@ const Distribution = () => {
 
             {/* FORM */}
             <form onSubmit={handleSubmit}>
-              <TextField
-                label="Student Register Number"
-                fullWidth
-                value={form.regNo}
-                onChange={(e) =>
-                  setForm({ ...form, regNo: e.target.value.toUpperCase() })
-                }
-                InputProps={{
-                  startAdornment: (
-                    <User size={18} style={{ marginRight: 8, color: "#0a5443" }} />
-                  ),
-                }}
-                sx={{ mb: 3 }}
-              />
-              <TextField
-                label="Medicine Name"
-                fullWidth
+              <Autocomplete
+                freeSolo
+                options={filteredMedicines}
                 value={form.medicine}
-                onChange={(e) =>
-                  setForm({ ...form, medicine: e.target.value })
+                onInputChange={(e, newValue) =>
+                  setForm({ ...form, medicine: newValue })
                 }
-                InputProps={{
-                  startAdornment: (
-                    <Pill size={18} style={{ marginRight: 8, color: "#0a5443" }} />
-                  ),
-                }}
-                sx={{ mb: 3 }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Medicine Name"
+                    fullWidth
+                    sx={{ mb: 3 }}
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <>
+                          <Pill size={18} style={{ marginRight: 8, color: "#0a5443" }} />
+                          {params.InputProps.startAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
               />
+
               <TextField
                 label="Quantity"
                 type="number"
@@ -178,27 +233,49 @@ const Distribution = () => {
                 sx={{ mb: 3 }}
               />
 
-              {/* SUBMIT BUTTON */}
+              {/* DATE & TIME DISPLAY */}
+              {lastDistribution && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    mb: 3,
+                    justifyContent: "center",
+                    color: "#0a5443",
+                    fontWeight: 500,
+                  }}
+                >
+                  <CalendarClock size={18} />
+                  <Typography variant="body2">
+                    Last distributed on: {lastDistribution}
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Submit Button */}
               <Button
                 type="submit"
                 variant="contained"
                 fullWidth
-                startIcon={<CheckCircle size={18} />}
+                startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <CheckCircle size={18} />}
+                disabled={loading}
                 sx={{
                   backgroundColor: "#1f8f7e",
                   py: 1.4,
                   fontWeight: "bold",
-                  borderRadius: 2,
+                  borderRadius: 10,
                   fontSize: "1rem",
                   "&:hover": {
                     backgroundColor: "#157b68",
                     transform: "translateY(-2px)",
                     boxShadow: "0 6px 20px rgba(31,143,126,0.3)",
                   },
+                  "&:disabled": { backgroundColor: "#9e9e9e" },
                   transition: "all 0.3s ease",
                 }}
               >
-                Distribute Medicine
+                {loading ? "Distributing..." : "Distribute Medicine"}
               </Button>
             </form>
 
@@ -208,7 +285,7 @@ const Distribution = () => {
               align="center"
               sx={{ mt: 4, color: "text.secondary" }}
             >
-              © 2025 MediCare Admin Portal | Sabaragamuwa University
+              © 2025 MediCare | Medicine Stock | Sabaragamuwa University
             </Typography>
           </Paper>
         </motion.div>

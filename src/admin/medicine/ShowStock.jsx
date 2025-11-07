@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Box,
   Paper,
   Typography,
   Table,
@@ -7,89 +8,79 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  CircularProgress,
-  Box,
   TableContainer,
+  CircularProgress,
+  Alert,
   Divider,
+  Chip,
   Fade,
 } from "@mui/material";
 import { motion } from "framer-motion";
+import { PackageCheck, AlertTriangle, Clock } from "lucide-react";
+import axios from "axios";
 
 const ShowStock = () => {
   const [stock, setStock] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+
+  const fetchStock = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("http://localhost:8000/api/medicine/stock");
+      setStock(res.data);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch stock:", err);
+      setError("Failed to fetch stock. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStock = async () => {
-      try {
-
-        const sampleStock = [
-          { name: "Paracetamol", quantity: 120, expiry: "2025-10-10" },
-          { name: "Amoxicillin", quantity: 75, expiry: "2025-06-22" },
-          { name: "Ibuprofen", quantity: 60, expiry: "2026-02-12" },
-          { name: "Azithromycin", quantity: 40, expiry: "2025-12-05" },
-        ];
-        setStock(sampleStock);
-      } catch (err) {
-        console.error("Error fetching stock data:", err);
-        setError("Failed to load stock data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchStock();
+    
+    // Auto-refresh every 5 seconds for real-time updates
+    const interval = setInterval(fetchStock, 5000);
+    return () => clearInterval(interval);
   }, []);
 
-  // Loading State
-  if (loading)
-    return (
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="80vh"
-      >
-        <CircularProgress color="success" size={60} />
-        <Typography sx={{ mt: 2, color: "text.secondary" }}>
-          Loading stock details...
-        </Typography>
-      </Box>
-    );
+  const isExpiringSoon = (expiryDate) => {
+    const today = new Date();
+    const expDate = new Date(expiryDate);
+    const diffDays = (expDate - today) / (1000 * 60 * 60 * 24);
+    return diffDays <= 30 && diffDays > 0;
+  };
 
-  // Error State
-  if (error)
-    return (
-      <Typography color="error" align="center" sx={{ mt: 4, fontWeight: 500 }}>
-        {error}
-      </Typography>
-    );
+  const isExpired = (expiryDate) => {
+    const today = new Date();
+    const expDate = new Date(expiryDate);
+    return expDate < today;
+  };
 
-  // No Data State
-  if (!stock.length)
-    return (
-      <Typography
-        variant="body1"
-        sx={{ mt: 3, textAlign: "center", color: "text.secondary" }}
-      >
-        No stock data available.
-      </Typography>
-    );
+  const getStockStatus = (quantity) => {
+    if (quantity === 0) return { label: "Out of Stock", color: "error" };
+    if (quantity < 10) return { label: "Low Stock", color: "warning" };
+    return { label: "In Stock", color: "success" };
+  };
+
+  const getExpiryStatus = (expiryDate) => {
+    if (isExpired(expiryDate)) return { label: "Expired", color: "error" };
+    if (isExpiringSoon(expiryDate)) return { label: "Expiring Soon", color: "warning" };
+    return null;
+  };
 
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(-45deg, #b3f3d9, #d4f9e6, #c8f5e2, #a9e0cb)",
         backgroundSize: "400% 400%",
         animation: "gradientShift 15s ease infinite",
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
-        py: 6,
+        py: 8,
         px: 2,
       }}
     >
@@ -114,14 +105,12 @@ const ShowStock = () => {
             elevation={8}
             sx={{
               width: "95%",
-              maxWidth: 1000,
+              maxWidth: 1200,
               borderRadius: 4,
               p: { xs: 3, md: 5 },
               backgroundColor: "rgba(255, 255, 255, 0.95)",
               backdropFilter: "blur(10px)",
               boxShadow: "0px 8px 25px rgba(0,0,0,0.1)",
-              transition: "all 0.3s ease",
-              "&:hover": { boxShadow: "0px 12px 30px rgba(0,0,0,0.15)" },
             }}
           >
             {/* LOGO */}
@@ -134,23 +123,25 @@ const ShowStock = () => {
             </Box>
 
             {/* TITLE */}
-            <Typography
-              variant="h5"
-              align="center"
-              sx={{
-                fontWeight: "bold",
-                color: "#007B5E",
-                letterSpacing: 1,
-                mb: 1,
-                textTransform: "uppercase",
-              }}
-            >
-              Medicine Stock Details
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1, mb: 1 }}>
+              <PackageCheck size={28} color="#007B5E" />
+              <Typography
+                variant="h5"
+                align="center"
+                sx={{
+                  fontWeight: "bold",
+                  color: "#007B5E",
+                  letterSpacing: 1,
+                  textTransform: "uppercase",
+                }}
+              >
+                Medicine Stock Inventory
+              </Typography>
+            </Box>
 
             <Divider
               sx={{
-                width: 200,
+                width: 250,
                 mx: "auto",
                 mb: 3,
                 borderBottomWidth: 3,
@@ -159,88 +150,164 @@ const ShowStock = () => {
               }}
             />
 
-            {/* TABLE */}
-            <TableContainer
-              sx={{
-                borderRadius: 3,
-                overflow: "hidden",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-              }}
-            >
-              <Table>
-                <TableHead
-                  sx={{
-                    background: "linear-gradient(to right, #80e4be, #a9e0cb)",
-                  }}
-                >
-                  <TableRow>
-                    {["Medicine Name", "Quantity", "Expiry Date"].map(
-                      (header) => (
-                        <TableCell
-                          key={header}
-                          sx={{
-                            color: "#004d40",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                            fontSize: "0.95rem",
-                          }}
-                        >
-                          {header}
-                        </TableCell>
-                      )
-                    )}
-                  </TableRow>
-                </TableHead>
+            {/* LOADING */}
+            {loading && (
+              <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
+                <CircularProgress sx={{ color: "#007B5E" }} />
+              </Box>
+            )}
 
-                <TableBody>
-                  {stock.map((item, index) => (
-                    <TableRow
-                      key={index}
-                      component={motion.tr}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.05 }}
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "rgba(128, 224, 190, 0.15)",
-                          transition: "0.3s",
-                          transform: "scale(1.01)",
-                        },
-                        backgroundColor:
-                          index % 2 === 0
-                            ? "rgba(255,255,255,0.9)"
-                            : "rgba(245,255,250,0.7)",
-                      }}
-                    >
-                      <TableCell align="center" sx={{ fontWeight: 500 }}>
-                        {item.name}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{
-                          fontWeight: 600,
-                          color:
-                            item.quantity < 50
-                              ? "error.main"
-                              : "success.main",
-                        }}
-                      >
-                        {item.quantity}
-                      </TableCell>
-                      <TableCell align="center">{item.expiry}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            {/* ERROR */}
+            {error && (
+              <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+                {error}
+              </Alert>
+            )}
+
+            {/* NO DATA */}
+            {!loading && !error && stock.length === 0 && (
+              <Box sx={{ textAlign: "center", py: 5 }}>
+                <AlertTriangle size={48} color="#FFA726" />
+                <Typography variant="h6" sx={{ mt: 2, color: "#666" }}>
+                  No medicines available in stock
+                </Typography>
+              </Box>
+            )}
+
+            {/* TABLE */}
+            {!loading && !error && stock.length > 0 && (
+              <>
+                <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
+                  <Clock size={16} color="#666" />
+                  <Typography variant="body2" sx={{ color: "#666" }}>
+                    Auto-refreshing every 5 seconds
+                  </Typography>
+                </Box>
+
+                <TableContainer
+                  component={Paper}
+                  sx={{ boxShadow: 2, borderRadius: 2, overflow: "hidden" }}
+                >
+                  <Table>
+                    <TableHead>
+                      <TableRow sx={{ backgroundColor: "#007B5E" }}>
+                        <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                          Medicine Name
+                        </TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold" }} align="center">
+                          Quantity
+                        </TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold" }} align="center">
+                          Status
+                        </TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                          License Number
+                        </TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                          Manufacturing Date
+                        </TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                          Expiry Date
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {stock.map((med) => {
+                        const stockStatus = getStockStatus(med.quantity);
+                        const expiryStatus = getExpiryStatus(med.expiryDate);
+                        
+                        return (
+                          <TableRow
+                            key={med._id}
+                            sx={{
+                              "&:hover": { backgroundColor: "#f5f5f5" },
+                              backgroundColor: isExpired(med.expiryDate)
+                                ? "rgba(255,0,0,0.05)"
+                                : "white",
+                            }}
+                          >
+                            <TableCell sx={{ fontWeight: 500 }}>{med.name}</TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{
+                                fontWeight: "bold",
+                                fontSize: "1.1rem",
+                                color:
+                                  med.quantity === 0
+                                    ? "error.main"
+                                    : med.quantity < 10
+                                    ? "warning.main"
+                                    : "success.main",
+                              }}
+                            >
+                              {med.quantity}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                                <Chip
+                                  label={stockStatus.label}
+                                  color={stockStatus.color}
+                                  size="small"
+                                  sx={{ fontWeight: 500 }}
+                                />
+                                {expiryStatus && (
+                                  <Chip
+                                    label={expiryStatus.label}
+                                    color={expiryStatus.color}
+                                    size="small"
+                                    sx={{ fontWeight: 500 }}
+                                  />
+                                )}
+                              </Box>
+                            </TableCell>
+                            <TableCell sx={{ fontFamily: "monospace", color: "#555" }}>
+                              {med.licenseNumber}
+                            </TableCell>
+                            <TableCell>
+                              {new Date(med.manufacturingDate).toLocaleDateString("en-GB")}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                color: isExpired(med.expiryDate)
+                                  ? "error.main"
+                                  : isExpiringSoon(med.expiryDate)
+                                  ? "warning.main"
+                                  : "inherit",
+                                fontWeight: isExpired(med.expiryDate) || isExpiringSoon(med.expiryDate)
+                                  ? "bold"
+                                  : "normal",
+                              }}
+                            >
+                              {new Date(med.expiryDate).toLocaleDateString("en-GB")}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                <Box sx={{ mt: 3, display: "flex", gap: 2, justifyContent: "center" }}>
+                  <Chip label={`Total Medicines: ${stock.length}`} color="primary" />
+                  <Chip
+                    label={`Low Stock: ${stock.filter((m) => m.quantity < 10 && m.quantity > 0).length}`}
+                    color="warning"
+                  />
+                  <Chip
+                    label={`Expired: ${stock.filter((m) => isExpired(m.expiryDate)).length}`}
+                    color="error"
+                  />
+                </Box>
+              </>
+            )}
 
             {/* FOOTER */}
             <Typography
               variant="body2"
               align="center"
-              sx={{ mt: 3, color: "text.secondary" }}
+              sx={{ mt: 4, color: "text.secondary" }}
             >
-              © 2025 MediCare Admin Portal | Sabaragamuwa University
+              © 2025 MediCare | Medicine Stock | Sabaragamuwa University
             </Typography>
           </Paper>
         </motion.div>
