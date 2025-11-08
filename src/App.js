@@ -10,6 +10,9 @@ import About from "./components/About";
 import Channel from "./components/Channel";
 import RegistrationForm from "./components/RegistrationForm";
 import AppointmentBooking from "./components/AppointmentBooking";
+import Medical from "./components/Medical";
+import UniversityMedical from "./components/UniversityMedical";
+import OtherMedical from "./components/OtherMedical";
 
 // Admin Components
 import AdminLogin from "./admin/AdminLogin";
@@ -56,7 +59,10 @@ const App = () => (
       <Route path="/registration-form" element={<RegistrationForm />} />
       <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
       <Route path="/appointment-booking" element={<AppointmentBooking />} />
-
+      <Route path="/medical" element={<Medical />} />
+      <Route path="/medical/university" element={<UniversityMedical />} />
+      <Route path="/medical/external" element={<OtherMedical />} />
+      
       {/* Student Protected */}
       <Route path="/personal-data" element={<ProtectedRoute><UserProfil /></ProtectedRoute>} />
 
