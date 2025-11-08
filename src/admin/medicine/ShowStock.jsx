@@ -16,7 +16,7 @@ import {
   Fade,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { PackageCheck, AlertTriangle, Clock } from "lucide-react";
+import { PackageCheck, AlertTriangle } from "lucide-react";
 import axios from "axios";
 
 const ShowStock = () => {
@@ -27,7 +27,7 @@ const ShowStock = () => {
   const fetchStock = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8000/api/medicine/stock");
+      const res = await axios.get("http://localhost:8000/api/medicineStock/stock");
       setStock(res.data);
       setError(null);
     } catch (err) {
@@ -40,10 +40,6 @@ const ShowStock = () => {
 
   useEffect(() => {
     fetchStock();
-    
-    // Auto-refresh every 5 seconds for real-time updates
-    const interval = setInterval(fetchStock, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   const isExpiringSoon = (expiryDate) => {
@@ -177,13 +173,6 @@ const ShowStock = () => {
             {/* TABLE */}
             {!loading && !error && stock.length > 0 && (
               <>
-                <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
-                  <Clock size={16} color="#666" />
-                  <Typography variant="body2" sx={{ color: "#666" }}>
-                    Auto-refreshing every 5 seconds
-                  </Typography>
-                </Box>
-
                 <TableContainer
                   component={Paper}
                   sx={{ boxShadow: 2, borderRadius: 2, overflow: "hidden" }}

@@ -53,7 +53,7 @@ const Distribution = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8000/api/medicine/distribute", {
+      const response = await axios.post("http://localhost:8000/api/medicineStock/distribute", {
         medicineName: form.medicine.trim(),
         quantity: Number(form.quantity),
       });

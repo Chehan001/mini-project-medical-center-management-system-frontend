@@ -67,7 +67,7 @@ const AddMedicine = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8000/api/medicine/add", {
+    const response = await axios.post("http://localhost:8000/api/medicineStock/add", {
         name: name.trim(),
         quantity: Number(quantity),
         manufacturingDate,
