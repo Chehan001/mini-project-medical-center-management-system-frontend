@@ -1,6 +1,17 @@
 import React, { useState } from "react";
-import { Box, TextField, Typography, Divider, Alert, Fade, Button, Container, Paper } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Divider,
+  Alert,
+  Fade,
+  Button,
+  Container,
+  Paper,
+} from "@mui/material";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -16,29 +27,40 @@ const UniversityMedical = () => {
   const [notification, setNotification] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Handle form input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submit -->connects with backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation
     if (!formData.studentName || !formData.regNumber || !formData.faculty || !formData.treatmentDate) {
       setError("Please fill in all required fields.");
       return;
     }
+
+    setError("");
+    setNotification("");
     setLoading(true);
-    setTimeout(() => {
-      setNotification("Form submitted successfully!");
-      setError("");
-      setLoading(false);
+
+    try {
+      const res = await axios.post("http://localhost:8000/api/university-medical", formData);
+      setNotification(res.data.message || "Form submitted successfully!");
       setFormData({
         studentName: "",
         regNumber: "",
         faculty: "",
         treatmentDate: "",
       });
-    }, 1500);
+    } catch (err) {
+      setError(err.response?.data?.message || "Error submitting form. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -56,7 +78,7 @@ const UniversityMedical = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        py: 6,
+        py: 1,
       }}
     >
       <Container maxWidth="sm">
@@ -148,6 +170,7 @@ const UniversityMedical = () => {
                 />
               </Box>
 
+              {/* Error */}
               {error && (
                 <Fade in={Boolean(error)}>
                   <Alert severity="error" sx={{ mt: 3, fontWeight: 600, boxShadow: 2 }}>
@@ -163,6 +186,7 @@ const UniversityMedical = () => {
                 </Fade>
               )}
 
+              {/* Submit Button */}
               <MotionButton
                 type="submit"
                 variant="contained"
@@ -188,7 +212,7 @@ const UniversityMedical = () => {
             </form>
           </Paper>
         </MotionBox>
-      </Container>
+      </Container> 
     </Box>
   );
 };
