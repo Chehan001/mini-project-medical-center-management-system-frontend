@@ -17,7 +17,7 @@ import {
 import axios from "axios";
 import { motion } from "framer-motion";
 
-// --- Helpers ---
+// Helpers 
 function toLocalIsoDateInputValue(date) {
   const tzOffset = date.getTimezoneOffset() * 60000;
   return new Date(date - tzOffset).toISOString().slice(0, 10);
@@ -52,7 +52,7 @@ export default function AppointmentBooking() {
   const [booked, setBooked] = useState([]);
   const [message, setMessage] = useState(null);
 
-  // Generate available slots
+  // Generate --> available slots
   const generateSlotsForDate = useCallback(
     (dateIso) => {
       const [year, month, day] = dateIso.split("-").map(Number);
@@ -93,10 +93,7 @@ export default function AppointmentBooking() {
     [holidays]
   );
 
-  const slots = useMemo(
-    () => generateSlotsForDate(selectedDate),
-    [selectedDate, generateSlotsForDate]
-  );
+  const slots = useMemo(() => generateSlotsForDate(selectedDate), [selectedDate, generateSlotsForDate]);
 
   const fetchBookedSlots = async (date) => {
     try {
@@ -111,7 +108,7 @@ export default function AppointmentBooking() {
     fetchBookedSlots(selectedDate);
   }, [selectedDate]);
 
-  // Auto-fill student info
+  // Auto-fill --> student info
   useEffect(() => {
     const regNumber = localStorage.getItem("regNumber");
     if (!regNumber || !selectedSlot) return;
@@ -173,8 +170,7 @@ export default function AppointmentBooking() {
     <Box
       sx={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(135deg, #b3f3d9, #d4f9e6, #c8f5e2, #a6f1d7)",
+        background: "linear-gradient(135deg, #b3f3d9, #d4f9e6, #c8f5e2, #a6f1d7)",
         backgroundSize: "400% 400%",
         animation: "gradientMove 12s ease infinite",
         "@keyframes gradientMove": {
@@ -212,15 +208,20 @@ export default function AppointmentBooking() {
             <Box textAlign="center" mb={3}>
               <motion.img
                 src="/medicare_logo.png"
-                alt="University Logo"
+                alt="MediCare Logo"
                 style={{
                   height: "70px",
                   objectFit: "contain",
                   marginBottom: "10px",
                 }}
                 initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8 }}
+                animate={{ scale: [0.8, 1.1, 1], opacity: 1 }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  ease: "easeInOut",
+                }}
               />
               <Typography
                 variant="h5"
@@ -246,7 +247,8 @@ export default function AppointmentBooking() {
 
             {/* Main Content */}
             <Grid container spacing={3} alignItems="center" justifyContent="center">
-              {/* Left: Date & Slots */}
+
+              {/* Left side -->  Date & Slots */}
               <Grid item xs={12} md={6}>
                 <Typography sx={{ color: "#1f8f7e", fontWeight: "bold" }}>
                   Choose a Date
@@ -309,7 +311,7 @@ export default function AppointmentBooking() {
                 )}
               </Grid>
 
-              {/* Right: Doctor Image */}
+              {/* Right side --> Doctor Image */}
               <Grid
                 item
                 xs={12}
@@ -335,7 +337,7 @@ export default function AppointmentBooking() {
               </Grid>
             </Grid>
 
-            {/* Student Info */}
+            {/* Student_Info */}
             <Box textAlign="center" mt={4}>
               <Typography
                 fontWeight="bold"
@@ -374,7 +376,10 @@ export default function AppointmentBooking() {
                   sx={{
                     mt: 3,
                     bgcolor: "#1f8f7e",
-                    "&:hover": { bgcolor: "#157666", boxShadow: "0 8px 20px rgba(31,143,126,0.3)" },
+                    "&:hover": {
+                      bgcolor: "#157666",
+                      boxShadow: "0 8px 20px rgba(31,143,126,0.3)",
+                    },
                     fontWeight: "bold",
                     borderRadius: 5,
                     py: 1.5,
@@ -387,7 +392,11 @@ export default function AppointmentBooking() {
               </motion.div>
 
               {message && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
                   <Box mt={2}>
                     <Alert severity={message.type}>{message.text}</Alert>
                   </Box>
