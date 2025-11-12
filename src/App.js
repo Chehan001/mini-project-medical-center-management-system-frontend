@@ -14,6 +14,7 @@ import Medical from "./components/Medical";
 import UniversityMedical from "./components/UniversityMedical";
 import OtherMedical from "./components/OtherMedical";
 import StudentMedicineDetails from "./components/StudentMedicineDetails";
+import StudentMedicalDetails from "./components/StudentMedicalDetails";
 
 // Admin Components
 import AdminLogin from "./admin/AdminLogin";
@@ -64,6 +65,7 @@ const App = () => (
       <Route path="/medical/university" element={<UniversityMedical />} />
       <Route path="/medical/external" element={<OtherMedical />} />
       <Route path="/student-medicine-details" element={<StudentMedicineDetails />} />
+      <Route path="/student-medical-details" element={<StudentMedicalDetails />} />
       
       {/* Student Protected */}
       <Route path="/personal-data" element={<ProtectedRoute><UserProfil /></ProtectedRoute>} />

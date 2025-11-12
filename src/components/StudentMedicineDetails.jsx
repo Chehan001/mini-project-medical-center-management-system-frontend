@@ -11,19 +11,12 @@ import {
   Container,
   Collapse,
   IconButton,
-  Chip,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { ExpandMore } from "@mui/icons-material";
 import axios from "axios";
 
 const MotionBox = motion(Box);
-
-const statusColors = {
-  active: "warning",
-  completed: "success",
-  cancelled: "default",
-};
 
 const StudentMedicineDetails = () => {
   const [medicines, setMedicines] = useState([]);
@@ -167,12 +160,6 @@ const StudentMedicineDetails = () => {
                     📅 {record.formattedDate || record.date} | 🕓 {record.time}
                   </Typography>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Chip
-                      label={record.status?.toUpperCase() || "UNKNOWN"}
-                      color={statusColors[record.status] || "default"}
-                      size="small"
-                      sx={{ fontWeight: 600 }}
-                    />
                     <IconButton
                       onClick={() => handleExpand(index)}
                       size="small"

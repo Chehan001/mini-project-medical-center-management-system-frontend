@@ -243,7 +243,7 @@ const UserProfile = () => {
                   background: "linear-gradient(90deg, #1e7e6f, #2da58f)",
                 },
               }}
-              onClick={() => navigate("/medical-details")}
+              onClick={() => navigate("/student-medical-details")}
             >
               Medical Details
             </MotionButton>
