@@ -3,111 +3,113 @@ import {
   Box,
   Paper,
   Typography,
-  Button,
-  Stack,
-  TextField,
-  Alert,
-  Divider,
-  RadioGroup,
-  Radio,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  CircularProgress,
   Table,
   TableHead,
   TableBody,
   TableRow,
   TableCell,
+  Divider,
+  Stack,
+  Button,
+  CircularProgress,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { X } from "lucide-react";
 import axios from "axios";
 
 const StudentMedical = () => {
   const [records, setRecords] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [formType, setFormType] = useState("University");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const [formData, setFormData] = useState({
-    studentName: "",
-    regNumber: "",
-    medicalDate: "",
-    pdfFile: null,
-  });
-
-  // Fetch all records
   useEffect(() => {
-    fetchRecords();
+    fetchAllRecords();
   }, []);
 
-  const fetchRecords = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/studentmedical");
-      setRecords(res.data);
-    } catch (err) {
-      console.error("Error fetching records:", err);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setFormData((prev) => ({ ...prev, pdfFile: file.name }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
-
-    if (!formData.studentName || !formData.regNumber || !formData.medicalDate) {
-      setError("Please fill in all required fields.");
-      return;
-    }
-
+  const fetchAllRecords = async () => {
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:5000/api/studentmedical", {
-        studentName: formData.studentName,
-        regNumber: formData.regNumber,
-        medicalDate: formData.medicalDate,
-        pdfFile: formData.pdfFile,
-        type: formType,
+
+      // Fetch all types of medical records in parallel
+      const [studentRes, universityRes, otherRes] = await Promise.all([
+        axios.get("http://localhost:8000/api/student-medical"),
+        axios.get("http://localhost:8000/api/university-medical"),
+        axios.get("http://localhost:8000/api/other-medical/all"),
+      ]);
+
+      // Combine all records
+      const combined = [
+        ...studentRes.data.map((r) => ({
+          ...r,
+          source: "Student",
+          medicalApproval: r.medicalApproval || "Pending",
+          doctorApproval: r.doctorApproval || "Pending",
+          medicalDate: r.medicalDate,
+          type: r.type || "Student",
+        })),
+        ...universityRes.data.map((r) => ({
+          _id: r._id,
+          studentName: r.studentName,
+          regNumber: r.regNumber,
+          medicalDate: r.treatmentDate,
+          type: "University",
+          medicalApproval: r.medicalApproval || "Pending",
+          doctorApproval: r.doctorApproval || "Pending",
+          pdfFile: null,
+          source: "University",
+        })),
+        ...otherRes.data.map((r) => ({
+          _id: r._id,
+          studentName: r.studentName,
+          regNumber: r.regNumber,
+          medicalDate: r.medicalDate || r.treatmentDate,
+          type: r.type || "Other",
+          medicalApproval: r.medicalApproval || "Pending",
+          doctorApproval: r.doctorApproval || "Pending",
+          pdfFile: r.pdfFile || r.file || null,
+          source: "Other",
+        })),
+      ];
+
+      // Filter duplicates by regNumber + date + type
+      const uniqueMap = new Map();
+      combined.forEach((r) => {
+        const key = `${r.regNumber}_${new Date(r.medicalDate).toDateString()}_${r.type}`;
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, r);
+        }
       });
 
-      setMessage(res.data.message);
-      fetchRecords(); // Refresh data
-      setShowForm(false);
-      setFormData({
-        studentName: "",
-        regNumber: "",
-        medicalDate: "",
-        pdfFile: null,
-      });
+      const uniqueRecords = Array.from(uniqueMap.values());
+
+      // Sort descending by date
+      uniqueRecords.sort((a, b) => new Date(b.medicalDate) - new Date(a.medicalDate));
+
+      setRecords(uniqueRecords);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to add record.");
+      console.error("Fetch error:", err);
+      setError("Failed to fetch records.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDoctorApproval = async (id, approval) => {
+  // Update doctor approval
+  const handleDoctorApproval = async (record, approval) => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/studentmedical/${id}/doctor-approval`,
-        { doctorApproval: approval }
-      );
-      fetchRecords();
+      let url = "";
+      if (record.source === "Student") {
+        url = `http://localhost:8000/api/student-medical/${record._id}/doctor-approval`;
+      } else if (record.source === "University") {
+        url = `http://localhost:8000/api/university-medical/${record._id}/doctor-approval`;
+      } else if (record.source === "Other") {
+        url = `http://localhost:8000/api/other-medical/${record._id}/doctor-approval`;
+      }
+
+      await axios.put(url, { doctorApproval: approval });
+
+      fetchAllRecords();
     } catch (err) {
-      console.error("Error updating approval:", err);
+      console.error("Approval update error:", err);
     }
   };
 
@@ -125,60 +127,18 @@ const StudentMedical = () => {
             transition={{ duration: 0.7 }}
           />
           <Typography variant="h4" fontWeight="bold" color="#065a45">
-            Medical Approval System
+            Medical Records
           </Typography>
-          <Divider sx={{ mt: 1, borderColor: "#13a67a", borderBottomWidth: 2, width: "70%", mx: "auto" }} />
+          <Divider
+            sx={{ mt: 1, borderColor: "#13a67a", borderBottomWidth: 2, width: "70%", mx: "auto" }}
+          />
         </Box>
 
-        {message && <Alert severity="success">{message}</Alert>}
-        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+        {loading && <CircularProgress sx={{ display: "block", mx: "auto", my: 3 }} />}
+        {error && <Typography color="error" align="center">{error}</Typography>}
 
-        {/* Add Form */}
-        {showForm && (
-          <Box sx={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Paper sx={{ p: 4, borderRadius: 3, width: "100%", maxWidth: 600 }}>
-              <Stack direction="row" justifyContent="space-between" mb={3}>
-                <Typography variant="h6" color="#065a45">
-                  Add Medical Record
-                </Typography>
-                <Button onClick={() => setShowForm(false)}><X /></Button>
-              </Stack>
-              <form onSubmit={handleSubmit}>
-                <Stack spacing={3}>
-                  <FormControl>
-                    <FormLabel>Record Type</FormLabel>
-                    <RadioGroup row value={formType} onChange={(e) => setFormType(e.target.value)}>
-                      <FormControlLabel value="University" control={<Radio color="success" />} label="University Medical" />
-                      <FormControlLabel value="Other" control={<Radio color="success" />} label="Other Medical" />
-                    </RadioGroup>
-                  </FormControl>
-                  <TextField label="Student Name" name="studentName" value={formData.studentName} onChange={handleInputChange} required />
-                  <TextField label="Register Number" name="regNumber" value={formData.regNumber} onChange={handleInputChange} required />
-                  <TextField type="date" label="Medical Date" name="medicalDate" value={formData.medicalDate} onChange={handleInputChange} required InputLabelProps={{ shrink: true }} />
-                  {formType === "Other" && (
-                    <Button variant="outlined" component="label">
-                      Upload PDF
-                      <input type="file" hidden accept=".pdf" onChange={handleFileChange} />
-                    </Button>
-                  )}
-                  <Stack direction="row" spacing={2}>
-                    <Button type="submit" variant="contained" fullWidth disabled={loading}>
-                      {loading ? <CircularProgress size={22} sx={{ mr: 1 }} /> : "Add Record"}
-                    </Button>
-                    <Button onClick={() => setShowForm(false)} variant="outlined" fullWidth>Cancel</Button>
-                  </Stack>
-                </Stack>
-              </form>
-            </Paper>
-          </Box>
-        )}
-
-        {/* Data Table */}
-        <Box mt={6}>
-          <Typography variant="h5" fontWeight="bold" color="#065a45" mb={2}>
-            Student Medical Records
-          </Typography>
-          <Table>
+        {!loading && (
+          <Table sx={{ mt: 4 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -189,6 +149,7 @@ const StudentMedical = () => {
                 <TableCell>Doctor Approval</TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {records.map((r) => (
                 <TableRow key={r._id}>
@@ -196,15 +157,30 @@ const StudentMedical = () => {
                   <TableCell>{r.regNumber}</TableCell>
                   <TableCell>{new Date(r.medicalDate).toLocaleDateString()}</TableCell>
                   <TableCell>{r.type}</TableCell>
-                  <TableCell sx={{ color: r.medicalApproval === "Approved" ? "green" : "red", fontWeight: "bold" }}>
+                  <TableCell
+                    sx={{
+                      color: r.medicalApproval === "Approved" ? "green" : "red",
+                      fontWeight: "bold",
+                    }}
+                  >
                     {r.medicalApproval}
                   </TableCell>
                   <TableCell>
                     <Stack direction="row" spacing={1}>
-                      <Button onClick={() => handleDoctorApproval(r._id, "Yes")} size="small" variant="contained">
+                      <Button
+                        size="small"
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleDoctorApproval(r, "Yes")}
+                      >
                         Yes
                       </Button>
-                      <Button onClick={() => handleDoctorApproval(r._id, "No")} size="small" variant="contained" color="error">
+                      <Button
+                        size="small"
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleDoctorApproval(r, "No")}
+                      >
                         No
                       </Button>
                     </Stack>
@@ -213,10 +189,10 @@ const StudentMedical = () => {
               ))}
             </TableBody>
           </Table>
-        </Box>
+        )}
 
         <Typography variant="body2" align="center" sx={{ mt: 4, color: "text.secondary" }}>
-          © MediCare | University Medical Approval | Sabaragamuwa University
+          © MediCare | University Medical Records | Sabaragamuwa University
         </Typography>
       </Paper>
     </Box>

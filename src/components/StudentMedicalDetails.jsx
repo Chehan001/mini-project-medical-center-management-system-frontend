@@ -1,149 +1,266 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box, Container, Paper, Typography, CircularProgress,
-  Stack, Collapse, IconButton, Alert, Divider, Chip
+  Box,
+  Paper,
+  Typography,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Divider,
+  Stack,
+  Button,
+  CircularProgress,
+  Chip,
+  Alert,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { ExpandMore } from "@mui/icons-material";
+import { Refresh as RefreshIcon, CheckCircle, Cancel } from "@mui/icons-material";
 import axios from "axios";
 
-const MotionBox = motion(Box);
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-};
-
-const StudentMedicalDetails = () => {
-  const [loading, setLoading] = useState(true);
-  const [universityMedical, setUniversityMedical] = useState([]);
-  const [otherMedical, setOtherMedical] = useState([]);
-  const [expandedIndexUni, setExpandedIndexUni] = useState(null);
-  const [expandedIndexOther, setExpandedIndexOther] = useState(null);
+const StudentMedical = () => {
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    const fetchMedicalDetails = async () => {
-      try {
-        const regNumber = localStorage.getItem("regNumber");
-        if (!regNumber) {
-          setError("No registration number found. Please log in first.");
-          setLoading(false);
-          return;
-        }
-
-        const uniRes = await axios.get(`http://localhost:8000/api/university-medical/${regNumber}`);
-        const otherRes = await axios.get(`http://localhost:8000/api/other-medical/${regNumber}`);
-
-        setUniversityMedical(uniRes.data || []);
-        setOtherMedical(otherRes.data || []);
-      } catch (err) {
-        console.error("Error fetching medical details:", err);
-        setError("Server error. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMedicalDetails();
+    fetchAllRecords();
   }, []);
 
-  const toggleExpandUni = (index) => setExpandedIndexUni(expandedIndexUni === index ? null : index);
-  const toggleExpandOther = (index) => setExpandedIndexOther(expandedIndexOther === index ? null : index);
+  const fetchAllRecords = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-  const cardStyles = (bg) => ({
-    mb: 2, p: 3, borderRadius: 3, background: bg, cursor: "pointer",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.12)", transition: "all 0.3s ease",
-  });
+      // Fetch all types of medical records in parallel
+      const [studentRes, universityRes, otherRes] = await Promise.all([
+        axios.get("http://localhost:8000/api/student-medical"),
+        axios.get("http://localhost:8000/api/university-medical"),
+        axios.get("http://localhost:8000/api/other-medical/all"),
+      ]);
 
-  const renderUniversityMedical = () =>
-    universityMedical.length === 0
-      ? <Typography sx={{ color: "#555", textAlign: "center" }}>No University Medical requests found.</Typography>
-      : universityMedical.map((item, index) => (
-        <MotionBox key={index} sx={cardStyles("linear-gradient(to right, #e0f7f4, #f0fffa)")} whileHover={{ scale: 1.03 }}>
-          <Stack spacing={1}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <Typography variant="subtitle1" fontWeight="bold" color="#065a45">
-                📅 {formatDate(item.treatmentDate)} | 🏫 University
-              </Typography>
-              <IconButton size="small" onClick={() => toggleExpandUni(index)}
-                sx={{ transform: expandedIndexUni === index ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }}>
-                <ExpandMore />
-              </IconButton>
-            </Box>
-            <Collapse in={expandedIndexUni === index}>
-              <Stack spacing={1} mt={2}>
-                <Typography variant="body1"><strong>Student Name:</strong> {item.studentName}</Typography>
-                <Chip label={item.status || "Pending"} color={item.status === "Completed" ? "success" : "warning"} size="small"
-                  sx={{ fontWeight: 600, alignSelf: "flex-start" }} />
-              </Stack>
-            </Collapse>
-          </Stack>
-        </MotionBox>
-      ));
+      // Combine all records with proper mapping
+      const combined = [
+        ...studentRes.data.map((r) => ({
+          ...r,
+          source: "Student",
+          medicalApproval: r.medicalApproval || "Pending",
+          doctorApproval: r.doctorApproval || "Pending",
+          medicalDate: r.medicalDate,
+          type: r.type || "Student",
+        })),
+        ...universityRes.data.map((r) => ({
+          _id: r._id,
+          studentName: r.studentName,
+          regNumber: r.regNumber,
+          medicalDate: r.treatmentDate,
+          type: "University",
+          medicalApproval: r.medicalApproval || "Pending",
+          doctorApproval: r.doctorApproval || "Pending",
+          pdfFile: r.pdfFile || null,
+          source: "University",
+        })),
+        ...otherRes.data.map((r) => ({
+          _id: r._id,
+          studentName: r.studentName,
+          regNumber: r.regNumber,
+          medicalDate: r.treatmentDate,
+          type: "Other",
+          medicalApproval: r.medicalApproval || "Pending",
+          doctorApproval: r.doctorApproval || "Pending",
+          pdfFile: r.file || null,
+          source: "Other",
+        })),
+      ];
 
-  const renderOtherMedical = () =>
-    otherMedical.length === 0
-      ? <Typography sx={{ color: "#555", textAlign: "center" }}>No Other Medical requests found.</Typography>
-      : otherMedical.map((item, index) => (
-        <MotionBox key={index} sx={cardStyles("linear-gradient(to right, #fff0f7, #ffe6f7)")} whileHover={{ scale: 1.03 }}>
-          <Stack spacing={1}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <Typography variant="subtitle1" fontWeight="bold" color="#065a45">
-                📅 {formatDate(item.treatmentDate)} | 🏥 Other
-              </Typography>
-              <IconButton size="small" onClick={() => toggleExpandOther(index)}
-                sx={{ transform: expandedIndexOther === index ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }}>
-                <ExpandMore />
-              </IconButton>
-            </Box>
-            <Collapse in={expandedIndexOther === index}>
-              <Stack spacing={1} mt={2}>
-                <Typography variant="body1"><strong>Student Name:</strong> {item.studentName}</Typography>
-                <Typography variant="body2"><strong>Faculty:</strong> {item.faculty}</Typography>
-                <Typography variant="body2"><strong>Doctor:</strong> {item.doctorName} ({item.doctorRegID})</Typography>
-                {item.file && (
-                  <Typography variant="body2">
-                    <strong>File:</strong> <a href={`http://localhost:8000${item.file}`} target="_blank" rel="noopener noreferrer">View PDF</a>
-                  </Typography>
-                )}
-              </Stack>
-            </Collapse>
-          </Stack>
-        </MotionBox>
-      ));
+      // Filter duplicates by regNumber + date + type
+      const uniqueMap = new Map();
+      combined.forEach((r) => {
+        const key = `${r.regNumber}_${new Date(r.medicalDate).toDateString()}_${r.type}`;
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, r);
+        }
+      });
 
-  if (loading) return (
-    <Box sx={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "linear-gradient(135deg, #b3f3d9, #e0fff3)" }}>
-      <CircularProgress sx={{ color: "#067d61" }} />
-    </Box>
-  );
+      const uniqueRecords = Array.from(uniqueMap.values());
+
+      // Sort descending by date
+      uniqueRecords.sort((a, b) => new Date(b.medicalDate) - new Date(a.medicalDate));
+
+      setRecords(uniqueRecords);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError("Failed to fetch records. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update doctor approval
+  const handleDoctorApproval = async (record, approval) => {
+    try {
+      setSuccess("");
+      setError("");
+
+      let url = "";
+      if (record.source === "Student") {
+        url = `http://localhost:8000/api/student-medical/${record._id}/doctor-approval`;
+      } else if (record.source === "University") {
+        url = `http://localhost:8000/api/university-medical/${record._id}/doctor-approval`;
+      } else if (record.source === "Other") {
+        url = `http://localhost:8000/api/other-medical/${record._id}/doctor-approval`;
+      }
+
+      await axios.put(url, { doctorApproval: approval });
+
+      setSuccess(`Doctor approval updated to "${approval}" for ${record.studentName}`);
+      fetchAllRecords();
+    } catch (err) {
+      console.error("Approval update error:", err);
+      setError("Failed to update approval. Please try again.");
+    }
+  };
+
+  const getApprovalChip = (status) => {
+    if (status === "Approved") {
+      return <Chip icon={<CheckCircle />} label="Approved" color="success" size="small" sx={{ fontWeight: 600 }} />;
+    } else if (status === "Not Approved") {
+      return <Chip icon={<Cancel />} label="Not Approved" color="error" size="small" sx={{ fontWeight: 600 }} />;
+    }
+    return <Chip label="Pending" color="warning" size="small" sx={{ fontWeight: 600 }} />;
+  };
+
+  const getDoctorApprovalChip = (status) => {
+    if (status === "Yes") {
+      return <Chip label="Yes" color="success" size="small" sx={{ fontWeight: 600 }} />;
+    } else if (status === "No") {
+      return <Chip label="No" color="error" size="small" sx={{ fontWeight: 600 }} />;
+    }
+    return <Chip label="Pending" color="default" size="small" />;
+  };
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(to bottom right, #d4fff1, #baf1e0)" }}>
-      <Container maxWidth="md" sx={{ py: { xs: 3, md: 8 } }}>
-        <Paper sx={{ p: 4, borderRadius: 4, background: "#ffffff", elevation: 6 }}>
-          <Box textAlign="center" mb={3}>
-            <motion.img src="/medicare_logo.png" alt="University Logo" style={{ height: "80px", objectFit: "contain", marginBottom: "15px" }}
-              initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.8 }} />
+    <Box sx={{ background: "linear-gradient(135deg,#b3f3d9,#e0fff3)", minHeight: "100vh", py: 6 }}>
+      <Paper elevation={8} sx={{ maxWidth: 1200, mx: "auto", p: 5, borderRadius: 4 }}>
+        {/* Header */}
+        <Box textAlign="center" mb={4}>
+          <motion.img
+            src="/medicare_logo.png"
+            alt="Medicare Logo"
+            style={{ height: "80px", marginBottom: "10px" }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.7 }}
+          />
+          <Typography variant="h4" fontWeight="bold" color="#065a45">
+            Medical Records Management
+          </Typography>
+          <Divider
+            sx={{ mt: 1, borderColor: "#13a67a", borderBottomWidth: 2, width: "70%", mx: "auto" }}
+          />
+        </Box>
+
+        {/* Action Bar */}
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+          <Typography variant="h6" color="#065a45">
+            Total Records: {records.length}
+          </Typography>
+          <Tooltip title="Refresh Records">
+            <IconButton onClick={fetchAllRecords} color="primary" disabled={loading}>
+              <RefreshIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        {/* Notifications */}
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess("")}>
+            {success}
+          </Alert>
+        )}
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError("")}>
+            {error}
+          </Alert>
+        )}
+
+        {loading && <CircularProgress sx={{ display: "block", mx: "auto", my: 3 }} />}
+
+        {!loading && records.length === 0 && (
+          <Typography align="center" color="text.secondary" sx={{ py: 4 }}>
+            No medical records found.
+          </Typography>
+        )}
+
+        {!loading && records.length > 0 && (
+          <Box sx={{ overflowX: "auto" }}>
+            <Table sx={{ mt: 2 }}>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: "#065a45" }}>
+                  <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Name</TableCell>
+                  <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Reg No</TableCell>
+                  <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Date</TableCell>
+                  <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Type</TableCell>
+                  <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Medical Approval</TableCell>
+                  <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Doctor Approval</TableCell>
+                  <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {records.map((r) => (
+                  <TableRow key={r._id} hover>
+                    <TableCell>{r.studentName}</TableCell>
+                    <TableCell>{r.regNumber}</TableCell>
+                    <TableCell>{new Date(r.medicalDate).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={r.type} 
+                        size="small" 
+                        color={r.type === "University" ? "primary" : r.type === "Other" ? "secondary" : "default"}
+                      />
+                    </TableCell>
+                    <TableCell>{getApprovalChip(r.medicalApproval)}</TableCell>
+                    <TableCell>{getDoctorApprovalChip(r.doctorApproval)}</TableCell>
+                    <TableCell>
+                      <Stack direction="row" spacing={1}>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          color="success"
+                          onClick={() => handleDoctorApproval(r, "Yes")}
+                          disabled={r.doctorApproval === "Yes"}
+                        >
+                          Yes
+                        </Button>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleDoctorApproval(r, "No")}
+                          disabled={r.doctorApproval === "No"}
+                        >
+                          No
+                        </Button>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Box>
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Typography variant="h4" sx={{ fontWeight: 700, mb: 3, textAlign: "center", color: "#0e4d46" }}>Medical Requests</Typography>
-          </motion.div>
-          {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-          <Divider sx={{ my: 2, borderColor: "#b3e7d3" }} />
-          <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, color: "#065a45" }}>University Medical Requests</Typography>
-          {renderUniversityMedical()}
-          <Divider sx={{ my: 3, borderColor: "#b3e7d3" }} />
-          <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, color: "#065a45" }}>Other Medical Requests</Typography>
-          {renderOtherMedical()}
-        </Paper>
-      </Container>
-      <Box sx={{ backgroundColor: "#0e4d46", color: "#fff", textAlign: "center", py: 2, mt: "auto", fontSize: { xs: 12, sm: 14 } }}>
-        © {new Date().getFullYear()} MediCare — Sabaragamuwa University
-      </Box>
+        )}
+
+        <Typography variant="body2" align="center" sx={{ mt: 4, color: "text.secondary" }}>
+          © MediCare | University Medical Records | Sabaragamuwa University
+        </Typography>
+      </Paper>
     </Box>
   );
 };
 
-export default StudentMedicalDetails;
+export default StudentMedical;
