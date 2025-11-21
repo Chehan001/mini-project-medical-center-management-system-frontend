@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 // User Components
 import HomePage from "./components/HomePage";
 import LoginRegister from "./components/LoginRegister";
-import UserProfil from "./components/UserProfil";
+import UserProfile from "./components/UserProfile";
 import ResetPassword from "./components/ResetPassword";
 import About from "./components/About";
 import Channel from "./components/Channel";
@@ -68,7 +68,7 @@ const App = () => (
       <Route path="/student-medical-details" element={<StudentMedicalDetails />} />
       
       {/* Student Protected */}
-      <Route path="/personal-data" element={<ProtectedRoute><UserProfil /></ProtectedRoute>} />
+      <Route path="/personal-data" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
       {/* Doctor/Admin Routes */}
       <Route path="/doctor-dashboard" element={<DoctorRoute><DoctorDashboard /></DoctorRoute>} />
