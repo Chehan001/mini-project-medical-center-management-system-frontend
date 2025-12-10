@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import MailLockOutlinedIcon from "@mui/icons-material/MailLockOutlined";
 import { useNavigate } from "react-router-dom";
+import API_ROOT from "../services/api";
 
 const LoginRegister = () => {
   const [action, setAction] = useState("Sign In");
@@ -43,7 +44,7 @@ const LoginRegister = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:8000/api/auth/request-password-reset", {
+      await axios.post(`${API_ROOT}/api/auth/request-password-reset`, {
         university_mail: form.universityEmail,
       });
       showMessage("success", "Password reset link sent to your university email.");
@@ -80,7 +81,7 @@ const LoginRegister = () => {
         return;
       }
       try {
-        const res = await axios.post("http://localhost:8000/api/auth/login", {
+        const res = await axios.post(`${API_ROOT}/api/auth/login`, {
           university_reg_number: form.idNumber,
           password: form.password,
         });
