@@ -1,13 +1,14 @@
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 // Public API for authentication (login)
 export const adminAuthApi = axios.create({
-  baseURL: "http://localhost:8000/api/auth",
+  baseURL: `${API_ROOT}/api/auth`,
 });
 
 // Protected admin API (needs JWT)
 export const adminApi = axios.create({
-  baseURL: "http://localhost:8000/api/admin",
+  baseURL: `${API_ROOT}/api/admin`,
 });
 
 // Attach token to protected API requests

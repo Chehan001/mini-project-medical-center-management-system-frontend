@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { Heart, Activity, User, Stethoscope } from "lucide-react";
 import DoctorNavBar from "./DoctorNavBar";
+import API_ROOT from "../services/api";
 
 const DoctorDashboard = () => {
   const [regNumber, setRegNumber] = useState("");
@@ -36,7 +37,7 @@ const DoctorDashboard = () => {
 
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/doctor/student/${trimmedReg}`
+        `${API_ROOT}/api/doctor/student/${trimmedReg}`
       );
 
       if (res.data.success) {
@@ -216,7 +217,7 @@ const DoctorDashboard = () => {
                 }}
               >
                 <Avatar
-                  src={`http://localhost:8000${studentData.photo || ""}`}
+                  src={`${API_ROOT}${studentData.photo || ""}`}
                   alt={studentData.name}
                   sx={{
                     width: 85,

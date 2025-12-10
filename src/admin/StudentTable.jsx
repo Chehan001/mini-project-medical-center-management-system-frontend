@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { motion } from "framer-motion";
+import API_ROOT from "../services/api";
 
 const StudentTable = () => {
   const [students, setStudents] = useState([]);
@@ -25,7 +26,7 @@ const StudentTable = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/user/");
+        const res = await axios.get(`${API_ROOT}/api/user/`);
         setStudents(res.data);
       } catch (err) {
         console.error("Fetch student data error:", err);
@@ -211,7 +212,7 @@ const StudentTable = () => {
                       <TableCell align="center">
                         {s.photo ? (
                           <Avatar
-                            src={`http://localhost:8000${s.photo}`}
+                            src={`${API_ROOT}${s.photo}`}
                             alt="Student"
                             sx={{
                               width: 50,

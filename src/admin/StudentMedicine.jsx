@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { User, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
+import API_ROOT from "../services/api";
 
 // Medicine_List (same as before)
 const medicineList = [
@@ -109,7 +110,7 @@ const StudentMedicine = () => {
     try {
       // <-- IMPORTANT: correct endpoint to match server.js
       const response = await axios.post(
-        "http://localhost:8000/api/studentMedicine/add-medicine",
+        `${API_ROOT}/api/studentMedicine/add-medicine`,
         {
           regNumber: registerNumber.toUpperCase(),
           date,

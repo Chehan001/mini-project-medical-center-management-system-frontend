@@ -3,6 +3,7 @@ import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Icon
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
+import API_ROOT from "../services/api";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -10,7 +11,7 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token'); // JWT token
-      const res = await axios.get('http://localhost:8000/api/admin/users', {
+      const res = await axios.get(`${API_ROOT}/api/admin/users `, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(res.data);
@@ -24,7 +25,7 @@ const Users = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8000/api/admin/users/${id}`, {
+      await axios.delete(`${API_ROOT}/api/admin/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(users.filter((user) => user._id !== id));

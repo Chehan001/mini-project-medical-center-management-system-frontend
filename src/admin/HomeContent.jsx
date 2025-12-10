@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, Button, Paper, Grid, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
+import API_ROOT from "../services/api";
 
 const HomeContent = () => {
   const [contents, setContents] = useState([]);
@@ -13,7 +14,7 @@ const HomeContent = () => {
 
   const fetchContents = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/admin/home-content', {
+      const res = await axios.get(`${API_ROOT}/api/admin/home-content`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setContents(res.data);
@@ -27,7 +28,7 @@ const HomeContent = () => {
 
     try {
       await axios.post(
-        'http://localhost:8000/api/admin/home-content',
+        `${API_ROOT}/api/admin/home-content`,
         { title, description, imageUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -44,7 +45,7 @@ const HomeContent = () => {
     if (!window.confirm('Delete this content?')) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/admin/home-content/${id}`, {
+      await axios.delete(`${API_ROOT}/api/admin/home-content/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchContents();

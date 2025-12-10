@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const StudentMedical = () => {
   const [records, setRecords] = useState([]);
@@ -31,9 +32,9 @@ const StudentMedical = () => {
 
       // Fetch all types of medical records in parallel
       const [studentRes, universityRes, otherRes] = await Promise.all([
-        axios.get("http://localhost:8000/api/student-medical"),
-        axios.get("http://localhost:8000/api/university-medical"),
-        axios.get("http://localhost:8000/api/other-medical/all"),
+        axios.get(`${API_ROOT}/api/student-medical`),
+        axios.get(`${API_ROOT}/api/university-medical`),
+        axios.get(`${API_ROOT}/api/other-medical/all`),
       ]);
 
       // Combine all records
@@ -98,11 +99,11 @@ const StudentMedical = () => {
     try {
       let url = "";
       if (record.source === "Student") {
-        url = `http://localhost:8000/api/student-medical/${record._id}/doctor-approval`;
+        url = `${API_ROOT}/api/student-medical/${record._id}/doctor-approval`;
       } else if (record.source === "University") {
-        url = `http://localhost:8000/api/university-medical/${record._id}/doctor-approval`;
+        url = `${API_ROOT}/api/university-medical/${record._id}/doctor-approval`;
       } else if (record.source === "Other") {
-        url = `http://localhost:8000/api/other-medical/${record._id}/doctor-approval`;
+        url = `${API_ROOT}/api/other-medical/${record._id}/doctor-approval`;
       }
 
       await axios.put(url, { doctorApproval: approval });

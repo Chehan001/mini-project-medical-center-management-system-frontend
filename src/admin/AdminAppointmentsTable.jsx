@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const AdminAppointmentsTable = () => {
   const [appointments, setAppointments] = useState([]);
@@ -26,7 +27,7 @@ const AdminAppointmentsTable = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/appointments");
+        const res = await axios.get(`${API_ROOT}/api/appointments`);
         if (res.data.ok) {
           setAppointments(res.data.data);
           setFiltered(res.data.data);

@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { motion } from "framer-motion";
+import API_ROOT from "../services/api";
 
 const AdminEntryPanel = () => {
   const [regNumber, setRegNumber] = useState("");
@@ -28,7 +29,7 @@ const AdminEntryPanel = () => {
       setError("");
       setMessage("");
       const res = await axios.get(
-        `http://localhost:8000/api/appointments/check/${regNumber}`
+        `${API_ROOT}/api/appointments/check/${regNumber}`
       );
 
       if (res.data.hasAppointment) {
@@ -55,7 +56,7 @@ const AdminEntryPanel = () => {
       setError("");
       setMessage("");
 
-      const res = await axios.post("http://localhost:8000/api/entries", {
+      const res = await axios.post(`${API_ROOT}/api/entries`, {
         regNumber,
         entryType: type,
       });
