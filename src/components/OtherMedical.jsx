@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -81,7 +82,7 @@ const OtherMedical = () => {
       });
 
       const response = await axios.post(
-        "http://localhost:8000/api/other-medical/submit",
+        `${API_ROOT}/api/other-medical/submit`,
         dataToSend,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

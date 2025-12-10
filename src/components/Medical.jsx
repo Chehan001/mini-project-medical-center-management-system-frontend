@@ -11,6 +11,7 @@ import {
 import { motion } from "framer-motion";
 import { Stethoscope, Building2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import API_ROOT from "../services/api";
 
 const MotionBox = motion(Box);
 

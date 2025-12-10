@@ -15,7 +15,7 @@ import {
 import { motion } from "framer-motion";
 import { ExpandMore } from "@mui/icons-material";
 import axios from "axios";
-
+import API_ROOT from "../services/api"; 
 const MotionBox = motion(Box);
 
 const StudentMedicineDetails = () => {
@@ -29,7 +29,7 @@ const StudentMedicineDetails = () => {
     setError("");
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/studentMedicine/student/${regNumber}`
+        `${API_ROOT}/api/studentMedicine/student/${regNumber}`
       );
 
       if (res.data.success) {

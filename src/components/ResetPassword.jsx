@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Container, TextField, Button, Paper, Typography } from '@mui/material';
+import API_ROOT from "../services/api";
 
 const ResetPassword = () => {
   const { userId, token } = useParams();
@@ -21,7 +22,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const res = await axios.post(`http://localhost:8000/api/auth/reset-password/${userId}/${token}`, {
+      const res = await axios.post(`${API_ROOT}/api/auth/reset-password/${userId}/${token}`, {
         password: form.password,
         confirmPassword: form.confirmPassword,
       });

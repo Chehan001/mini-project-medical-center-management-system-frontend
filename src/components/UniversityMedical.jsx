@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -48,7 +49,7 @@ const UniversityMedical = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/university-medical", formData);
+      const res = await axios.post(`${API_ROOT}/api/university-medical`, formData);
       setNotification(res.data.message || "Form submitted successfully!");
       setFormData({
         studentName: "",

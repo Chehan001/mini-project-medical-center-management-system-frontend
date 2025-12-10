@@ -11,6 +11,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const WorkingHours = () => {
   const [hours, setHours] = useState(null);
@@ -20,7 +21,7 @@ const WorkingHours = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/hours")
+      .get(`${API_ROOT}/api/hours`)
       .then((res) => {
         setHours(res.data.hours);
         setToday(res.data.today);

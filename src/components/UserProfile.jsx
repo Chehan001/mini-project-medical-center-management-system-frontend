@@ -14,6 +14,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import NavBar from "./UserNavBar";
 import { HeartPulse, Pill } from "lucide-react";
+import API_ROOT from "../services/api";
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -34,7 +35,7 @@ const UserProfile = () => {
         }
 
         const response = await axios.get(
-          `http://localhost:8000/api/user/${storedRegNo}`
+          `${API_ROOT}/api/user/${storedRegNo}`
         );
 
         if (!response.data || Object.keys(response.data).length === 0) {
@@ -119,7 +120,7 @@ const UserProfile = () => {
             <Grid container spacing={4} alignItems="center" justifyContent="center">
               <Grid item xs={12} sm={4} textAlign="center">
                 <Avatar
-                  src={userData.photo ? `http://localhost:8000${userData.photo}` : undefined}
+                  src={userData.photo ? `${API_ROOT}${userData.photo}` : undefined}
                   sx={{
                     width: { xs: 120, sm: 160, md: 180 },
                     height: { xs: 120, sm: 160, md: 180 },

@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const StudentMedical = () => {
   const [records, setRecords] = useState([]);
@@ -38,9 +39,9 @@ const StudentMedical = () => {
       setError("");
 
       const [studentRes, universityRes, otherRes] = await Promise.all([
-        axios.get("http://localhost:8000/api/student-medical"),
-        axios.get("http://localhost:8000/api/university-medical"),
-        axios.get("http://localhost:8000/api/other-medical/all"),
+        axios.get(`${API_ROOT}/api/student-medical`),
+        axios.get(`${API_ROOT}/api/university-medical`),
+        axios.get(`${API_ROOT}/api/other-medical/all`),
       ]);
 
       const combined = [

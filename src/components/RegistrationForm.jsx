@@ -19,6 +19,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import API_ROOT from "../services/api";
 
 const RegistrationForm = () => {
   const [form, setForm] = useState({});
@@ -32,11 +33,11 @@ const RegistrationForm = () => {
       setForm((prev) => ({ ...prev, regNumber: storedRegNo }));
 
       axios
-        .get(`http://localhost:8000/api/user/${storedRegNo}`)
+        .get(`${API_ROOT}/api/user/${storedRegNo}`)
         .then((res) => {
           setForm(res.data);
           if (res.data.photo) {
-            setPhoto(`http://localhost:8000${res.data.photo}`);
+            setPhoto(`${API_ROOT}${res.data.photo}`);
           }
         })
         .catch((err) => {
@@ -85,7 +86,7 @@ const RegistrationForm = () => {
       }
       if (photoFile) fd.append("photo", photoFile);
 
-      const res = await axios.post("http://localhost:8000/api/user", fd, {
+      const res = await axios.post( `${API_ROOT}/api/user`, fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
