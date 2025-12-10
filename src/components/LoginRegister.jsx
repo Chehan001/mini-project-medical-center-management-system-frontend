@@ -64,7 +64,7 @@ const LoginRegister = () => {
         return;
       }
       try {
-        await axios.post("http://localhost:8000/api/auth/register", {
+        await axios.post(`${API_ROOT}/api/auth/register`, {
           university_mail: form.universityEmail,
           university_reg_number: form.idNumber,
           password: form.password,
