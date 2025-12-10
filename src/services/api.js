@@ -1,3 +1,3 @@
-const API_ROOT = "https://152.42.207.96:8000";
+const API_ROOT = "https://medicare-server.duckdns.org";
 
 export default API_ROOT;
