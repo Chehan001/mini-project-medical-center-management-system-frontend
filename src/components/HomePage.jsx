@@ -27,50 +27,44 @@ const HomePage = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          textAlign: "center",
         }}
       >
         <Slideshow />
       </Box>
 
-      {/* Location +  Working Hours Section */}
+      {/* Location + Working Hours  */}
       <Box
         sx={{
-          mt: 2,
+          mt: 4,
           mb: 6,
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          justifyContent: "space-between",
-          alignItems: "center",
           width: "100%",
-          maxWidth: "1200px",
-          mx: "auto",
+          display: "flex",
+          justifyContent: "center",
           px: 2,
-          gap: 3,
         }}
       >
-        {/* Left: MediCare Location */}
         <Box
           sx={{
             width: "100%",
-            maxWidth: { md: "50%" },
-            display: "flex",
-            justifyContent: "center",
+            maxWidth: "1400px",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              md: "1fr 380px",
+            },
+            gap: 4,
+            alignItems: "center",
           }}
         >
-          <MediCareLocation />
-        </Box>
+          {/* Left: Location */}
+          <Box display="flex" justifyContent="center">
+            <MediCareLocation />
+          </Box>
 
-        {/* Right: Working Hours */}
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth: "360px",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <WorkingHours />
+          {/* Right: Working Hours */}
+          <Box display="flex" justifyContent="center">
+            <WorkingHours />
+          </Box>
         </Box>
       </Box>
 
