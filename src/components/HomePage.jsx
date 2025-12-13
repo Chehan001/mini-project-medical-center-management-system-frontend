@@ -1,9 +1,9 @@
 import React from "react";
+import { Box, Typography } from "@mui/material";
 import NavBar from "./NavBar";
 import Slideshow from "./Slideshow";
 import WorkingHours from "./WorkingHours";
 import MediCareLocation from "./MediCareLocation";
-import { Box, Typography } from "@mui/material";
 
 const HomePage = () => {
   return (
@@ -21,8 +21,8 @@ const HomePage = () => {
       {/* Slideshow */}
       <Box
         sx={{
-          px: { xs: 1, sm: 2 },
-          py: { xs: 1.5, sm: 3 },
+          px: { xs: 2, sm: 3 },
+          py: { xs: 2, sm: 3 },
           display: "flex",
           justifyContent: "center",
         }}
@@ -30,12 +30,13 @@ const HomePage = () => {
         <Slideshow />
       </Box>
 
-      {/* Location + Working Hours */}
+      {/* Location + Working Hours Section */}
       <Box
         sx={{
+          flex: 1,
           width: "100%",
-          px: { xs: 1.5, md: 2 },
-          pb: { xs: 3, md: 6 },
+          px: { xs: 2, sm: 3, md: 4 },
+          pb: { xs: 3, md: 4 },
           display: "flex",
           justifyContent: "center",
         }}
@@ -47,33 +48,19 @@ const HomePage = () => {
             display: "grid",
             gridTemplateColumns: {
               xs: "1fr",
-              md: "1fr 380px",
+              md: "repeat(2, 1fr)",
             },
-            gap: { xs: 2, md: 4 }, 
+            gap: { xs: 2, sm: 3, md: 4 },
             alignItems: "start",
           }}
         >
-          {/* MediCare Location (space reduced) */}
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: "420px",
-              mx: "auto",
-              transform: { xs: "scale(0.94)", md: "scale(1)" },
-            }}
-          >
+          {/* MediCare Location */}
+          <Box sx={{ width: "100%" }}>
             <MediCareLocation />
           </Box>
 
           {/* Working Hours */}
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: "380px",
-              mx: "auto",
-              transform: { xs: "scale(0.94)", md: "scale(1)" },
-            }}
-          >
+          <Box sx={{ width: "100%" }}>
             <WorkingHours />
           </Box>
         </Box>
@@ -86,11 +73,12 @@ const HomePage = () => {
           backgroundColor: "#0e4d46",
           color: "#fff",
           textAlign: "center",
-          py: { xs: 2, md: 3 },
+          py: { xs: 2, md: 2.5 },
           boxShadow: "0 -4px 12px rgba(0,0,0,0.15)",
+          mt: "auto",
         }}
       >
-        <Typography variant="body2" sx={{ fontSize: { xs: 11, md: 14 } }}>
+        <Typography variant="body2" sx={{ fontSize: { xs: "0.875rem", md: "0.9rem" } }}>
           © {new Date().getFullYear()} MediCare — Sabaragamuwa University
         </Typography>
       </Box>
