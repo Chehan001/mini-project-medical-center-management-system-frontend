@@ -34,10 +34,10 @@ const HomePage = () => {
       <Box
         sx={{
           width: "100%",
+          px: { xs: 1.5, md: 2 },
+          pb: { xs: 3, md: 6 },
           display: "flex",
           justifyContent: "center",
-          px: { xs: 1.5, md: 2 },
-          pb: { xs: 3, md: 6 }, 
         }}
       >
         <Box
@@ -50,15 +50,16 @@ const HomePage = () => {
               md: "1fr 380px",
             },
             gap: { xs: 2, md: 4 }, 
-            alignItems: "start", 
+            alignItems: "start",
           }}
         >
-          {/* Location */}
+          {/* MediCare Location (space reduced) */}
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              transform: { xs: "scale(0.95)", md: "scale(1)" },
+              width: "100%",
+              maxWidth: "420px",
+              mx: "auto",
+              transform: { xs: "scale(0.94)", md: "scale(1)" },
             }}
           >
             <MediCareLocation />
@@ -67,8 +68,9 @@ const HomePage = () => {
           {/* Working Hours */}
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
+              width: "100%",
+              maxWidth: "380px",
+              mx: "auto",
               transform: { xs: "scale(0.94)", md: "scale(1)" },
             }}
           >
