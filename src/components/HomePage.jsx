@@ -44,7 +44,7 @@ const HomePage = () => {
         <Box
           sx={{
             width: "100%",
-            maxWidth: "1200px",
+            maxWidth: "1000px",
             display: "grid",
             gridTemplateColumns: {
               xs: "1fr",

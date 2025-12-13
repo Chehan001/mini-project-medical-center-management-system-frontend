@@ -39,7 +39,7 @@ const WorkingHours = () => {
     background: "linear-gradient(135deg, #a6e3d1, #67b8a3)",
     color: "#2c2c2c",
     width: "100%",
-    maxWidth: "320px", // responsive max width
+    maxWidth: "320px", 
     borderRadius: "16px",
     boxShadow: "0 6px 14px rgba(0, 0, 0, 0.15)",
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
