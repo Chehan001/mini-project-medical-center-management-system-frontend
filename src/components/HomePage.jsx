@@ -6,13 +6,10 @@ import { Box, Typography } from "@mui/material";
 
 const HomePage = () => {
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         minHeight: "100vh",
-        position: "relative",
         background: "linear-gradient(to bottom right, #c8f1e7, #a7e3cf, #80e4be)",
-        margin: 0,
-        padding: 0,
         display: "flex",
         flexDirection: "column",
       }}
@@ -23,7 +20,8 @@ const HomePage = () => {
       {/* Main Content */}
       <Box
         sx={{
-          padding: "30px 20px",
+          px: { xs: 1, sm: 2 },
+          py: { xs: 2, sm: 3 },
           flexGrow: 1,
           display: "flex",
           flexDirection: "column",
@@ -34,39 +32,45 @@ const HomePage = () => {
         <Slideshow />
       </Box>
 
-      {/* Working Hours Section with optional left component */}
+      {/* Location / Working Hours Section */}
       <Box
         sx={{
-          mt: 1,
+          mt: 2,
           mb: 6,
           display: "flex",
-          flexDirection: { xs: "column", md: "row" }, // column on mobile, row on desktop
-          justifyContent: { xs: "center", md: "space-between" }, // center on mobile, spaced on desktop
-          alignItems: { xs: "center", md: "flex-start" },
+          flexDirection: { xs: "column", md: "row" },
+          justifyContent: "space-between",
+          alignItems: "center",
           width: "100%",
           maxWidth: "1200px",
-          margin: "0 auto",
+          mx: "auto",
           px: 2,
-          gap: 2,
+          gap: 3,
         }}
       >
-        {/* Left Component */}
+        {/* Left Component (placeholder – safe & responsive) */}
         <Box
           sx={{
-            flex: 1,
-            width: { xs: "100%", md: "auto" },
-            mb: { xs: 2, md: 0 }, // margin below on mobile
-            textAlign: { xs: "center", md: "left" }, // center on mobile
+            width: "100%",
+            maxWidth: { md: "50%" },
+            textAlign: { xs: "center", md: "left" },
           }}
         >
-          <Typography variant="h6" sx={{ color: "#1f5b50" }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "#1f5b50", fontWeight: 600 }}
+          >
             Left Component Here
           </Typography>
         </Box>
 
         {/* Right Component */}
         <Box
-          sx={{ flexShrink: 0, display: "flex",justifyContent: { xs: "center", md: "flex-end" }, width: { xs: "100%", md: "auto" }, // full width on mobile for centering
+          sx={{
+            width: "100%",
+            maxWidth: "360px",
+            display: "flex",
+            justifyContent: "center",
           }}
         >
           <WorkingHours />
@@ -80,23 +84,15 @@ const HomePage = () => {
           backgroundColor: "#0e4d46",
           color: "#fff",
           textAlign: "center",
-          py: 3, 
-          mt: { xs: 4, md: 6 }, // space above footer
+          py: 3,
           boxShadow: "0 -4px 12px rgba(0,0,0,0.15)",
-          transition: "background-color 0.3s ease, transform 0.3s ease",
-          cursor: "default",
-          "&:hover": {
-            backgroundColor: "#0c3e3a",
-            transform: "translateY(-2px)",
-          },
         }}
       >
         <Typography variant="body2" sx={{ fontSize: { xs: 12, md: 14 } }}>
           © {new Date().getFullYear()} MediCare — Sabaragamuwa University
         </Typography>
       </Box>
-
-    </div>
+    </Box>
   );
 };
 
