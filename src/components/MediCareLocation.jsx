@@ -15,7 +15,7 @@ const MediCareLocation = () => {
         background: "linear-gradient(135deg, #ffffff, #e6f5f1)",
         boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
         width: "100%",
-        maxWidth: "420px",
+        maxWidth: "380px",
         mx: "auto",
       }}
     >
