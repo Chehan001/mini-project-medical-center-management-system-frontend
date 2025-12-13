@@ -18,51 +18,60 @@ const HomePage = () => {
       {/* Navigation Bar */}
       <NavBar />
 
-      {/* Main Content */}
+      {/* Slideshow */}
       <Box
         sx={{
           px: { xs: 1, sm: 2 },
-          py: { xs: 2, sm: 3 },
-          flexGrow: 1,
+          py: { xs: 1.5, sm: 3 },
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <Slideshow />
       </Box>
 
-      {/* Location + Working Hours  */}
+      {/* Location + Working Hours */}
       <Box
         sx={{
-          mt: 4,
-          mb: 6,
           width: "100%",
           display: "flex",
           justifyContent: "center",
-          px: 2,
+          px: 1.5,
+          pb: 4,
         }}
       >
         <Box
           sx={{
             width: "100%",
-            maxWidth: "1400px",
+            maxWidth: "1200px",
             display: "grid",
             gridTemplateColumns: {
               xs: "1fr",
               md: "1fr 380px",
             },
-            gap: 4,
-            alignItems: "center",
+            gap: { xs: 2.5, md: 4 }, //smaller gap on -->  mobile
+            alignItems: "start",
           }}
         >
-          {/* Left: Location */}
-          <Box display="flex" justifyContent="center">
+          {/* Location Card (compact on mobile) */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              transform: { xs: "scale(0.96)", md: "scale(1)" }, // mobile
+            }}
+          >
             <MediCareLocation />
           </Box>
 
-          {/* Right: Working Hours */}
-          <Box display="flex" justifyContent="center">
+          {/* Working Hours (priority info) */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              transform: { xs: "scale(0.95)", md: "scale(1)" }, // mobile
+            }}
+          >
             <WorkingHours />
           </Box>
         </Box>
@@ -75,11 +84,11 @@ const HomePage = () => {
           backgroundColor: "#0e4d46",
           color: "#fff",
           textAlign: "center",
-          py: 3,
+          py: { xs: 2, md: 3 },
           boxShadow: "0 -4px 12px rgba(0,0,0,0.15)",
         }}
       >
-        <Typography variant="body2" sx={{ fontSize: { xs: 12, md: 14 } }}>
+        <Typography variant="body2" sx={{ fontSize: { xs: 11, md: 14 } }}>
           © {new Date().getFullYear()} MediCare — Sabaragamuwa University
         </Typography>
       </Box>
