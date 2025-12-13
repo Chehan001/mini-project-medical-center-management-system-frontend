@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, Paper, IconButton } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import locationImage from "../assets/location.png";
 
 const MediCareLocation = () => {
   const locationURL = "https://maps.app.goo.gl/FBELa1QWyeTjwf866";
@@ -33,10 +34,10 @@ const MediCareLocation = () => {
         <LocationOnIcon /> MediCare Location
       </Typography>
 
-      {/* Location Image */}
+      {/* Location --> Image */}
       <Box
         component="img"
-        src="/location.png"
+        src={locationImage}   
         alt="MediCare Location"
         onClick={() => window.open(locationURL, "_blank")}
         sx={{
@@ -52,8 +53,6 @@ const MediCareLocation = () => {
           },
         }}
       />
-
-      {/* Click Hint */}
       <Box sx={{ textAlign: "center", mt: 1 }}>
         <IconButton
           onClick={() => window.open(locationURL, "_blank")}

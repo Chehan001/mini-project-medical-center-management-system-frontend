@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "./NavBar";
 import Slideshow from "./Slideshow";
 import WorkingHours from "./WorkingHours";
+import MediCareLocation from "./MediCareLocation";
 import { Box, Typography } from "@mui/material";
 
 const HomePage = () => {
@@ -32,7 +33,7 @@ const HomePage = () => {
         <Slideshow />
       </Box>
 
-      {/* Location / Working Hours Section */}
+      {/* Location +  Working Hours Section */}
       <Box
         sx={{
           mt: 2,
@@ -48,23 +49,19 @@ const HomePage = () => {
           gap: 3,
         }}
       >
-        {/* Left Component (placeholder – safe & responsive) */}
+        {/* Left: MediCare Location */}
         <Box
           sx={{
             width: "100%",
             maxWidth: { md: "50%" },
-            textAlign: { xs: "center", md: "left" },
+            display: "flex",
+            justifyContent: "center",
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{ color: "#1f5b50", fontWeight: 600 }}
-          >
-            Left Component Here
-          </Typography>
+          <MediCareLocation />
         </Box>
 
-        {/* Right Component */}
+        {/* Right: Working Hours */}
         <Box
           sx={{
             width: "100%",
