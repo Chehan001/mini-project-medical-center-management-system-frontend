@@ -16,8 +16,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { motion } from "framer-motion";
+import API_ROOT from "../services/api";
 
-// Helpers 
 function toLocalIsoDateInputValue(date) {
   const tzOffset = date.getTimezoneOffset() * 60000;
   return new Date(date - tzOffset).toISOString().slice(0, 10);
@@ -114,7 +114,7 @@ export default function AppointmentBooking() {
     if (!regNumber || !selectedSlot) return;
 
     axios
-      .get(`http://localhost:8000/api/user/${regNumber}`)
+      .get(`${API_ROOT}/api/user/${regNumber}`)
       .then((res) => {
         setStudentData({
           name: res.data.name,
