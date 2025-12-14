@@ -97,7 +97,7 @@ export default function AppointmentBooking() {
 
   const fetchBookedSlots = async (date) => {
     try {
-      const res = await axios.get(`/api/appointments/by-date/${date}`);
+      const res = await axios.get(`${API_ROOT}/api/appointments/by-date/${date}`);
       if (res.data.ok) setBooked(res.data.bookings);
     } catch (err) {
       console.error("Failed to fetch booked appointments:", err);
@@ -142,7 +142,7 @@ export default function AppointmentBooking() {
       return setMessage({ type: "error", text: "That slot is already booked." });
 
     try {
-      const res = await axios.post("/api/appointments", {
+      const res = await axios.post(`${API_ROOT}/api/appointments`, {
         date: selectedDate,
         time: selectedSlot.label,
         mobile: studentData.mobile,
