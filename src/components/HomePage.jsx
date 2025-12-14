@@ -1,88 +1,68 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
-import NavBar from "./NavBar";
-import Slideshow from "./Slideshow";
+import { Box, Container } from "@mui/material";
 import WorkingHours from "./WorkingHours";
 import MediCareLocation from "./MediCareLocation";
 
 const HomePage = () => {
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background: "linear-gradient(to bottom right, #c8f1e7, #a7e3cf, #80e4be)",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* Navigation Bar */}
-      <NavBar />
-
-      {/* Slideshow */}
-      <Box
-        sx={{
-          px: { xs: 2, sm: 3 },
-          py: { xs: 2, sm: 3 },
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <Slideshow />
-      </Box>
-
-      {/* Location + Working Hours Section */}
-      <Box
-        sx={{
-          flex: 1,
-          width: "100%",
-          px: { xs: 2, sm: 3, md: 4 },
-          pb: { xs: 3, md: 4 },
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      {/* Slideshow Section */}
+      <Box sx={{ mb: 4 }}>
+        {/* <Slideshow /> */}
         <Box
           sx={{
-            width: "100%",
-            maxWidth: "1000px",
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              md: "repeat(2, 1fr)",
-            },
-            gap: { xs: 2, sm: 3, md: 4 },
-            alignItems: "start",
+            height: { xs: "250px", sm: "350px", md: "450px" },
+           background: "linear-gradient(135deg, #d4f9e6, #a6f1d7)",
+            borderRadius: "16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#fff",
+            fontSize: "24px",
+            fontWeight: "bold",
           }}
         >
-          {/* MediCare Location */}
-          <Box sx={{ width: "100%" }}>
-            <MediCareLocation />
-          </Box>
-
-          {/* Working Hours */}
-          <Box sx={{ width: "100%" }}>
-            <WorkingHours />
-          </Box>
+          Slideshow Placeholder
         </Box>
       </Box>
 
-      {/* Footer */}
+      {/* Working Hours & Location Section - Side by Side */}
       <Box
-        component="footer"
         sx={{
-          backgroundColor: "#0e4d46",
-          color: "#fff",
-          textAlign: "center",
-          py: { xs: 2, md: 2.5 },
-          boxShadow: "0 -4px 12px rgba(0,0,0,0.15)",
-          mt: "auto",
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 3,
+          justifyContent: "center",
+          alignItems: { xs: "center", md: "flex-start" },
         }}
       >
-        <Typography variant="body2" sx={{ fontSize: { xs: "0.875rem", md: "0.9rem" } }}>
-          © {new Date().getFullYear()} MediCare — Sabaragamuwa University
-        </Typography>
+        {/* Working Hours - Left */}
+        <Box
+          sx={{
+            flex: { md: "1" },
+            width: "100%",
+            maxWidth: { xs: "420px", md: "100%" },
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <WorkingHours />
+        </Box>
+
+        {/* Location - Right */}
+        <Box
+          sx={{
+            flex: { md: "1" },
+            width: "100%",
+            maxWidth: { xs: "420px", md: "100%" },
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <MediCareLocation />
+        </Box>
       </Box>
-    </Box>
+    </Container>
   );
 };
 
