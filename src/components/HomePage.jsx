@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "./NavBar";
 import Slideshow from "./Slideshow";
 import WorkingHours from "./WorkingHours";
+import MediCareLocation from "./MediCareLocation";  
 import { Box, Typography } from "@mui/material";
 
 const HomePage = () => {
