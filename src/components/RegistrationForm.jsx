@@ -289,7 +289,7 @@ const RegistrationForm = () => {
               <RadioGroup
                 row
                 name={name}
-                value={form[name] || ""}  //use dynamic key here
+                value={form[name] || ""}  
                 onChange={handleChange}
               >
                 <FormControlLabel value="yes" control={<Radio disabled={isReadOnly} />} label="Yes" />
@@ -312,7 +312,7 @@ const RegistrationForm = () => {
               <RadioGroup
                 row
                 name={name}
-                value={form[name] || ""}  //use dynamic key
+                value={form[name] || ""}  
                 onChange={handleChange}
               >
                 <FormControlLabel value="yes" control={<Radio disabled={isReadOnly} />} label="Yes" />
@@ -403,7 +403,7 @@ const RegistrationForm = () => {
               <RadioGroup
                 row
                 name={name}
-                value={form[name] || ""}  //use dynamic key
+                value={form[name] || ""}  
                 onChange={handleChange}
               >
                 <FormControlLabel value="yes" control={<Radio disabled={isReadOnly} />} label="Yes" />
@@ -469,7 +469,7 @@ const RegistrationForm = () => {
           <TextField
             label="Any other physical defect or disease (Reg. 89)?"
             name="remarks"
-            value={form.remarks || ""}  // add this to display previous input
+            value={form.remarks || ""}  
             onChange={handleChange}
             fullWidth
             multiline
