@@ -1,32 +1,37 @@
 import React from "react";
-import { Box, Container } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import NavBar from "./NavBar";
+import Slideshow from "./Slideshow";
 import WorkingHours from "./WorkingHours";
 import MediCareLocation from "./MediCareLocation";
 
 const HomePage = () => {
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Slideshow Section */}
-      <Box sx={{ mb: 4 }}>
-        {/* <Slideshow /> */}
-        <Box
-          sx={{
-            height: { xs: "250px", sm: "350px", md: "450px" },
-           background: "linear-gradient(135deg, #d4f9e6, #a6f1d7)",
-            borderRadius: "16px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-            fontSize: "24px",
-            fontWeight: "bold",
-          }}
-        >
-          Slideshow Placeholder
-        </Box>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(to bottom right, #c8f1e7, #a7e3cf, #80e4be)",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* Navigation Bar */}
+      <NavBar />
+
+      {/* Slideshow */}
+      <Box
+        sx={{
+          px: { xs: 2, sm: 3 },
+          py: { xs: 2, sm: 3 },
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Slideshow />
       </Box>
 
-      {/* Working Hours & Location Section - Side by Side */}
+      {/* Location + Working Hours Section */}
+       {/* Working Hours & Location Section - Side by Side */}
       <Box
         sx={{
           display: "flex",
@@ -62,7 +67,24 @@ const HomePage = () => {
           <MediCareLocation />
         </Box>
       </Box>
-    </Container>
+
+      {/* Footer */}
+      <Box
+        component="footer"
+        sx={{
+          backgroundColor: "#0e4d46",
+          color: "#fff",
+          textAlign: "center",
+          py: { xs: 2, md: 2.5 },
+          boxShadow: "0 -4px 12px rgba(0,0,0,0.15)",
+          mt: "auto",
+        }}
+      >
+        <Typography variant="body2" sx={{ fontSize: { xs: "0.875rem", md: "0.9rem" } }}>
+          © {new Date().getFullYear()} MediCare — Sabaragamuwa University
+        </Typography>
+      </Box>
+    </Box>
   );
 };
 
