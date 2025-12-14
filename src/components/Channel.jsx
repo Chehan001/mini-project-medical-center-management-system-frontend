@@ -126,7 +126,7 @@ const Channel = () => {
 
   const formatTime = (date) => {
     const now = new Date();
-    const diff = Math.floor((now - date) / 1000 / 60); // minutes
+    const diff = Math.floor((now - date) / 1000 / 60); 
 
     if (diff < 60) return `${diff}m ago`;
     if (diff < 1440) return `${Math.floor(diff / 60)}h ago`;
