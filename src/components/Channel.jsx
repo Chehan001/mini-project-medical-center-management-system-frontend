@@ -1,7 +1,36 @@
 import React, { useState } from 'react';
-import { Plus, Bell, Heart, AlertTriangle, Info, Megaphone, Clock, User, Pin, X, Eye, Tag } from 'lucide-react';
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Chip,
+  IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Avatar,
+  Badge,
+  Alert,
+} from '@mui/material';
 
-// Import local images
+// Icons
+import AddIcon from '@mui/icons-material/Add';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import InfoIcon from '@mui/icons-material/Info';
+import AnnouncementIcon from '@mui/icons-material/Announcement';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PersonIcon from '@mui/icons-material/Person';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PushPinIcon from '@mui/icons-material/PushPin';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import TextField from '@mui/material/TextField';
+
 import img1 from '../assets/notice1.jpg';
 import img2 from '../assets/notice2.jpg';
 import img3 from '../assets/notice3.png';
@@ -9,6 +38,7 @@ import img4 from '../assets/notice4.jpg';
 import img6 from '../assets/notice6.jpg';
 
 const Channel = () => {
+  // Notices
   const [notices, setNotices] = useState([
     {
       id: 1,
@@ -43,7 +73,6 @@ const Channel = () => {
   ]);
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [newNotice, setNewNotice] = useState({
     type: 'general',
     title: '',
@@ -51,87 +80,20 @@ const Channel = () => {
     priority: 'medium',
   });
   const [showSuccess, setShowSuccess] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  // Educational images data with local imports
-  const educationalImages = [
-    {
-      id: 1,
-      title: 'Types of Heart Disease',
-      description: 'Learn about different cardiovascular conditions including coronary artery disease, heart failure, valve disease, and arrhythmias.',
-      category: 'Cardiovascular Health',
-      image: img1,
-      details: 'Understanding heart conditions is crucial for prevention. Key risk factors include hypertension, high cholesterol, smoking, obesity, and sedentary lifestyle.',
-    },
-    {
-      id: 2,
-      title: 'Diabetes Complications',
-      description: 'Understanding the systemic effects of diabetes including eye disease, stroke, heart damage, renal failure, and neuropathy.',
-      category: 'Endocrine Health',
-      image: img2,
-      details: 'Diabetes affects multiple organ systems. Regular monitoring, medication adherence, and lifestyle modifications are essential for management.',
-    },
-    {
-      id: 3,
-      title: 'Dangers of Smoking',
-      description: 'Global smoking statistics and health risks. 5.5 trillion cigarettes are smoked worldwide annually, causing millions of preventable deaths.',
-      category: 'Preventive Health',
-      image: img3,
-      details: 'Smoking is the leading cause of preventable death. It increases risk of lung cancer, COPD, heart disease, and stroke.',
-    },
-    {
-      id: 4,
-      title: 'Youth Health Education',
-      description: 'Youth smoking trends: 1,600 youth try their first cigarette daily in the U.S., with 4.9M students as current tobacco users.',
-      category: 'Youth Health',
-      image: img4,
-      details: 'Early prevention and education are critical. Peer pressure, mental health issues, and accessibility are major contributing factors.',
-    },
-    {
-      id: 5,
-      title: 'Stress Response System',
-      description: 'How the body responds to stress through the hypothalamus, nerve impulses, and hormonal changes affecting multiple organs.',
-      category: 'Mental Health',
-      image: img6,
-      details: 'Chronic stress impacts physical and mental health. Learn coping strategies including exercise, meditation, and professional support.',
-    },
-  ];
-
+  // Notice types
   const noticeTypes = {
-    medical: {
-      color: '#54dabfff',
-      icon: Heart,
-      label: 'Medical',
-      gradient: 'from-pink-500 to-rose-500',
-    },
-    warning: {
-      color: '#21c972ff',
-      icon: AlertTriangle,
-      label: 'Warning',
-      gradient: 'from-orange-500 to-amber-500',
-    },
-    info: {
-      color: '#446e56ff',
-      icon: Info,
-      label: 'Information',
-      gradient: 'from-blue-500 to-cyan-500',
-    },
-    general: {
-      color: '#3db482ff',
-      icon: Megaphone,
-      label: 'General',
-      gradient: 'from-purple-500 to-indigo-600',
-    },
+    medical: { label: 'Medical', color: 'primary', icon: <LocalHospitalIcon /> },
+    warning: { label: 'Warning', color: 'warning', icon: <WarningAmberIcon /> },
+    info: { label: 'Information', color: 'info', icon: <InfoIcon /> },
+    general: { label: 'General', color: 'secondary', icon: <AnnouncementIcon /> },
   };
 
-  const priorityColors = {
-    high: '#12955aff',
-    medium: '#227b48ff',
-    low: '#4caf50',
-  };
+  const priorityColors = { high: '#265e4bff', medium: '#2a9f65ff', low: '#388e3c' };
 
   const formatTime = (date) => {
-    const now = new Date();
-    const diff = Math.floor((now - date) / 1000 / 60);
+    const diff = Math.floor((Date.now() - date) / 1000 / 60);
     if (diff < 60) return `${diff}m ago`;
     if (diff < 1440) return `${Math.floor(diff / 60)}h ago`;
     return `${Math.floor(diff / 1440)}d ago`;
@@ -156,326 +118,152 @@ const Channel = () => {
   const handleDelete = (id) => setNotices(notices.filter((n) => n.id !== id));
   const handlePin = (id) => setNotices(notices.map((n) => (n.id === id ? { ...n, pinned: !n.pinned } : n)));
 
-  const sortedNotices = [...notices].sort((a, b) => {
-    if (a.pinned !== b.pinned) return b.pinned ? 1 : -1;
-    return b.timestamp - a.timestamp;
-  });
+  const sortedNotices = [...notices].sort((a, b) => (b.pinned - a.pinned) || (b.timestamp - a.timestamp));
+
+  //  images
+  const educationalImages = [
+    { id: 1, title: 'Types of Heart Disease', description: 'Learn about different cardiovascular conditions.', category: 'Cardiovascular Health', image: img1, details: 'Heart conditions info...' },
+    { id: 2, title: 'Diabetes Complications', description: 'Effects of diabetes.', category: 'Endocrine Health', image: img2, details: 'Diabetes info...' },
+    { id: 3, title: 'Dangers of Smoking', description: 'Health risks of smoking.', category: 'Preventive Health', image: img3, details: 'Smoking info...' },
+    { id: 4, title: 'Youth Health Education', description: 'Youth smoking trends.', category: 'Youth Health', image: img4, details: 'Youth health info...' },
+    { id: 5, title: 'Stress Response System', description: 'How the body responds to stress.', category: 'Mental Health', image: img6, details: 'Stress info...' },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-300 to-teal-200">
-      {/* Header */}
-      <div className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-xl">
-              <Bell className="w-8 h-8 text-white" />
-            </div>
-            <div className="text-center sm:text-left">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Medical Notice Channel</h1>
-              <p className="text-sm sm:text-base text-gray-600 mt-1">Health announcements and educational resources</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', p: 3 }}>
+      {/* Success Alert */}
+      {showSuccess && (
+        <Alert severity="success" sx={{ mb: 3 }}>
+          Notice posted successfully!
+        </Alert>
+      )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Success Alert */}
-        {showSuccess && (
-          <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-md animate-fade-in">
-            <div className="flex items-center">
-              <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <p className="ml-3 text-sm font-medium text-green-800">Notice posted successfully!</p>
-            </div>
-          </div>
-        )}
+      {/* Notice stats */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {Object.entries(noticeTypes).map(([key, config]) => {
+          const count = notices.filter((n) => n.type === key).length;
+          return (
+            <Grid item xs={6} md={3} key={key}>
+              <Card sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Avatar sx={{ bgcolor: 'grey.200' }}>{config.icon}</Avatar>
+                <Box>
+                  <Typography variant="h6">{count}</Typography>
+                  <Typography variant="body2">{config.label}</Typography>
+                </Box>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-          {Object.entries(noticeTypes).map(([key, config]) => {
-            const count = notices.filter((n) => n.type === key).length;
-            const Icon = config.icon;
-            return (
-              <div
-                key={key}
-                className={`bg-gradient-to-br ${config.gradient} text-white rounded-2xl shadow-lg p-4 sm:p-6 transform hover:scale-105 transition-all cursor-pointer`}
-              >
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
-                  </div>
-                  <div>
-                    <p className="text-2xl sm:text-3xl font-bold">{count}</p>
-                    <p className="text-xs sm:text-sm opacity-90">{config.label}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      {/* Educational resources */}
+      <Typography variant="h5" sx={{ mb: 2 }}>Medical Education Resources</Typography>
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {educationalImages.map((img) => (
+          <Grid item xs={12} sm={6} md={4} key={img.id}>
+            <Card onClick={() => setSelectedImage(img)} sx={{ cursor: 'pointer' }}>
+              <Box component="img" src={img.image} alt={img.title} sx={{ width: '100%', height: 200, objectFit: 'cover' }} />
+              <CardContent>
+                <Chip label={img.category} color="primary" size="small" sx={{ mb: 1 }} />
+                <Typography variant="h6">{img.title}</Typography>
+                <Typography variant="body2">{img.description}</Typography>
+              </CardContent>
+              <CardContent>
+                <Button fullWidth startIcon={<VisibilityIcon />} variant="contained">View Details</Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
-        {/*  Resources Section  */}
-        <div className="mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 flex items-center gap-2 drop-shadow-lg">
-            <Heart className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
-            Medical Education Resources
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {educationalImages.map((img) => (
-              <div
-                key={img.id}
-                onClick={() => setSelectedImage(img)}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all hover:shadow-2xl"
-              >
-                <div className="relative h-56 sm:h-64 overflow-hidden">
-                  <img
-                    src={img.image}
-                    alt={img.title}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                  />
-                  <div className="absolute top-3 right-3">
-                    <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-purple-700 shadow-lg">
-                      Image {img.id}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Tag className="w-4 h-4 text-purple-600" />
-                    <span className="text-xs font-semibold text-purple-700 bg-purple-100 px-2 py-1 rounded-full">
-                      {img.category}
-                    </span>
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 leading-tight">{img.title}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed mb-4">{img.description}</p>
-                  <button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2.5 sm:py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 shadow-md">
-                    <Eye className="w-4 h-4" />
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Recent notices */}
+      <Typography variant="h5" sx={{ mb: 2 }}>Recent Notices</Typography>
+      <Grid container spacing={2} sx={{ mb: 10 }}>
+        {sortedNotices.map((notice) => {
+          const typeConfig = noticeTypes[notice.type];
+          return (
+            <Grid item xs={12} md={6} key={notice.id}>
+              <Card sx={{ borderLeft: `5px solid ${priorityColors[notice.priority]}` }}>
+                {notice.pinned && (
+                  <Box sx={{ p: 1, bgcolor: 'primary.main', color: 'white', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <PushPinIcon fontSize="small" /> Pinned
+                  </Box>
+                )}
+                <CardContent>
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                    <Typography variant="h6">{notice.title}</Typography>
+                    <Chip label={typeConfig.label} color={typeConfig.color} size="small" />
+                  </Box>
+                  <Box display="flex" alignItems="center" gap={1} mb={1}>
+                    <PersonIcon fontSize="small" />
+                    <Typography variant="caption">{notice.author}</Typography>
+                    <AccessTimeIcon fontSize="small" sx={{ ml: 1 }} />
+                    <Typography variant="caption">{formatTime(notice.timestamp)}</Typography>
+                  </Box>
+                  <Typography variant="body2" mb={1}>{notice.message}</Typography>
+                  <Box display="flex" justifyContent="flex-end" gap={1}>
+                    <IconButton size="small" color={notice.pinned ? 'primary' : 'default'} onClick={() => handlePin(notice.id)}>
+                      <PushPinIcon />
+                    </IconButton>
+                    <IconButton size="small" color="error" onClick={() => handleDelete(notice.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
 
-        {/* Responsive Grid */}
-        <div className="mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 flex items-center gap-2 drop-shadow-lg">
-            <Bell className="w-6 h-6 sm:w-7 sm:h-7 text-purple-600" />
-            Recent Notices
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            {sortedNotices.map((notice) => {
-              const TypeIcon = noticeTypes[notice.type].icon;
-              return (
-                <div
-                  key={notice.id}
-                  className={`bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-all ${
-                    notice.pinned ? 'ring-2 ring-purple-500' : ''
-                  }`}
-                >
-                  <div className="h-2" style={{ backgroundColor: priorityColors[notice.priority] }} />
-                  {notice.pinned && (
-                    <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 flex items-center gap-2 text-sm font-semibold">
-                      <Pin className="w-4 h-4" />
-                      Pinned Notice
-                    </div>
-                  )}
-                  <div className="p-4 sm:p-6">
-                    <div className="flex items-start gap-3 sm:gap-4 mb-4">
-                      <div className={`w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br ${noticeTypes[notice.type].gradient} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg`}>
-                        <TypeIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="text-base sm:text-lg font-bold text-gray-800 leading-tight">{notice.title}</h3>
-                          <span className={`px-2 py-1 bg-gradient-to-r ${noticeTypes[notice.type].gradient} text-white text-xs font-semibold rounded-full whitespace-nowrap flex-shrink-0`}>
-                            {noticeTypes[notice.type].label}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-500 flex-wrap">
-                          <div className="flex items-center gap-1">
-                            <User className="w-3 h-3" />
-                            <span>{notice.author}</span>
-                          </div>
-                          <span>•</span>
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            <span>{formatTime(notice.timestamp)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="border-t border-gray-200 my-4" />
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4">{notice.message}</p>
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        onClick={() => handlePin(notice.id)}
-                        className={`p-2 rounded-lg transition-colors ${
-                          notice.pinned ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        <Pin className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(notice.id)}
-                        className="p-2 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+      {/* Floating Button */}
+      <IconButton
+        sx={{ position: 'fixed', bottom: 24, right: 24, bgcolor: 'primary.main', color: 'white', '&:hover': { bgcolor: 'primary.dark' }, width: 64, height: 64 }}
+        onClick={() => setOpenDialog(true)}
+      >
+        <AddIcon fontSize="large" />
+      </IconButton>
 
-        <button
-          onClick={() => setOpenDialog(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/50 hover:scale-110 transition-all flex items-center justify-center z-50"
-        >
-          <Plus className="w-7 h-7 sm:w-8 sm:h-8" />
-        </button>
+      {/* Add ---> Notice Dialog */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Create Notice</DialogTitle>
+        <DialogContent>
+          <Box display="flex" flexDirection="column" gap={2} mt={1}>
+            <select value={newNotice.type} onChange={(e) => setNewNotice({ ...newNotice, type: e.target.value })}>
+              {Object.entries(noticeTypes).map(([key, config]) => <option key={key} value={key}>{config.label}</option>)}
+            </select>
+            <TextField label="Title" fullWidth value={newNotice.title} onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })} />
+            <TextField label="Message" fullWidth multiline rows={4} value={newNotice.message} onChange={(e) => setNewNotice({ ...newNotice, message: e.target.value })} />
+            <select value={newNotice.priority} onChange={(e) => setNewNotice({ ...newNotice, priority: e.target.value })}>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleAddNotice} disabled={!newNotice.title || !newNotice.message}>Post</Button>
+        </DialogActions>
+      </Dialog>
 
-        {/* Add Notice Dialog */}
-        {openDialog && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-4 sm:p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center">
-                      <Plus className="w-6 h-6 text-white" />
-                    </div>
-                    <h2 className="text-xl font-bold text-gray-800">Create Notice</h2>
-                  </div>
-                  <button onClick={() => setOpenDialog(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100">
-                    <X className="w-5 h-5 text-gray-500" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-4 sm:p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Type</label>
-                  <select
-                    value={newNotice.type}
-                    onChange={(e) => setNewNotice({ ...newNotice, type: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                  >
-                    {Object.entries(noticeTypes).map(([key, config]) => (
-                      <option key={key} value={key}>{config.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Title</label>
-                  <input
-                    type="text"
-                    value={newNotice.title}
-                    onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })}
-                    placeholder="Enter notice title"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
-                  <textarea
-                    value={newNotice.message}
-                    onChange={(e) => setNewNotice({ ...newNotice, message: e.target.value })}
-                    placeholder="Enter detailed message"
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Priority</label>
-                  <select
-                    value={newNotice.priority}
-                    onChange={(e) => setNewNotice({ ...newNotice, priority: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="p-4 sm:p-6 border-t border-gray-200 flex gap-3">
-                <button
-                  onClick={() => setOpenDialog(false)}
-                  className="flex-1 px-6 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAddNotice}
-                  disabled={!newNotice.title || !newNotice.message}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  Post
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Image -->          Detail Modal */}
+      {/* Image Modal */}
+      <Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)} maxWidth="md" fullWidth>
         {selectedImage && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50" onClick={() => setSelectedImage(null)}>
-            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="p-4 sm:p-6 border-b border-gray-200">
-                <div className="flex items-start justify-between mb-3">
-                  <h2 className="text-2xl font-bold text-gray-800 pr-8">{selectedImage.title}</h2>
-                  <button onClick={() => setSelectedImage(null)} className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 flex-shrink-0">
-                    <X className="w-6 h-6 text-gray-500" />
-                  </button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Tag className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm font-semibold text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
-                    {selectedImage.category}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-4 sm:p-6">
-                <img
-                  src={selectedImage.image}
-                  alt={selectedImage.title}
-                  className="w-full h-64 sm:h-96 object-cover rounded-xl mb-6 shadow-lg"
-                />
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Description</h3>
-                    <p className="text-gray-700 leading-relaxed">{selectedImage.description}</p>
-                  </div>
-                  <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                    <h4 className="font-bold text-blue-900 mb-2">Additional Information</h4>
-                    <p className="text-sm text-blue-900">{selectedImage.details}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 sm:p-6 border-t border-gray-200">
-                <button
-                  onClick={() => setSelectedImage(null)}
-                  className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
+          <>
+            <DialogTitle>{selectedImage.title}</DialogTitle>
+            <DialogContent>
+              <Box component="img" src={selectedImage.image} alt={selectedImage.title} sx={{ width: '100%', borderRadius: 2, mb: 2 }} />
+              <Typography variant="body1" mb={1}>{selectedImage.description}</Typography>
+              <Alert severity="info">{selectedImage.details}</Alert>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setSelectedImage(null)}>Close</Button>
+            </DialogActions>
+          </>
         )}
-      </div>
-    </div>
+      </Dialog>
+    </Box>
   );
 };
 
