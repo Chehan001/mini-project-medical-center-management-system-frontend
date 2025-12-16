@@ -23,7 +23,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import NavBar from './NavBar';
 
-// Icons
 import AddIcon from '@mui/icons-material/Add';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
@@ -36,12 +35,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
-// Images
 import img1 from '../assets/notice1.jpg';
 import img2 from '../assets/notice2.jpg';
 import img3 from '../assets/notice3.png';
 import img4 from '../assets/notice4.jpg';
-import img5 from '../assets/notice5.jpg';
 import img6 from '../assets/notice6.jpg';
 
 const Channel = () => {
@@ -50,7 +47,7 @@ const Channel = () => {
       id: 1,
       type: 'medical',
       title: 'COVID-19 Vaccination Drive',
-      message: 'All students are requested to participate in the vaccination drive.',
+      message: 'Students are requested to participate in the vaccination drive at the medical center.',
       author: 'Medical Officer',
       timestamp: new Date(),
       priority: 'high',
@@ -60,7 +57,7 @@ const Channel = () => {
       id: 2,
       type: 'general',
       title: 'Lab Safety Training',
-      message: 'Mandatory safety training on Friday at 2 PM.',
+      message: 'Mandatory lab safety training will be held this Friday at 2 PM.',
       author: 'Admin Office',
       timestamp: new Date(),
       priority: 'medium',
@@ -101,13 +98,12 @@ const Channel = () => {
   };
 
   const priorityColors = {
-    high: '#f44336',
-    medium: '#ff9800',
+    high: '#2aa370ff',
+    medium: '#14893bff',
     low: '#4caf50',
   };
 
-  const images = [img1, img2, img3, img4, img5, img6];
-
+  const images = [img1, img2, img3, img4, img6];
   const formatTime = (date) => {
     const diff = Math.floor((new Date() - date) / 60000);
     if (diff < 60) return `${diff} min ago`;
@@ -149,6 +145,7 @@ const Channel = () => {
       <NavBar />
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
+        {/* Header */}
         <Stack alignItems="center" spacing={2} mb={4}>
           <Avatar sx={{ bgcolor: '#667eea', width: 60, height: 60 }}>
             <NotificationsActiveIcon />
@@ -158,9 +155,10 @@ const Channel = () => {
           </Typography>
         </Stack>
 
+        {/* Success Alert */}
         <AnimatePresence>
           {showSuccess && (
-            <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <Alert severity="success" sx={{ mb: 3 }}>
                 Notice posted successfully!
               </Alert>
@@ -168,12 +166,16 @@ const Channel = () => {
           )}
         </AnimatePresence>
 
-        {/* Educational Images */}
+        {/* Images */}
         <Grid container spacing={3} mb={4}>
           {images.map((img, index) => (
             <Grid item xs={12} md={4} key={index}>
-              <Card sx={{ borderRadius: 3, overflow: 'hidden' }}>
-                <img src={img} alt={`notice-${index}`} style={{ width: '100%', height: 200, objectFit: 'cover' }} />
+              <Card sx={{ borderRadius: 3 }}>
+                <img
+                  src={img}
+                  alt={`health-${index}`}
+                  style={{ width: '100%', height: 200, objectFit: 'cover' }}
+                />
                 <CardContent>
                   <Stack direction="row" spacing={1} alignItems="center">
                     <FavoriteIcon color="error" />
@@ -189,7 +191,7 @@ const Channel = () => {
         <Grid container spacing={3}>
           {sortedNotices.map((notice) => (
             <Grid item xs={12} md={6} key={notice.id}>
-              <Card sx={{ borderRadius: 3, position: 'relative' }}>
+              <Card sx={{ borderRadius: 3 }}>
                 <Box sx={{ height: 6, background: priorityColors[notice.priority] }} />
                 <CardContent>
                   <Stack direction="row" spacing={2} mb={2}>
@@ -208,6 +210,7 @@ const Channel = () => {
                     <Chip label={noticeTypes[notice.type].label} />
                   </Stack>
 
+                  <Divider sx={{ mb: 2 }} />
                   <Typography variant="body2">{notice.message}</Typography>
 
                   <Stack direction="row" justifyContent="flex-end" mt={2}>
@@ -224,7 +227,7 @@ const Channel = () => {
           ))}
         </Grid>
 
-        {/* Add Button */}
+        {/* Button */}
         <Fab
           onClick={() => setOpenDialog(true)}
           sx={{
@@ -237,7 +240,7 @@ const Channel = () => {
           <AddIcon />
         </Fab>
 
-        {/* Dialog */}
+        {/* Add Dialog */}
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
           <DialogTitle>Create Notice</DialogTitle>
           <DialogContent>
@@ -254,18 +257,25 @@ const Channel = () => {
                 ))}
               </TextField>
 
-              <TextField label="Title" value={newNotice.title}
-                onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })} />
+              <TextField
+                label="Title"
+                value={newNotice.title}
+                onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })}
+              />
 
-              <TextField label="Message" multiline rows={4}
+              <TextField
+                label="Message"
+                multiline
+                rows={4}
                 value={newNotice.message}
-                onChange={(e) => setNewNotice({ ...newNotice, message: e.target.value })} />
+                onChange={(e) => setNewNotice({ ...newNotice, message: e.target.value })}
+              />
             </Stack>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
             <Button variant="contained" onClick={handleAddNotice} disabled={!newNotice.title || !newNotice.message}>
-              Post
+              Post Notice
             </Button>
           </DialogActions>
         </Dialog>
