@@ -6,7 +6,6 @@ import img1 from '../assets/notice1.jpg';
 import img2 from '../assets/notice2.jpg';
 import img3 from '../assets/notice3.png';
 import img4 from '../assets/notice4.jpg';
-import img5 from '../assets/notice5.jpg';
 import img6 from '../assets/notice6.jpg';
 
 const Channel = () => {
@@ -89,14 +88,6 @@ const Channel = () => {
     },
     {
       id: 5,
-      title: 'Health Risk Factors',
-      description: 'Key health indicators including age, gender, height, weight, blood pressure, and vision metrics for comprehensive health assessment.',
-      category: 'Health Monitoring',
-      image: img5,
-      details: 'Regular health screenings help detect problems early. Track BMI, blood pressure, cholesterol, and glucose levels regularly.',
-    },
-    {
-      id: 6,
       title: 'Stress Response System',
       description: 'How the body responds to stress through the hypothalamus, nerve impulses, and hormonal changes affecting multiple organs.',
       category: 'Mental Health',
