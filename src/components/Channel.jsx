@@ -17,7 +17,6 @@ import {
   Alert,
 } from '@mui/material';
 
-// Icons
 import AddIcon from '@mui/icons-material/Add';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
@@ -29,10 +28,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-
 import NavBar from './NavBar';
 
-// Import images
 import img1 from '../assets/notice1.jpg';
 import img2 from '../assets/notice2.jpg';
 import img3 from '../assets/notice3.png';
@@ -93,7 +90,7 @@ const Channel = () => {
     general: { label: 'General', color: 'secondary', icon: <AnnouncementIcon /> },
   };
 
-  const priorityColors = { high: '#d32f2f', medium: '#f57c00', low: '#388e3c' };
+  const priorityColors = { high: '#5edcabff', medium: '#277046ff', low: '#388e3c' };
 
   const formatTime = (date) => {
     const diff = Math.floor((Date.now() - date) / 1000 / 60);
@@ -187,7 +184,7 @@ const Channel = () => {
           ))}
         </Grid>
 
-        {/* Recent Notices */}
+        {/*  Notices */}
         <Typography variant="h5" sx={{ mt: 6, mb: 2, fontWeight: 600, color: 'white', textAlign: 'center' }}>
           Recent Notices
         </Typography>
@@ -226,7 +223,7 @@ const Channel = () => {
           ))}
         </Grid>
 
-        {/* Floating Add Button */}
+        {/* Floating Button */}
         <IconButton
           sx={{
             position: 'fixed',
@@ -266,7 +263,7 @@ const Channel = () => {
           </DialogActions>
         </Dialog>
 
-        {/* Image Modal */}
+        {/* Image */}
         <Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)} maxWidth="md" fullWidth>
           {selectedImage && (
             <>
