@@ -18,6 +18,7 @@ import {
 import { motion } from "framer-motion";
 import { PackageCheck, AlertTriangle } from "lucide-react";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const ShowStock = () => {
   const [stock, setStock] = useState([]);
@@ -27,7 +28,7 @@ const ShowStock = () => {
   const fetchStock = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8000/api/medicineStock/stock");
+      const res = await axios.get(`${API_ROOT}/api/medicineStock/stock`);
       setStock(res.data);
       setError(null);
     } catch (err) {

@@ -14,6 +14,7 @@ import {
 import { motion } from "framer-motion";
 import { CheckCircle, Pill, Hash, CalendarClock } from "lucide-react";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const MEDICINE_NAMES = [
   "Paracetamol", "Ibuprofen", "Aspirin", "Diclofenac sodium", "Naproxen",
@@ -53,7 +54,7 @@ const Distribution = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8000/api/medicineStock/distribute", {
+      const response = await axios.post(`${API_ROOT}/api/medicineStock/distribute`, {
         medicineName: form.medicine.trim(),
         quantity: Number(form.quantity),
       });

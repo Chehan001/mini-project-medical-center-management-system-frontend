@@ -14,6 +14,7 @@ import {
 import { motion } from "framer-motion";
 import { Plus, Calendar } from "lucide-react";
 import axios from "axios";
+import API_ROOT from "../services/api";
 
 const MEDICINE_NAMES = [
   "Paracetamol", "Ibuprofen", "Aspirin", "Diclofenac sodium", "Naproxen",
@@ -67,7 +68,7 @@ const AddMedicine = () => {
 
     setLoading(true);
     try {
-    const response = await axios.post("http://localhost:8000/api/medicineStock/add", {
+    const response = await axios.post(`${API_ROOT}/api/medicineStock/add`, {
         name: name.trim(),
         quantity: Number(quantity),
         manufacturingDate,
