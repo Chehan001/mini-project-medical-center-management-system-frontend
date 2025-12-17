@@ -14,7 +14,7 @@ import {
 import { motion } from "framer-motion";
 import { CheckCircle, Pill, Hash, CalendarClock } from "lucide-react";
 import axios from "axios";
-import API_ROOT from "../services/api";
+import API_ROOT from "../../services/api";
 
 const MEDICINE_NAMES = [
   "Paracetamol", "Ibuprofen", "Aspirin", "Diclofenac sodium", "Naproxen",

@@ -34,8 +34,6 @@ const MedicineStockSystem = () => {
           <Route path="distribution" element={<Distribution />} />
         </Routes>
       </div>
-
-      {/* Animated gradient keyframes */}
       <style>
         {`
           @keyframes gradientShift {
