@@ -108,7 +108,6 @@ const StudentMedicine = () => {
     }
 
     try {
-      // <-- IMPORTANT: correct endpoint to match server.js
       const response = await axios.post(
         `${API_ROOT}/api/studentMedicine/add-medicine`,
         {
@@ -127,12 +126,11 @@ const StudentMedicine = () => {
         { id: 1, medicineName: "", dosage: "", frequency: "", timing: "morning" },
       ]);
 
-      // Auto-clear success message after 5 seconds
+      // Auto-clear --> success message 
       setTimeout(() => setMessage(""), 5000);
     } catch (err) {
       console.error("Error adding medicine:", err);
 
-      // Ensure the message "Error adding medicine record. Please try again." is displayed if server failed
       const serverMessage =
         err.response?.data?.message || "Error adding medicine record. Please try again.";
 

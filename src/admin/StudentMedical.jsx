@@ -30,7 +30,7 @@ const StudentMedical = () => {
     try {
       setLoading(true);
 
-      // Fetch all types of medical records in parallel
+      // Fetch --> all types of medical records
       const [studentRes, universityRes, otherRes] = await Promise.all([
         axios.get(`${API_ROOT}/api/student-medical`),
         axios.get(`${API_ROOT}/api/university-medical`),
@@ -82,7 +82,7 @@ const StudentMedical = () => {
 
       const uniqueRecords = Array.from(uniqueMap.values());
 
-      // Sort descending by date
+      // Sort -- > by date
       uniqueRecords.sort((a, b) => new Date(b.medicalDate) - new Date(a.medicalDate));
 
       setRecords(uniqueRecords);
@@ -94,7 +94,7 @@ const StudentMedical = () => {
     }
   };
 
-  // Update doctor approval
+  // Update --> doctor approval
   const handleDoctorApproval = async (record, approval) => {
     try {
       let url = "";
