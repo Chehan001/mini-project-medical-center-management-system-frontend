@@ -1,15 +1,10 @@
 
-<!-- ===================== -->
-<!-- MediCare README START -->
-<!-- ===================== -->
 
 <div align="center">
 
 <img src="images/image3.png" alt="MediCare Banner" width="100%" style="background-color:white; padding:20px;"/>
 
 <h1>🏥 MediCare – University Medical Center Management System</h1>
-
-<p><b>A MERN Stack Digital Healthcare Solution for Sabaragamuwa University</b></p>
 
 </div>
 
@@ -136,11 +131,6 @@ a structured and disciplined software development lifecycle.
 
 <hr/>
 
-<h2>📷 System Snapshots</h2>
-
-<div align="center">
-  <img src="images/image4.png" alt="System Screenshot" width="75%"/>
-</div>
 
 <hr/>
 
@@ -175,8 +165,10 @@ npm run dev
 <h2>👨‍💻 Author</h2>
 
 <p>
-<b>Your Name</b><br/>
-Department of Computing<br/>
+<b>Chehan Lasindu</b><br/>
+Department of Physical Sciences and 
+Technology<br/>
+Faculty of Applied Sciences</br>
 Sabaragamuwa University of Sri Lanka
 </p>
 
@@ -186,6 +178,3 @@ Sabaragamuwa University of Sri Lanka
 ⭐ If you like this project, give it a star!
 </div>
 
-<!-- =================== -->
-<!-- MediCare README END -->
-<!-- =================== -->
